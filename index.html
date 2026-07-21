@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2D4A8A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<title>Treino de Inglês A1</title>
+<style>
+:root {
+  --bg: #FBFAF7;
+  --card: #FFFFFF;
+  --ink: #1E2733;
+  --muted: #66707E;
+  --line: #E4E2DA;
+  --accent: #2D4A8A;
+  --accent-ink: #FFFFFF;
+  --marker: #FFD34D;
+  --marker-ink: #4A3A05;
+  --ok: #1F8A5D;
+  --ok-bg: #E7F4EE;
+  --err: #C94F4A;
+  --err-bg: #FBEDEC;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12161E; --card: #1B222D; --ink: #E9ECF2; --muted: #98A2B5;
+    --line: #2C3542; --accent: #7FA3E8; --accent-ink: #0E1520;
+    --marker: #E8B93B; --marker-ink: #2A2104;
+    --ok: #4CC08F; --ok-bg: #17352A; --err: #E8837F; --err-bg: #3B2323;
+  }
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 120px; }
+.en { font-family: Georgia, "Times New Roman", serif; }
+h1 { font-size: 24px; line-height: 1.2; margin: 8px 0 4px; }
+h2 { font-size: 20px; margin: 0 0 2px; }
+.sub { color: var(--muted); font-size: 15px; margin: 0 0 18px; }
+.eyebrow {
+  display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--marker-ink); background: var(--marker);
+  padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
+}
+.blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.block {
+  display: flex; flex-direction: column; gap: 6px; text-align: left;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 14px; cursor: pointer; color: var(--ink); font: inherit; min-height: 108px;
+}
+.block:active { transform: scale(0.985); }
+.block .ic { font-size: 22px; }
+.block .nm { font-weight: 600; font-size: 15px; line-height: 1.25; }
+.block .st { font-size: 12px; color: var(--muted); margin-top: auto; font-variant-numeric: tabular-nums; }
+.topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.back {
+  flex: none; background: var(--card); border: 1px solid var(--line); color: var(--ink);
+  border-radius: 10px; padding: 8px 12px; font: inherit; font-size: 15px; cursor: pointer;
+}
+.progress { flex: 1; height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.progress i { display: block; height: 100%; width: 0%; background: var(--accent); border-radius: 999px; transition: width 0.25s ease; }
+.count { flex: none; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px; margin-bottom: 12px;
+}
+.explain { font-size: 15.5px; }
+.explain h3 { font-size: 16px; margin: 14px 0 6px; }
+.explain h3:first-child { margin-top: 0; }
+.explain p { margin: 6px 0; }
+.explain ul { margin: 6px 0; padding-left: 20px; }
+.explain li { margin-bottom: 5px; }
+.explain code {
+  font-family: Georgia, serif; font-style: italic; font-size: 15.5px;
+  background: var(--bg); padding: 1px 6px; border-radius: 5px; white-space: nowrap;
+}
+.explain .frm {
+  display: block; background: var(--bg); border-left: 3px solid var(--marker);
+  padding: 8px 12px; margin: 8px 0; font-size: 15px;
+}
+.tblwrap { overflow-x: auto; margin: 8px 0; }
+.explain table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.explain th, .explain td { border: 1px solid var(--line); padding: 5px 9px; text-align: left; }
+.explain th { background: var(--bg); font-weight: 600; }
+.kinds { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
+.kind {
+  font: inherit; font-size: 14px; padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer;
+}
+.kind.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.qlabel { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+.qtext { font-size: 19px; margin: 0 0 14px; }
+.qtext .gap { border-bottom: 2px solid var(--accent); padding: 0 18px; }
+.qtask {
+  display: inline-block; background: var(--marker); color: var(--marker-ink);
+  font-size: 13.5px; font-weight: 600; border-radius: 8px; padding: 3px 10px; margin-bottom: 10px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.chip {
+  background: var(--bg); border: 1px solid var(--line); color: var(--ink);
+  border-radius: 999px; padding: 10px 16px; font-size: 16.5px; cursor: pointer;
+  font-family: Georgia, serif;
+}
+.chip:disabled { opacity: 0.3; }
+.chip.good { border-color: var(--ok); background: var(--ok-bg); color: var(--ok); }
+.chip.bad { border-color: var(--err); background: var(--err-bg); color: var(--err); }
+.built {
+  min-height: 52px; border: 1.5px dashed var(--line); border-radius: 12px;
+  padding: 8px 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+}
+.built .chip { background: var(--card); border-color: var(--accent); }
+.built-hint { color: var(--muted); font-size: 14px; padding-left: 4px; }
+.ptline { color: var(--muted); font-size: 15px; margin: 10px 2px 0; font-style: italic; }
+.sumcard { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--marker); border-radius: 0 12px 12px 0; padding: 12px 14px; margin-top: 16px; font-size: 15px; }
+.sumcard b { display: block; margin-bottom: 6px; }
+.sumcard .sline { display: block; margin: 3px 0; }
+input.answer {
+  width: 100%; font: inherit; font-family: Georgia, serif; font-size: 18px;
+  color: var(--ink); background: var(--bg); border: 1.5px solid var(--line);
+  border-radius: 12px; padding: 13px 14px;
+}
+input.answer:focus { outline: none; border-color: var(--accent); }
+.opts { display: grid; gap: 10px; }
+.opt {
+  font: inherit; font-family: Georgia, serif; font-size: 17px; text-align: left;
+  background: var(--bg); border: 1.5px solid var(--line); color: var(--ink);
+  border-radius: 12px; padding: 12px 16px; cursor: pointer;
+}
+.opt.good { border-color: var(--ok); background: var(--ok-bg); color: var(--ok); }
+.opt.bad { border-color: var(--err); background: var(--err-bg); color: var(--err); }
+.feedback { border-radius: 12px; padding: 14px 16px; margin-top: 14px; font-size: 15.5px; }
+.feedback.ok { background: var(--ok-bg); color: var(--ok); }
+.feedback.err { background: var(--err-bg); color: var(--err); }
+.feedback .full { font-family: Georgia, serif; font-size: 18px; color: var(--ink); display: block; margin: 6px 0; }
+.feedback .dw-ok { color: var(--ok); }
+.feedback .dw-bad { color: var(--err); font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.feedback .where { display: block; margin-top: 4px; }
+.feedback .rule { display: block; margin-top: 8px; font-size: 14.5px; color: var(--ink); opacity: 0.85; }
+.actionbar {
+  position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg);
+  border-top: 1px solid var(--line);
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+}
+.actionbar .inner { max-width: 520px; margin: 0 auto; display: flex; gap: 10px; }
+.btn {
+  font: inherit; font-weight: 600; font-size: 17px; border-radius: 12px;
+  padding: 14px 18px; cursor: pointer; border: 1px solid var(--line);
+  background: var(--card); color: var(--ink); width: 100%;
+}
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn:active { transform: scale(0.98); }
+.result-score { font-size: 44px; font-weight: 700; font-variant-numeric: tabular-nums; margin: 4px 0; }
+.review { margin-top: 16px; display: grid; gap: 10px; }
+.review-item {
+  background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--err);
+  border-radius: 0 12px 12px 0; padding: 12px 14px; font-size: 15px;
+}
+.review-item .en { font-size: 16.5px; }
+.review-item .rule { color: var(--muted); font-size: 13.5px; display: block; margin-top: 4px; }
+.install-tip {
+  margin-top: 18px; background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 12px 16px; font-size: 14px; color: var(--muted);
+}
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hidden { display: none !important; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section id="s-home">
+    <span class="eyebrow">Apostila A1 · aulas 01–23</span>
+    <h1>Treino de Inglês</h1>
+    <p class="sub">Escolha um tema. Cada bloco tem explicação e exercícios de estrutura: afirmativa, negativa e pergunta.</p>
+    <button type="button" class="btn" id="btn-weak" style="margin: 0 0 12px; text-align: left;">🎯 Treinar meus erros — repete o que você mais errou</button>
+    <div class="blocks" id="blocks"></div>
+    <button type="button" class="btn primary hidden" id="btn-install" style="margin-top:16px;">Instalar no celular</button>
+    <div class="install-tip" id="ios-tip">No iPhone: Safari → botão compartilhar → "Adicionar à Tela de Início". No Android: Chrome → menu ⋮ → "Adicionar à tela inicial".</div>
+  </section>
+
+  <section id="s-section" class="hidden">
+    <div class="topbar">
+      <button type="button" class="back" id="btn-back-home">← Temas</button>
+    </div>
+    <h2 id="sec-title"></h2>
+    <p class="sub" id="sec-desc"></p>
+    <div class="card explain" id="sec-explain"></div>
+    <div class="kinds" id="sec-kinds"></div>
+  </section>
+
+  <section id="s-quiz" class="hidden">
+    <div class="topbar">
+      <button type="button" class="back" id="btn-back-sec">← Sair</button>
+      <div class="progress"><i id="progress-fill"></i></div>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="card">
+      <p class="qlabel" id="qlabel"></p>
+      <div id="qtask-holder"></div>
+      <p class="qtext" id="qtext"></p>
+      <div id="area-chips" class="hidden">
+        <div class="chips" id="chip-pool"></div>
+        <div class="built" id="chip-built"></div>
+        <p class="ptline hidden" id="pt-line"></p>
+      </div>
+      <div id="area-input" class="hidden">
+        <input type="text" class="answer" id="answer-input" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" enterkeyhint="done" placeholder="Escreva a frase em inglês">
+      </div>
+      <div id="area-pick" class="opts hidden"></div>
+      <div id="feedback" class="feedback hidden"></div>
+    </div>
+  </section>
+
+  <section id="s-done" class="hidden">
+    <div class="topbar">
+      <button type="button" class="back" id="btn-done-home">← Temas</button>
+    </div>
+    <div class="card" style="text-align:center;">
+      <p class="qlabel">Fim da rodada</p>
+      <div class="result-score" id="final-score"></div>
+      <p class="sub" id="final-msg" style="margin-bottom:0;"></p>
+    </div>
+    <div id="summary"></div>
+    <div class="review" id="review"></div>
+  </section>
+
+</div>
+
+<div class="actionbar hidden" id="actionbar">
+  <div class="inner">
+    <button type="button" class="btn primary" id="btn-main">Verificar</button>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- utilidades ---------- */
+function $(id){ return document.getElementById(id); }
+function shuffle(arr){
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+var CONTR = [
+  ["doesn't","does not"],["don't","do not"],["didn't","did not"],["isn't","is not"],
+  ["aren't","are not"],["wasn't","was not"],["weren't","were not"],["i'm","i am"],
+  ["can't","cannot"],["shouldn't","should not"],["wouldn't","would not"],
+  ["she's","she is"],["he's","he is"],["it's","it is"],["we're","we are"],
+  ["they're","they are"],["you're","you are"],["there's","there is"]
+];
+function norm(s){
+  s = (s || "").toLowerCase().trim().replace(/’/g,"'").replace(/\s+/g," ").replace(/\s+\?/g,"?").replace(/[.!?]+$/g,"");
+  CONTR.forEach(function(c){ s = s.split(c[0]).join(c[1]); });
+  return s;
+}
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+function third(b){
+  if (b === "have") return "has";
+  if (b === "go") return "goes";
+  if (b === "do") return "does";
+  if (/[^aeiou]y$/.test(b)) return b.slice(0,-1) + "ies";
+  if (/(s|sh|ch|x|o|z)$/.test(b)) return b + "es";
+  return b + "s";
+}
+
+/* ---------- verbos da apostila (tabela da aula 23) ---------- */
+var IRR = {
+  querer: { pres:{eu:"quero",sing3:"quer",nos:"queremos",plur3:"querem"}, past:{eu:"quis",sing3:"quis",nos:"quisemos",plur3:"quiseram"} },
+  ter: { pres:{eu:"tenho",sing3:"tem",nos:"temos",plur3:"têm"}, past:{eu:"tive",sing3:"teve",nos:"tivemos",plur3:"tiveram"} },
+  ir: { pres:{eu:"vou",sing3:"vai",nos:"vamos",plur3:"vão"}, past:{eu:"fui",sing3:"foi",nos:"fomos",plur3:"foram"} },
+  fazer: { pres:{eu:"faço",sing3:"faz",nos:"fazemos",plur3:"fazem"}, past:{eu:"fiz",sing3:"fez",nos:"fizemos",plur3:"fizeram"} },
+  dizer: { pres:{eu:"digo",sing3:"diz",nos:"dizemos",plur3:"dizem"}, past:{eu:"disse",sing3:"disse",nos:"dissemos",plur3:"disseram"} },
+  saber: { pres:{eu:"sei"}, past:{eu:"soube",sing3:"soube",nos:"soubemos",plur3:"souberam"} },
+  dormir: { pres:{eu:"durmo"} },
+  jogar: { past:{eu:"joguei"} },
+  começar: { past:{eu:"comecei"} },
+  pegar: { past:{eu:"peguei"} },
+  sair: { pres:{eu:"saio",sing3:"sai",nos:"saímos",plur3:"saem"}, past:{eu:"saí",sing3:"saiu",nos:"saímos",plur3:"saíram"} },
+  ver: { pres:{eu:"vejo",sing3:"vê",nos:"vemos",plur3:"veem"}, past:{eu:"vi",sing3:"viu",nos:"vimos",plur3:"viram"} },
+  vir: { pres:{eu:"venho",sing3:"vem",nos:"vimos",plur3:"vêm"}, past:{eu:"vim",sing3:"veio",nos:"viemos",plur3:"vieram"} }
+};
+var VERBS = [
+  {b:"study", p:"studied", c:"English", reg:1, pt:"estudar", cls:"ar", cpt:"inglês"},
+  {b:"play", p:"played", c:"soccer", reg:1, pt:"jogar", cls:"ar", cpt:"futebol", ov:IRR.jogar},
+  {b:"work", p:"worked", c:"", reg:1, pt:"trabalhar", cls:"ar", cpt:""},
+  {b:"walk", p:"walked", c:"", reg:1, pt:"andar", cls:"ar", cpt:""},
+  {b:"talk", p:"talked", c:"to him", reg:1, pt:"conversar", cls:"ar", cpt:"com ele"},
+  {b:"want", p:"wanted", c:"a new dress", reg:1, pt:"querer", cls:"er", cpt:"um vestido novo", ov:IRR.querer},
+  {b:"need", p:"needed", c:"a new coat", reg:1, pt:"precisar", cls:"ar", cpt:"de um casaco novo"},
+  {b:"hate", p:"hated", c:"the movie", reg:1, pt:"detestar", cls:"ar", cpt:"o filme"},
+  {b:"love", p:"loved", c:"the play", reg:1, pt:"amar", cls:"ar", cpt:"a peça"},
+  {b:"enjoy", p:"enjoyed", c:"the party", reg:1, pt:"aproveitar", cls:"ar", cpt:"a festa"},
+  {b:"start", p:"started", c:"the class", reg:1, pt:"começar", cls:"ar", cpt:"a aula", ov:IRR.começar},
+  {b:"stop", p:"stopped", c:"the car", reg:1, pt:"parar", cls:"ar", cpt:"o carro"},
+  {b:"remember", p:"remembered", c:"his name", reg:1, pt:"lembrar", cls:"ar", cpt:"o nome dele"},
+  {b:"travel", p:"traveled", c:"to the USA", reg:1, pt:"viajar", cls:"ar", cpt:"para os EUA"},
+  {b:"learn", p:"learned", c:"how to cook", reg:1, pt:"aprender", cls:"er", cpt:"a cozinhar"},
+  {b:"snow", p:"snowed", c:"", reg:1, it:1, pt:"nevar", cls:"ar", cpt:""},
+  {b:"rain", p:"rained", c:"", reg:1, it:1, pt:"chover", cls:"er", cpt:""},
+  {b:"eat", p:"ate", c:"bread for breakfast", reg:0, pt:"comer", cls:"er", cpt:"pão no café da manhã"},
+  {b:"drink", p:"drank", c:"coffee", reg:0, pt:"beber", cls:"er", cpt:"café"},
+  {b:"go", p:"went", c:"to the movies", reg:0, pt:"ir", cls:"ir", cpt:"ao cinema", ov:IRR.ir},
+  {b:"do", p:"did", c:"the homework", reg:0, pt:"fazer", cls:"er", cpt:"a lição de casa", ov:IRR.fazer},
+  {b:"say", p:"said", c:"hello", reg:0, pt:"dizer", cls:"er", cpt:"olá", ov:IRR.dizer},
+  {b:"tell", p:"told", c:"him", reg:0, pt:"contar", cls:"ar", cpt:"para ele"},
+  {b:"sell", p:"sold", c:"candy", reg:0, pt:"vender", cls:"er", cpt:"doces"},
+  {b:"buy", p:"bought", c:"a new shirt", reg:0, pt:"comprar", cls:"ar", cpt:"uma camisa nova"},
+  {b:"write", p:"wrote", c:"an e-mail", reg:0, pt:"escrever", cls:"er", cpt:"um e-mail"},
+  {b:"speak", p:"spoke", c:"English at home", reg:0, pt:"falar", cls:"ar", cpt:"inglês em casa"},
+  {b:"have", p:"had", c:"a meeting", reg:0, pt:"ter", cls:"er", cpt:"uma reunião", ov:IRR.ter},
+  {b:"sleep", p:"slept", c:"until late", reg:0, pt:"dormir", cls:"ir", cpt:"até tarde", ov:IRR.dormir},
+  {b:"understand", p:"understood", c:"German", reg:0, pt:"entender", cls:"er", cpt:"alemão"},
+  {b:"begin", p:"began", c:"the exam", reg:0, pt:"começar", cls:"ar", cpt:"a prova", ov:IRR.começar},
+  {b:"know", p:"knew", c:"him", reg:0, pt:"saber", cls:"er", cpt:"dele", ov:IRR.saber},
+  {b:"leave", p:"left", c:"home", reg:0, pt:"sair", cls:"ir", cpt:"de casa", ov:IRR.sair},
+  {b:"take", p:"took", c:"the bus", reg:0, pt:"pegar", cls:"ar", cpt:"o ônibus", ov:IRR.pegar}
+];
+var CVERBS = [
+  {b:"study", g:"studying", c:"English", pinf:"estudar", cls:"ar", cpt:"inglês"},
+  {b:"work", g:"working", c:"", pinf:"trabalhar", cls:"ar", cpt:""},
+  {b:"travel", g:"traveling", c:"to the USA", pinf:"viajar", cls:"ar", cpt:"para os EUA"},
+  {b:"eat", g:"eating", c:"bread", pinf:"comer", cls:"er", cpt:"pão"},
+  {b:"drink", g:"drinking", c:"coffee", pinf:"beber", cls:"er", cpt:"café"},
+  {b:"sleep", g:"sleeping", c:"", pinf:"dormir", cls:"ir", cpt:""},
+  {b:"go", g:"going", c:"to the mall", pinf:"ir", cls:"ir", cpt:"ao shopping"},
+  {b:"buy", g:"buying", c:"a new coat", pinf:"comprar", cls:"ar", cpt:"um casaco novo"},
+  {b:"write", g:"writing", c:"an e-mail", pinf:"escrever", cls:"er", cpt:"um e-mail"},
+  {b:"speak", g:"speaking", c:"English", pinf:"falar", cls:"ar", cpt:"inglês"},
+  {b:"play", g:"playing", c:"soccer", pinf:"jogar", cls:"ar", cpt:"futebol"},
+  {b:"leave", g:"leaving", c:"", pinf:"sair", cls:"ir", cpt:""},
+  {b:"come", g:"coming", c:"home", pinf:"vir", cls:"ir", cpt:"para casa"},
+  {b:"stay", g:"staying", c:"with friends", pinf:"ficar", cls:"ar", cpt:"com amigos"},
+  {b:"have", g:"having", c:"a staff meeting", pinf:"ter", cls:"er", cpt:"uma reunião"},
+  {b:"see", g:"seeing", c:"him", pinf:"ver", cls:"er", cpt:"ele"}
+];
+var SUBJ = ["I","you","he","she","we","they"];
+var T_PAST = ["yesterday","last night","last week"];
+var T_PAST_PT = ["ontem","ontem à noite","na semana passada"];
+var T_PRES = ["every day","in the morning","at night","on weekends","every week"];
+var T_PRES_PT = ["todos os dias","de manhã","à noite","nos fins de semana","toda semana"];
+var T_CONT = ["now","right now","today","tonight","tomorrow","next week"];
+var T_CONT_PT = ["agora","agora mesmo","hoje","hoje à noite","amanhã","semana que vem"];
+var T_FUT = ["tomorrow","next week","next year","tonight","later"];
+var T_FUT_PT = ["amanhã","semana que vem","ano que vem","hoje à noite","mais tarde"];
+
+var SUBJ_PT = {
+  I: {w:"Eu", slot:"eu"}, you: {w:"Você", slot:"sing3"},
+  he: {w:"Ele", slot:"sing3"}, she: {w:"Ela", slot:"sing3"},
+  we: {w:"Nós", slot:"nos"}, they: {w:"Eles", slot:"plur3"},
+  it: {w:"", slot:"sing3"}
+};
+var ESTAR = {eu:"estou", sing3:"está", nos:"estamos", plur3:"estão"};
+
+function parts(list){ return list.filter(function(x){ return x !== ""; }); }
+function ptForm(v, tense, slot){
+  if (v.ov && v.ov[tense] && v.ov[tense][slot]) return v.ov[tense][slot];
+  var stem = v.pt.slice(0, -2);
+  if (v.cls === "ar") return tense === "pres"
+    ? {eu:stem+"o", sing3:stem+"a", nos:stem+"amos", plur3:stem+"am"}[slot]
+    : {eu:stem+"ei", sing3:stem+"ou", nos:stem+"amos", plur3:stem+"aram"}[slot];
+  if (v.cls === "er") return tense === "pres"
+    ? {eu:stem+"o", sing3:stem+"e", nos:stem+"emos", plur3:stem+"em"}[slot]
+    : {eu:stem+"i", sing3:stem+"eu", nos:stem+"emos", plur3:stem+"eram"}[slot];
+  return tense === "pres"
+    ? {eu:stem+"o", sing3:stem+"e", nos:stem+"imos", plur3:stem+"em"}[slot]
+    : {eu:stem+"i", sing3:stem+"iu", nos:stem+"imos", plur3:stem+"iram"}[slot];
+}
+function ptGerund(v){
+  var stem = (v.pt || v.pinf).slice(0, -2);
+  var cls = v.cls;
+  return stem + (cls === "ar" ? "ando" : cls === "er" ? "endo" : "indo");
+}
+function ptSentence(list, punct){
+  var arr = list.filter(function(x){ return x; });
+  if (!arr.length) return "";
+  arr[0] = cap(arr[0]);
+  return arr.join(" ") + punct;
+}
+
+function genPast(){
+  var items = [];
+  VERBS.forEach(function(v, i){
+    var s = v.it ? "it" : SUBJ[i % SUBJ.length];
+    var sp = SUBJ_PT[s];
+    var t = T_PAST[i % T_PAST.length], tpt = T_PAST_PT[i % T_PAST_PT.length];
+    var vfPt = ptForm(v, "past", sp.slot);
+    var ruleAf = v.reg
+      ? "Passado regular: " + v.b + " → " + v.p + " (base + -ed)."
+      : "Passado irregular: " + v.b + " → " + v.p + " (memorize a forma).";
+    items.push({t:"c", k:"af", parts: parts([s, v.p, v.c, t]),
+      pt: ptSentence([sp.w, vfPt, v.cpt, tpt], "."),
+      rule: ruleAf + " Ordem: sujeito + verbo no passado + complemento + tempo."});
+    items.push({t:"c", k:"ng", parts: parts([s, "didn't", v.b, v.c, t]),
+      pt: ptSentence([sp.w, "não", vfPt, v.cpt, tpt], "."),
+      rule: "Negativa no passado: didn't + verbo base. O verbo volta ao presente: didn't " + v.b + " (nunca didn't " + v.p + ")."});
+    items.push({t:"c", k:"in", parts: parts(["did", s === "I" ? "I" : s, v.b, v.c, t]).concat(["?"]),
+      pt: ptSentence([sp.w, vfPt, v.cpt, tpt], "?"),
+      rule: "Pergunta no passado: Did + sujeito + verbo base (" + v.b + "). O did já indica o passado."});
+  });
+  return items;
+}
+function genPresent(){
+  var items = [];
+  VERBS.forEach(function(v, i){
+    var s = v.it ? "it" : SUBJ[(i + 2) % SUBJ.length];
+    var is3 = (s === "he" || s === "she" || s === "it");
+    var sp = SUBJ_PT[s];
+    var t = T_PRES[i % T_PRES.length], tpt = T_PRES_PT[i % T_PRES_PT.length];
+    var form = is3 ? third(v.b) : v.b;
+    var vfPt = ptForm(v, "pres", sp.slot);
+    var ruleAf = is3
+      ? "He/She/It: verbo ganha -s → " + v.b + " → " + third(v.b) + ". Ordem: sujeito + verbo + complemento + tempo."
+      : "Com " + s + " o verbo fica na forma base: " + v.b + ". Ordem: sujeito + verbo + complemento + tempo.";
+    items.push({t:"c", k:"af", parts: parts([s, form, v.c, t]),
+      pt: ptSentence([sp.w, vfPt, v.cpt, tpt], "."), rule: ruleAf});
+    items.push({t:"c", k:"ng", parts: parts([s, is3 ? "doesn't" : "don't", v.b, v.c, t]),
+      pt: ptSentence([sp.w, "não", vfPt, v.cpt, tpt], "."),
+      rule: (is3 ? "He/She/It nega com doesn't" : cap(s) + " nega com don't") + " + verbo base (" + v.b + " sem -s)."});
+    items.push({t:"c", k:"in", parts: parts([is3 ? "does" : "do", s === "I" ? "I" : s, v.b, v.c, t]).concat(["?"]),
+      pt: ptSentence([sp.w, vfPt, v.cpt, tpt], "?"),
+      rule: "Pergunta: " + (is3 ? "Does" : "Do") + " + sujeito + verbo base. O " + (is3 ? "does já carrega o -s." : "do vem antes do sujeito.")});
+  });
+  return items;
+}
+function beFor(s){ return s === "I" ? "am" : (s === "he" || s === "she" || s === "it") ? "is" : "are"; }
+function genCont(){
+  var items = [];
+  CVERBS.forEach(function(v, i){
+    var s = SUBJ[(i + 1) % SUBJ.length];
+    var be = beFor(s);
+    var sp = SUBJ_PT[s];
+    var t = T_CONT[i % T_CONT.length], tpt = T_CONT_PT[i % T_CONT_PT.length];
+    var ger = ptGerund(v);
+    var estarPt = ESTAR[sp.slot];
+    items.push({t:"c", k:"af", parts: parts([s, be, v.g, v.c, t]),
+      pt: ptSentence([sp.w, estarPt, ger, v.cpt, tpt], "."),
+      rule: "Continuous: sujeito + " + be + " + verbo com -ing (" + v.g + "). Serve para agora e para futuro combinado."});
+    items.push({t:"c", k:"ng", parts: parts([s, be === "am" ? "am" : (be === "is" ? "isn't" : "aren't"), be === "am" ? "not" : "", v.g, v.c, t]),
+      pt: ptSentence([sp.w, "não", estarPt, ger, v.cpt, tpt], "."),
+      rule: "Negativa: " + (be === "am" ? "am not" : (be === "is" ? "isn't" : "aren't")) + " + verbo com -ing."});
+    items.push({t:"c", k:"in", parts: parts([be, s === "I" ? "I" : s, v.g, v.c, t]).concat(["?"]),
+      pt: ptSentence([sp.w, estarPt, ger, v.cpt, tpt], "?"),
+      rule: "Pergunta: inverte o to be → " + cap(be) + " + sujeito + " + v.g + "?"});
+  });
+  return items;
+}
+function goingPt(slot){ return {eu:"vou", sing3:"vai", nos:"vamos", plur3:"vão"}[slot]; }
+function genVerbs(){
+  var items = [];
+  var extra = CVERBS.filter(function(cv){ return !VERBS.some(function(v){ return v.b === cv.b; }); });
+  var ALL = VERBS.concat(extra.map(function(cv){
+    return {b:cv.b, c:cv.c, pt:cv.pinf, cls:cv.cls, cpt:cv.cpt, p:null, it:0, ov: IRR[cv.pinf] || null};
+  }));
+
+  ALL.forEach(function(v, i){
+    var pol = i % 3; // 0 afirmativa, 1 negativa, 2 pergunta
+
+    /* presente */
+    var sP = v.it ? "it" : SUBJ[i % SUBJ.length];
+    var spP = SUBJ_PT[sP];
+    var is3 = (sP === "he" || sP === "she" || sP === "it");
+    var form = is3 ? third(v.b) : v.b;
+    var tP = T_PRES[i % T_PRES.length], tPpt = T_PRES_PT[i % T_PRES_PT.length];
+    var vfP = ptForm(v, "pres", spP.slot);
+    if (pol === 0) {
+      items.push({t:"tr", k:"pr", pt: ptSentence([spP.w, vfP, v.cpt, tPpt], "."),
+        answer: parts([sP, form, v.c, tP]).join(" "),
+        rule: "Presente afirmativo: " + (is3 ? "he/she/it ganha -s → " + form + "." : "forma base → " + v.b + ".")});
+    } else if (pol === 1) {
+      items.push({t:"tr", k:"pr", pt: ptSentence([spP.w, "não", vfP, v.cpt, tPpt], "."),
+        answer: parts([sP, is3 ? "doesn't" : "don't", v.b, v.c, tP]).join(" "),
+        rule: "Presente negativo: " + (is3 ? "doesn't" : "don't") + " + " + v.b + " (verbo sem -s)."});
+    } else {
+      items.push({t:"tr", k:"pr", pt: ptSentence([spP.w, vfP, v.cpt, tPpt], "?"),
+        answer: parts([is3 ? "does" : "do", sP === "I" ? "I" : sP, v.b, v.c, tP]).join(" ") + "?",
+        rule: "Pergunta no presente: " + (is3 ? "Does" : "Do") + " + sujeito + " + v.b + " (base)."});
+    }
+
+    /* passado (só verbos com forma irregular/regular conhecida) */
+    if (v.p) {
+      var sA = v.it ? "it" : SUBJ[(i + 3) % SUBJ.length];
+      var spA = SUBJ_PT[sA];
+      var tA = T_PAST[(i + 1) % T_PAST.length], tApt = T_PAST_PT[(i + 1) % T_PAST_PT.length];
+      var vfA = ptForm(v, "past", spA.slot);
+      var pol2 = (i + 1) % 3;
+      if (pol2 === 0) {
+        items.push({t:"tr", k:"pa", pt: ptSentence([spA.w, vfA, v.cpt, tApt], "."),
+          answer: parts([sA, v.p, v.c, tA]).join(" "),
+          rule: "Passado: " + v.b + " → " + v.p + " (" + (v.reg ? "regular +ed" : "irregular") + ")."});
+      } else if (pol2 === 1) {
+        items.push({t:"tr", k:"pa", pt: ptSentence([spA.w, "não", vfA, v.cpt, tApt], "."),
+          answer: parts([sA, "didn't", v.b, v.c, tA]).join(" "),
+          rule: "Negativa no passado: didn't + " + v.b + " (verbo base, nunca didn't " + v.p + ")."});
+      } else {
+        items.push({t:"tr", k:"pa", pt: ptSentence([spA.w, vfA, v.cpt, tApt], "?"),
+          answer: parts(["did", sA === "I" ? "I" : sA, v.b, v.c, tA]).join(" ") + "?",
+          rule: "Pergunta no passado: Did + sujeito + " + v.b + " (base). O did já indica o passado."});
+      }
+    }
+
+    /* futuro (going to) */
+    var sF = v.it ? "it" : SUBJ[(i + 5) % SUBJ.length];
+    var spF = SUBJ_PT[sF];
+    var beF = beFor(sF);
+    var tF = T_FUT[i % T_FUT.length], tFpt = T_FUT_PT[i % T_FUT_PT.length];
+    var goPt = goingPt(spF.slot);
+    var pol3 = (i + 2) % 3;
+    if (pol3 === 0) {
+      items.push({t:"tr", k:"fu", pt: ptSentence([spF.w, goPt, v.pt, v.cpt, tFpt], "."),
+        answer: parts([sF, beF, "going to", v.b, v.c, tF]).join(" "),
+        rule: "Futuro (going to): sujeito + " + beF + " + going to + verbo base."});
+    } else if (pol3 === 1) {
+      var negBe = beF === "am" ? "am not" : beF === "is" ? "isn't" : "aren't";
+      items.push({t:"tr", k:"fu", pt: ptSentence([spF.w, "não", goPt, v.pt, v.cpt, tFpt], "."),
+        answer: parts([sF, negBe, "going to", v.b, v.c, tF]).join(" "),
+        rule: "Futuro negativo: " + negBe + " + going to + verbo base."});
+    } else {
+      items.push({t:"tr", k:"fu", pt: ptSentence([spF.w, goPt, v.pt, v.cpt, tFpt], "?"),
+        answer: parts([beF, sF === "I" ? "I" : sF, "going to", v.b, v.c, tF]).join(" ") + "?",
+        rule: "Pergunta no futuro: inverte o to be → " + cap(beF) + " + sujeito + going to + verbo base."});
+    }
+  });
+  return items;
+}
+
+/* ---------- seções ---------- */
+var SECTIONS = [
+{
+  id: "past", icon: "⏪", title: "Simple Past", kinds: true,
+  desc: "Passado com os 32 verbos da tabela da aula 23.",
+  explain: "<h3>Como funciona</h3>" +
+    "<p>O simple past fala de coisas que aconteceram e terminaram.</p>" +
+    "<span class='frm'><b>Afirmativa:</b> sujeito + verbo no passado → <code>She learned how to cook</code></span>" +
+    "<span class='frm'><b>Negativa:</b> sujeito + didn't + verbo base → <code>She didn't learn how to cook</code></span>" +
+    "<span class='frm'><b>Pergunta:</b> Did + sujeito + verbo base? → <code>Did she learn how to cook?</code></span>" +
+    "<p><b>Regra de ouro:</b> com <code>did</code> ou <code>didn't</code>, o verbo volta à forma base. O did já carrega o passado.</p>" +
+    "<h3>Regulares (+ed) e irregulares</h3>" +
+    "<div class='tblwrap'><table><tr><th>Regular</th><th>S. Past</th><th>Irregular</th><th>S. Past</th></tr>" +
+    "<tr><td>study</td><td>studied</td><td>eat</td><td>ate</td></tr>" +
+    "<tr><td>play</td><td>played</td><td>drink</td><td>drank</td></tr>" +
+    "<tr><td>work</td><td>worked</td><td>go</td><td>went</td></tr>" +
+    "<tr><td>walk</td><td>walked</td><td>do</td><td>did</td></tr>" +
+    "<tr><td>talk</td><td>talked</td><td>say</td><td>said</td></tr>" +
+    "<tr><td>want</td><td>wanted</td><td>tell</td><td>told</td></tr>" +
+    "<tr><td>need</td><td>needed</td><td>sell</td><td>sold</td></tr>" +
+    "<tr><td>hate</td><td>hated</td><td>buy</td><td>bought</td></tr>" +
+    "<tr><td>love</td><td>loved</td><td>write</td><td>wrote</td></tr>" +
+    "<tr><td>enjoy</td><td>enjoyed</td><td>speak</td><td>spoke</td></tr>" +
+    "<tr><td>start</td><td>started</td><td>have</td><td>had</td></tr>" +
+    "<tr><td>stop</td><td>stopped</td><td>sleep</td><td>slept</td></tr>" +
+    "<tr><td>remember</td><td>remembered</td><td>understand</td><td>understood</td></tr>" +
+    "<tr><td>travel</td><td>traveled</td><td>begin</td><td>began</td></tr>" +
+    "<tr><td>learn</td><td>learned</td><td>know</td><td>knew</td></tr>" +
+    "<tr><td>snow</td><td>snowed</td><td>leave</td><td>left</td></tr>" +
+    "<tr><td>rain</td><td>rained</td><td>take</td><td>took</td></tr></table></div>" +
+    "<p>Verbo to be no passado: <code>am/is → was</code>, <code>are → were</code> (treine no bloco There + To be).</p>",
+  gen: genPast
+},
+{
+  id: "modais", icon: "🧭", title: "Modal verbs", kinds: true,
+  desc: "Can, may, must, should, would... o que cada um faz.",
+  explain: "<h3>O que são</h3>" +
+    "<p>Modais são verbos auxiliares que mudam o sentido do verbo principal. Estrutura: <b>modal + verbo base</b> (sem to, sem -s, sem -ing).</p>" +
+    "<span class='frm'><b>Afirmativa:</b> <code>I can speak English</code><br><b>Negativa:</b> <code>I can't speak English</code><br><b>Pergunta:</b> <code>Can you speak English?</code> (inverte, sem do/does)</span>" +
+    "<h3>Cada modal, um a um</h3>" +
+    "<ul>" +
+    "<li><b>CAN</b> — habilidade, permissão, pedido: <code>She can play the piano</code> (ela sabe/consegue).</li>" +
+    "<li><b>COULD</b> — passado do can e pedido educado: <code>Could you help me?</code></li>" +
+    "<li><b>MAY</b> — permissão formal e possibilidade: <code>May I come in?</code> (posso entrar?).</li>" +
+    "<li><b>MIGHT</b> — possibilidade menor, talvez: <code>It might rain tomorrow</code>.</li>" +
+    "<li><b>MUST</b> — obrigação forte, necessidade, conclusão lógica: <code>You must study</code>.</li>" +
+    "<li><b>HAVE TO</b> — obrigação por circunstância: <code>I have to work in the morning</code>.</li>" +
+    "<li><b>SHALL</b> — intenção, sugestão: <code>Shall we go now?</code> (vamos?).</li>" +
+    "<li><b>SHOULD</b> — conselho, recomendação: <code>You should study every day</code> (você deveria).</li>" +
+    "<li><b>OUGHT TO</b> — dever moral, conselho insistente: <code>You ought to call your mother</code>.</li>" +
+    "<li><b>WILL</b> — futuro, desejo, vontade: <code>I will have a sandwich</code>.</li>" +
+    "<li><b>WOULD</b> — \"gostaria\", pedido educado, condicional: <code>I would like to talk to you</code> (eu gostaria). Abreviado: <code>I'd like...</code></li>" +
+    "<li><b>NEED</b> — necessidade: <code>I need to study</code>.</li>" +
+    "</ul>",
+  items: [
+    {t:"c", k:"in", parts:["would","you","like","to go","to the movies","with me","?"], rule:"Would = 'gostaria'. Pergunta: Would + sujeito + like + to... (aula 20)."},
+    {t:"c", k:"af", parts:["I","would like","to talk","to you"], rule:"Would like = gostaria. Depois vem to + verbo: would like TO talk."},
+    {t:"c", k:"ng", parts:["I","wouldn't like","to live","here"], rule:"Negativa: would + not = wouldn't. O resto não muda."},
+    {t:"c", k:"af", parts:["she","can","play","the piano"], rule:"Can = habilidade. Modal + verbo base: can play (sem -s, mesmo com she!)."},
+    {t:"c", k:"in", parts:["can","you","speak","English","?"], rule:"Pergunta com modal: inverte → Can + sujeito + verbo. Sem do/does."},
+    {t:"c", k:"ng", parts:["I","can't","go","to the party","tonight"], rule:"Can + not = can't (ou cannot). Negativa direta no modal."},
+    {t:"c", k:"af", parts:["you","should","study","every day"], rule:"Should = conselho ('deveria'). Should + verbo base."},
+    {t:"c", k:"ng", parts:["he","shouldn't","drink","soda","at night"], rule:"Shouldn't = should not. Verbo base depois: drink (sem -s)."},
+    {t:"c", k:"in", parts:["may","I","come in","?"], rule:"May = permissão formal: May I...? (posso...?)."},
+    {t:"c", k:"af", parts:["we","must","finish","the homework","today"], rule:"Must = obrigação forte. Must + verbo base."},
+    {t:"c", k:"af", parts:["I","have to","work","in the morning"], rule:"Have to = obrigação por circunstância. Have to + verbo base."},
+    {t:"c", k:"in", parts:["shall","we","go","now","?"], rule:"Shall = sugestão: Shall we go? (vamos?)."},
+    {t:"c", k:"af", parts:["it","might","rain","tomorrow"], rule:"Might = possibilidade (talvez). Might + verbo base."},
+    {t:"c", k:"af", parts:["I","will","have","a sandwich"], rule:"Will = futuro/vontade. Will + verbo base. 'I will have' = vou querer (pedido)."},
+    {t:"w", k:"in", given:"She can play the guitar.", task:"Passe para pergunta", answer:"can she play the guitar?", rule:"Modal na pergunta: inverte com o sujeito → Can she...? Sem do/does."},
+    {t:"w", k:"ng", given:"I can go now.", task:"Passe para negativa", answer:"I can't go now", alt:["I cannot go now"], rule:"Negativa do can: can't (cannot). Nunca 'don't can'."},
+    {t:"w", k:"in", given:"You would like to start today.", task:"Passe para pergunta", answer:"would you like to start today?", rule:"Would + you + like...? — pergunta educada da aula 20."},
+    {t:"w", k:"ng", given:"He should eat meat.", task:"Passe para negativa", answer:"he shouldn't eat meat", alt:["he should not eat meat"], rule:"Should + not = shouldn't. O verbo continua base: eat."}
+  ]
+},
+{
+  id: "tobe", icon: "📍", title: "There + To be", kinds: true,
+  desc: "Am, is, are, was, were e there is/are.",
+  explain: "<h3>Verbo to be</h3>" +
+    "<p><code>To be</code> = ser ou estar. Ele NÃO usa do/does: nega com <b>not</b> e pergunta <b>invertendo</b>.</p>" +
+    "<div class='tblwrap'><table><tr><th>Afirmativa</th><th>Negativa</th><th>Pergunta</th></tr>" +
+    "<tr><td>I am</td><td>I am not</td><td>Am I?</td></tr>" +
+    "<tr><td>You are</td><td>You aren't</td><td>Are you?</td></tr>" +
+    "<tr><td>He/She/It is</td><td>He isn't</td><td>Is he?</td></tr>" +
+    "<tr><td>We/They are</td><td>They aren't</td><td>Are they?</td></tr></table></div>" +
+    "<p>No passado: <code>am/is → was</code> e <code>are → were</code>.</p>" +
+    "<h3>There to be = haver/ter</h3>" +
+    "<span class='frm'><code>There is</code> + singular → <code>There is an apple</code><br>" +
+    "<code>There are</code> + plural → <code>There are two apples</code><br>" +
+    "Passado: <code>there was / there were</code></span>" +
+    "<p>Negativa: <code>there isn't / there aren't (any)</code>. Pergunta: <code>Is there...? / Are there...?</code></p>" +
+    "<p>Plurais irregulares (aula 19): <code>person → people</code>, <code>child → children</code>, <code>man → men</code>, <code>woman → women</code>, <code>foot → feet</code>, <code>tooth → teeth</code>.</p>",
+  items: [
+    {t:"c", k:"af", parts:["there","is","an apple","in the refrigerator"], rule:"There is + singular (an apple)."},
+    {t:"c", k:"af", parts:["there","are","two apples","in the fridge"], rule:"There are + plural (two apples)."},
+    {t:"c", k:"ng", parts:["there","isn't","any milk","in the fridge"], rule:"Negativa: there isn't + any + substantivo."},
+    {t:"c", k:"in", parts:["are","there","any apples","?"], rule:"Pergunta: inverte → Are there...?"},
+    {t:"c", k:"in", parts:["is","there","a supermarket","downtown","?"], rule:"Is there + singular. Downtown sem 'in the'."},
+    {t:"c", k:"af", parts:["there","was","a party","last night"], rule:"Passado singular: there was."},
+    {t:"c", k:"af", parts:["there","were","two men","in the store"], rule:"Passado plural: there were. Man → men (plural irregular)."},
+    {t:"c", k:"af", parts:["she","is","busy","today"], rule:"To be + adjetivo: she is busy (ela ESTÁ ocupada)."},
+    {t:"c", k:"ng", parts:["I","am","not","late"], rule:"Negativa do to be: am/is/are + not. Sem don't!"},
+    {t:"c", k:"in", parts:["are","you","tired","?"], rule:"Pergunta do to be: inverte → Are you...? Sem do!"},
+    {t:"c", k:"ng", parts:["he","isn't","at home","now"], rule:"Isn't = is not. Em casa = at home."},
+    {t:"c", k:"in", parts:["was","she","sad","yesterday","?"], rule:"Pergunta no passado: Was/Were + sujeito."},
+    {t:"c", k:"af", parts:["we","were","happy","on Christmas"], rule:"We/You/They no passado: were."},
+    {t:"c", k:"in", parts:["aren't","you","hungry","?"], rule:"Pergunta negativa: Aren't you...? To be hungry = estar com fome (aula 15)."},
+    {t:"w", k:"af", given:"There is an apple in the fridge.", task:"Reescreva com TWO APPLES", answer:"there are two apples in the fridge", rule:"Plural muda o verbo: there IS → there ARE."},
+    {t:"w", k:"in", given:"She is busy.", task:"Passe para pergunta", answer:"is she busy?", rule:"To be pergunta invertendo: Is she...?"},
+    {t:"w", k:"ng", given:"They are at the beach.", task:"Passe para negativa", answer:"they aren't at the beach", alt:["they are not at the beach"], rule:"Are + not = aren't."},
+    {t:"w", k:"in", given:"He was late.", task:"Passe para pergunta", answer:"was he late?", rule:"Passado do to be pergunta igual: inverte → Was he...?"}
+  ]
+},
+{
+  id: "cont", icon: "⏳", title: "Present Continuous", kinds: true,
+  desc: "To be + verbo com -ing: agora e futuro combinado.",
+  explain: "<h3>Como funciona</h3>" +
+    "<span class='frm'><b>Estrutura:</b> sujeito + am/is/are + verbo-ing → <code>I am studying English now</code></span>" +
+    "<p>Usos (aula 18):</p>" +
+    "<ul><li><b>Agora:</b> <code>She is working</code> (ela está trabalhando neste momento).</li>" +
+    "<li><b>Futuro combinado:</b> <code>I'm meeting Jim tomorrow</code> (já está marcado).</li></ul>" +
+    "<p>Compare: <code>We're having a staff meeting next Monday</code> (só dessa vez) × <code>We have a staff meeting every Monday</code> (rotina → simple present).</p>" +
+    "<span class='frm'><b>Negativa:</b> <code>He isn't working next week</code><br><b>Pergunta:</b> <code>Is she seeing him tomorrow?</code></span>" +
+    "<p>Atenção ao -ing: <code>write → writing</code>, <code>leave → leaving</code>, <code>come → coming</code> (some o -e), <code>stop → stopping</code> (dobra a consoante).</p>",
+  gen: genCont
+},
+{
+  id: "horas", icon: "🕒", title: "Horas", kinds: false,
+  desc: "Todas as formas de dizer as horas da aula 17.",
+  explain: "<h3>Como dizer as horas</h3>" +
+    "<p>Sempre comece com <code>It's...</code> A pergunta é <code>What time is it?</code></p>" +
+    "<div class='tblwrap'><table><tr><th>Hora</th><th>Como se diz</th></tr>" +
+    "<tr><td>1:00</td><td>It's one o'clock</td></tr>" +
+    "<tr><td>4:15</td><td>It's four fifteen</td></tr>" +
+    "<tr><td>3:15</td><td>It's a quarter after three</td></tr>" +
+    "<tr><td>5:30</td><td>It's five thirty</td></tr>" +
+    "<tr><td>10:30</td><td>It's half past ten</td></tr>" +
+    "<tr><td>5:45</td><td>It's a quarter to six</td></tr>" +
+    "<tr><td>3:50</td><td>It's ten to four</td></tr>" +
+    "<tr><td>7:05</td><td>It's seven o five</td></tr></table></div>" +
+    "<ul><li><b>o'clock</b> — hora em ponto.</li>" +
+    "<li><b>a quarter after</b> — 15 minutos depois da hora.</li>" +
+    "<li><b>half past</b> — meia hora depois.</li>" +
+    "<li><b>a quarter to / ten to</b> — faltam 15 / 10 para a próxima hora.</li>" +
+    "<li><b>a.m.</b> = 0h às 12h · <b>p.m.</b> = 12h às 24h.</li>" +
+    "<li><b>At</b> = às (<code>at 1 pm</code>) · <b>from... to...</b> = das... às... (<code>from nine to five</code>).</li></ul>",
+  items: [
+    {t:"c", k:"ot", parts:["it's","one","o'clock"], hint:"1:00", rule:"Hora em ponto: it's + número + o'clock."},
+    {t:"c", k:"ot", parts:["it's","four","fifteen"], hint:"4:15", rule:"Jeito direto: hora + minutos → four fifteen."},
+    {t:"c", k:"ot", parts:["it's","a quarter","after","three"], hint:"3:15", rule:"Quarter = 15 min. After = depois da hora → a quarter after three."},
+    {t:"c", k:"ot", parts:["it's","half","past","ten"], hint:"10:30", rule:"Half past = meia hora depois → half past ten."},
+    {t:"c", k:"ot", parts:["it's","a quarter","to","six"], hint:"5:45", rule:"To = faltando para. 5:45 = faltam 15 para as 6 → a quarter to six."},
+    {t:"c", k:"ot", parts:["it's","ten","to","four"], hint:"3:50", rule:"3:50 = faltam 10 para as 4 → ten to four."},
+    {t:"c", k:"ot", parts:["it's","seven","o","five"], hint:"7:05", rule:"Minutos 01–09: fala 'o' (letra O) → seven o five."},
+    {t:"c", k:"ot", parts:["it's","nine","twenty-five"], hint:"9:25", rule:"Jeito direto: nine twenty-five."},
+    {t:"c", k:"ot", parts:["it's","five","thirty"], hint:"5:30", rule:"5:30 também pode ser direto: five thirty."},
+    {t:"c", k:"ot", parts:["what","time","is","it","?"], hint:"Monte a pergunta: que horas são?", rule:"What time is it? = Que horas são?"},
+    {t:"c", k:"ot", parts:["I","work","from","nine","to","five"], hint:"Trabalho das 9 às 5", rule:"From... to... = das... às... (aula 17)."},
+    {t:"p", k:"ot", text:"14h (2 da tarde) é ___", opts:["2 p.m.","2 a.m."], answer:"2 p.m.", rule:"p.m. = de meio-dia até meia-noite. a.m. = de meia-noite até meio-dia."}
+  ]
+},
+{
+  id: "present", icon: "▶️", title: "Simple Present", kinds: true,
+  desc: "Rotinas e verdades, com a regra do he/she/it.",
+  explain: "<h3>Como funciona</h3>" +
+    "<p>O simple present fala de rotinas, hábitos e verdades gerais.</p>" +
+    "<span class='frm'><b>Afirmativa:</b> sujeito + verbo → <code>I drink coffee every day</code><br>" +
+    "<b>Negativa:</b> sujeito + don't/doesn't + verbo base → <code>She doesn't drink coffee</code><br>" +
+    "<b>Pergunta:</b> Do/Does + sujeito + verbo base? → <code>Does she drink coffee?</code></span>" +
+    "<h3>A regra do He / She / It</h3>" +
+    "<p>Na afirmativa, o verbo ganha <b>-s</b>. Detalhes (aula 03):</p>" +
+    "<ul><li>Termina em <b>S, H, O, X</b> → +es: <code>go → goes</code>, <code>do → does</code>, <code>watch → watches</code></li>" +
+    "<li>Vogal + y → +s: <code>play → plays</code>, <code>enjoy → enjoys</code></li>" +
+    "<li>Consoante + y → tira o y, +ies: <code>study → studies</code></li>" +
+    "<li>Exceção: <code>have → has</code></li></ul>" +
+    "<p><b>Pegadinha:</b> na negativa e na pergunta o -s vai embora — quem carrega ele é o does: <code>Does he work?</code> / <code>He doesn't work</code>.</p>",
+  gen: genPresent
+},
+{
+  id: "wh", icon: "❓", title: "WH Questions", kinds: false,
+  desc: "Where, when, what, who, why, how + perguntas.",
+  explain: "<h3>As palavrinhas WH</h3>" +
+    "<ul><li><b>Where</b> = onde/aonde → pergunta lugar</li>" +
+    "<li><b>When</b> = quando → pergunta tempo</li>" +
+    "<li><b>What</b> = o quê/qual → pergunta coisa</li>" +
+    "<li><b>Who</b> = quem → pergunta pessoa</li>" +
+    "<li><b>Why</b> = por quê → pergunta motivo</li>" +
+    "<li><b>How</b> = como → pergunta modo (e How much/How many/How old...)</li></ul>" +
+    "<span class='frm'><b>Estrutura:</b> WH + do/does + sujeito + verbo base + resto<br><code>Where do you like to go for a walk?</code></span>" +
+    "<p>A resposta nunca é yes/no — a WH question pede informação. Com o verbo to be, inverte direto: <code>How old are you?</code> / <code>What time is it?</code></p>",
+  items: [
+    {t:"c", k:"ot", parts:["where","do","you","like","to go","for a walk","?"], rule:"Where pergunta o LUGAR: Where + do + you + like + to go...?"},
+    {t:"c", k:"ot", parts:["when","do","you","like","to go","for a walk","?"], rule:"When pergunta o TEMPO. A estrutura é a mesma, só troca a palavrinha WH."},
+    {t:"c", k:"ot", parts:["what","do","you","like","to eat","?"], rule:"What pergunta a COISA: What do you like to eat?"},
+    {t:"c", k:"ot", parts:["where","do","you","want","to go","tomorrow","?"], rule:"WH + do + sujeito + want + to go (dois verbos: to!)."},
+    {t:"c", k:"ot", parts:["when","do","you","study","your English lessons","?"], rule:"When + do + you + study...? (aula 13)."},
+    {t:"c", k:"ot", parts:["how","do","you","spell","chicken","?"], rule:"How do you spell...? = como se escreve/soletra (aula 11)."},
+    {t:"c", k:"ot", parts:["why","do","you","study","English","?"], rule:"Why pergunta o MOTIVO. Responde com because."},
+    {t:"c", k:"ot", parts:["who","do","you","work","with","?"], rule:"Who pergunta a PESSOA. A preposição fica no final: work WITH."},
+    {t:"c", k:"ot", parts:["where","does","she","like","to go","on weekends","?"], rule:"She → does. O verbo fica base: like (sem -s)."},
+    {t:"c", k:"ot", parts:["why","does","he","work","at night","?"], rule:"He → does: Why does he work at night?"},
+    {t:"c", k:"ot", parts:["how","old","are","you","?"], rule:"Idade: How old + to be → How old are you? (sem do!)."},
+    {t:"c", k:"ot", parts:["how much","does","it","cost","?"], rule:"How much = quanto (preço): How much does it cost?"},
+    {t:"w", k:"ot", given:"She likes to go to the beach.", task:"Pergunte o LUGAR (where)", answer:"where does she like to go?", rule:"Where + does + she + like + to go? O lugar (the beach) sai da pergunta — é ele que você quer saber."},
+    {t:"w", k:"ot", given:"They study English in the morning.", task:"Pergunte o TEMPO (when)", answer:"when do they study English?", rule:"When + do + they + study English? O tempo sai da pergunta."},
+    {t:"w", k:"ot", given:"He wants to eat chicken.", task:"Pergunte a COISA (what)", answer:"what does he want to eat?", rule:"What + does + he + want + to eat? Want volta à base (sem -s)."}
+  ]
+},
+{
+  id: "togo", icon: "🚶", title: "Tipos de TO GO", kinds: false,
+  desc: "To go to the × to go to × to go — quando usar cada um.",
+  explain: "<h3>As 3 formas (aula 08)</h3>" +
+    "<ul><li><b>go to the</b> → lugares públicos e construídos pelo homem: <code>go to the movies</code>, <code>go to the mall</code>, <code>go to the beach</code>, <code>go to the supermarket</code></li>" +
+    "<li><b>go to</b> → nomes próprios, regiões, <b>school</b> e <b>church</b>: <code>go to Brazil</code>, <code>go to school</code>, <code>go to church</code></li>" +
+    "<li><b>go</b> (sem nada!) → <b>downtown</b> e <b>home</b>: <code>go downtown</code>, <code>go home</code></li></ul>" +
+    "<h3>Exceções</h3>" +
+    "<p>Países com nome composto usam THE: <code>go to THE USA</code>, <code>the UK</code>, <code>the Vatican</code>.</p>" +
+    "<p><b>City</b> = cidade desenvolvida · <b>town</b> = cidade menor.</p>",
+  items: [
+    {t:"p", k:"ot", text:"I go ___ movies on weekends.", opts:["to the","to","(nada)"], answer:"to the", rule:"Cinema é lugar público construído → to the movies."},
+    {t:"p", k:"ot", text:"She goes ___ church every week.", opts:["to the","to","(nada)"], answer:"to", rule:"Church é exceção: go to church (sem the)."},
+    {t:"p", k:"ot", text:"We go ___ downtown every day.", opts:["to the","to","(nada)"], answer:"(nada)", rule:"Downtown não leva nada: go downtown."},
+    {t:"p", k:"ot", text:"They go ___ school in the morning.", opts:["to the","to","(nada)"], answer:"to", rule:"School é exceção: go to school."},
+    {t:"p", k:"ot", text:"He goes ___ home at night.", opts:["to the","to","(nada)"], answer:"(nada)", rule:"Home não leva nada: go home."},
+    {t:"p", k:"ot", text:"I want to go ___ USA.", opts:["to the","to","(nada)"], answer:"to the", rule:"Exceção dos países compostos: the USA → go to THE USA."},
+    {t:"p", k:"ot", text:"She goes ___ beach on weekends.", opts:["to the","to","(nada)"], answer:"to the", rule:"Praia é lugar público → to the beach."},
+    {t:"p", k:"ot", text:"I go ___ Brazil every year.", opts:["to the","to","(nada)"], answer:"to", rule:"Nome próprio de país → go to Brazil."},
+    {t:"c", k:"in", parts:["do","you","want","to go","to the mall","with me","?"], rule:"Mall = lugar público → to the mall (aula 13)."},
+    {t:"c", k:"af", parts:["she","goes","to church","every week"], rule:"Church sem the. She → goes (o + es)."},
+    {t:"c", k:"af", parts:["he","goes","home","at night"], rule:"Home sem nada: goes home."},
+    {t:"c", k:"ng", parts:["they","don't","go","to the supermarket","on weekends"], rule:"Negativa: don't + go (base). Supermercado → to the."},
+    {t:"c", k:"af", parts:["we","go","downtown","every day"], rule:"Downtown sem nada: go downtown."},
+    {t:"c", k:"af", parts:["I","want","to go","to the USA"], rule:"Want + to go (dois verbos) + to the USA (exceção do the)."}
+  ]
+},
+{
+  id: "semanas", icon: "📅", title: "Semanas", kinds: false,
+  desc: "On the week, on the weekend, on weekends...",
+  explain: "<h3>As 4 formas (aula 06)</h3>" +
+    "<div class='tblwrap'><table><tr><th>Forma</th><th>Significado</th></tr>" +
+    "<tr><td>on the week</td><td>na semana</td></tr>" +
+    "<tr><td>on the weekend</td><td>no final de semana (específico)</td></tr>" +
+    "<tr><td>on weekends</td><td>nos fins de semana (geral, costume)</td></tr>" +
+    "<tr><td>on the weekends</td><td>nos finais de semana (específicos)</td></tr></table></div>" +
+    "<p><b>Dica:</b> sem THE = geral (todo fim de semana, costume). Com THE = específico.</p>" +
+    "<h3>Vocabulário de tempo (aula 06)</h3>" +
+    "<ul><li><code>today</code> = hoje · <code>tonight</code> = hoje à noite</li>" +
+    "<li><code>this morning</code> = hoje de manhã · <code>this afternoon</code> = hoje à tarde · <code>this evening</code> = hoje de noite</li>" +
+    "<li><code>every day</code> = todos os dias · <code>every week</code> = toda semana</li></ul>",
+  items: [
+    {t:"p", k:"ot", text:"I study English ___ (na semana).", opts:["on the week","on weekends","on the weekend"], answer:"on the week", rule:"Na semana = on the week."},
+    {t:"p", k:"ot", text:"We go to the mall ___ (no final de semana).", opts:["on the weekend","on weekends","on the week"], answer:"on the weekend", rule:"No final de semana (um específico) = on the weekend."},
+    {t:"p", k:"ot", text:"They travel ___ (nos fins de semana, costume).", opts:["on weekends","on the weekends","on the week"], answer:"on weekends", rule:"Costume geral, sem the: on weekends."},
+    {t:"p", k:"ot", text:"She works ___ (nos finais de semana, específicos).", opts:["on the weekends","on weekends","on the weekend"], answer:"on the weekends", rule:"Específicos, com the: on the weekends."},
+    {t:"p", k:"ot", text:"I want to go to the movies ___ (hoje à noite).", opts:["tonight","this morning","today"], answer:"tonight", rule:"Hoje à noite = tonight."},
+    {t:"p", k:"ot", text:"He needs to work ___ (hoje de manhã).", opts:["this morning","tonight","this evening"], answer:"this morning", rule:"Hoje de manhã = this morning."},
+    {t:"c", k:"af", parts:["I","go","to the mall","on weekends"], rule:"Costume → on weekends (sem the). Frase da aula 13."},
+    {t:"c", k:"in", parts:["do","you","go","to church","every week","?"], rule:"Every week = toda semana. Do + you + go...?"},
+    {t:"c", k:"ng", parts:["she","doesn't","work","on the weekend"], rule:"Negativa: doesn't + work (base) + on the weekend."},
+    {t:"c", k:"af", parts:["we","like","to travel","on the weekends"], rule:"Like + to travel (dois verbos) + on the weekends."}
+  ]
+},
+{
+  id: "pronomes", icon: "👥", title: "Pronomes", kinds: false,
+  desc: "Subject, object e adjective possessive pronouns.",
+  explain: "<h3>As 3 famílias (aula 06)</h3>" +
+    "<div class='tblwrap'><table><tr><th>Subject<br>(quem faz)</th><th>Object<br>(quem recebe)</th><th>Possessive<br>(de quem é)</th></tr>" +
+    "<tr><td>I (eu)</td><td>me (me/mim)</td><td>my (meu/minha)</td></tr>" +
+    "<tr><td>you (você)</td><td>you (te)</td><td>your (seu/teu)</td></tr>" +
+    "<tr><td>he (ele)</td><td>him (o/ele)</td><td>his (dele)</td></tr>" +
+    "<tr><td>she (ela)</td><td>her (a/ela)</td><td>her (dela)</td></tr>" +
+    "<tr><td>it (ele/ela coisa)</td><td>it</td><td>its (dele/dela)</td></tr>" +
+    "<tr><td>we (nós)</td><td>us (nos)</td><td>our (nosso)</td></tr>" +
+    "<tr><td>they (eles/elas)</td><td>them (os/as)</td><td>their (deles)</td></tr></table></div>" +
+    "<ul><li><b>Subject</b> vem ANTES do verbo: <code>SHE works</code>.</li>" +
+    "<li><b>Object</b> vem DEPOIS do verbo ou preposição: <code>I like HER</code>, <code>talk to HIM</code>.</li>" +
+    "<li><b>Possessive</b> vem antes do substantivo: <code>MY book</code>, <code>HIS car</code>.</li></ul>",
+  items: [
+    {t:"p", k:"ot", text:"___ works every day. (ele)", opts:["He","Him","His"], answer:"He", rule:"Quem FAZ a ação → subject pronoun: He works."},
+    {t:"p", k:"ot", text:"I speak English with ___. (ela)", opts:["her","she","hers"], answer:"her", rule:"Depois de preposição (with) → object pronoun: with her."},
+    {t:"p", k:"ot", text:"This is ___ book. (meu)", opts:["my","me","I"], answer:"my", rule:"Antes de substantivo (book) → possessive: my book."},
+    {t:"p", k:"ot", text:"Do you understand ___? (eles)", opts:["them","they","their"], answer:"them", rule:"Recebe a ação → object: understand them."},
+    {t:"p", k:"ot", text:"I like ___ car. (dele)", opts:["his","him","he"], answer:"his", rule:"Posse antes de substantivo: his car (o carro dele)."},
+    {t:"p", k:"ot", text:"___ name is Ana. (dela)", opts:["Her","She","Hers"], answer:"Her", rule:"Posse: her name = o nome dela. 'Her' é object E possessive."},
+    {t:"p", k:"ot", text:"She likes ___. (eu)", opts:["me","I","my"], answer:"me", rule:"Recebe a ação → object: she likes me."},
+    {t:"p", k:"ot", text:"I want to talk to ___. (ele)", opts:["him","he","his"], answer:"him", rule:"Depois de preposição (to) → object: talk to him."},
+    {t:"p", k:"ot", text:"We love ___ parents. (nossos)", opts:["our","us","we"], answer:"our", rule:"Posse: our parents = nossos pais."},
+    {t:"p", k:"ot", text:"They sell ___ house. (deles)", opts:["their","them","they"], answer:"their", rule:"Posse: their house = a casa deles."},
+    {t:"p", k:"ot", text:"Call ___ tomorrow. (nós)", opts:["us","we","our"], answer:"us", rule:"Recebe a ação → object: call us = ligue para nós."},
+    {t:"p", k:"ot", text:"___ are my parents. (eles)", opts:["They","Them","Their"], answer:"They", rule:"Quem faz/é → subject: They are my parents."},
+    {t:"c", k:"af", parts:["she","works","with","her parents"], rule:"She (subject) + her (possessive) — a mesma palavra 'her' com dois papéis diferentes."},
+    {t:"c", k:"af", parts:["I","learn","how to cook","with my mother"], rule:"My = meu/minha antes do substantivo (aula 11)."}
+  ]
+},
+{
+  id: "conj", icon: "✏️", title: "Conjugação", kinds: false,
+  desc: "I, you, we, they × he, she, it — treine as formas.",
+  explain: "<h3>A regra geral (aulas 03–05)</h3>" +
+    "<span class='frm'><b>I / You / We / They</b> → verbo na forma base: <code>I drink, they study</code><br>" +
+    "<b>He / She / It</b> → verbo ganha -s: <code>he drinks, she studies</code></span>" +
+    "<h3>Como colocar o -s (só para he/she/it)</h3>" +
+    "<ul><li>Termina em <b>S, H, O, X</b> → +ES: <code>go → goes</code>, <code>do → does</code>, <code>watch → watches</code>, <code>wash → washes</code></li>" +
+    "<li><b>Vogal + Y</b> → só +S: <code>play → plays</code>, <code>say → says</code>, <code>enjoy → enjoys</code></li>" +
+    "<li><b>Consoante + Y</b> → tira o Y e põe IES: <code>study → studies</code></li>" +
+    "<li>Exceção famosa: <code>have → has</code></li></ul>" +
+    "<p><b>Lembre:</b> esse -s só existe na AFIRMATIVA. Na negativa e pergunta, does/doesn't carrega o -s e o verbo volta ao normal.</p>" +
+    "<p>Digite só o verbo conjugado (uma palavra).</p>",
+  items: [
+    {t:"w", k:"ot", given:"to study", task:"Conjugue para HE", answer:"studies", rule:"Consoante + y → tira o y, põe -ies: studies."},
+    {t:"w", k:"ot", given:"to go", task:"Conjugue para SHE", answer:"goes", rule:"Termina em O → +es: goes."},
+    {t:"w", k:"ot", given:"to work", task:"Conjugue para IT", answer:"works", rule:"Caso normal → só +s: works."},
+    {t:"w", k:"ot", given:"to have", task:"Conjugue para HE", answer:"has", rule:"Exceção: have → has."},
+    {t:"w", k:"ot", given:"to play", task:"Conjugue para SHE", answer:"plays", rule:"Vogal + y → só +s: plays."},
+    {t:"w", k:"ot", given:"to buy", task:"Conjugue para HE", answer:"buys", rule:"Vogal + y (u+y) → só +s: buys."},
+    {t:"w", k:"ot", given:"to do", task:"Conjugue para SHE", answer:"does", rule:"Termina em O → +es: does."},
+    {t:"w", k:"ot", given:"to rain", task:"Conjugue para IT", answer:"rains", rule:"Caso normal → +s: it rains (chove)."},
+    {t:"w", k:"ot", given:"to speak", task:"Conjugue para HE", answer:"speaks", rule:"Caso normal → +s: speaks."},
+    {t:"w", k:"ot", given:"to sell", task:"Conjugue para SHE", answer:"sells", rule:"Caso normal → +s: sells."},
+    {t:"w", k:"ot", given:"to study", task:"Conjugue para WE", answer:"study", rule:"We NÃO muda o verbo: we study. O -s é só para he/she/it!"},
+    {t:"w", k:"ot", given:"to eat", task:"Conjugue para THEY", answer:"eat", rule:"They não muda: they eat."},
+    {t:"w", k:"ot", given:"to drink", task:"Conjugue para I", answer:"drink", rule:"I não muda: I drink."},
+    {t:"w", k:"ot", given:"to sleep", task:"Conjugue para YOU", answer:"sleep", rule:"You não muda: you sleep."},
+    {t:"w", k:"ot", given:"to watch", task:"Conjugue para HE", answer:"watches", rule:"Termina em H (ch) → +es: watches."},
+    {t:"w", k:"ot", given:"to teach", task:"Conjugue para SHE", answer:"teaches", rule:"Termina em H (ch) → +es: teaches."}
+  ]
+},
+{
+  id: "verbos", icon: "🧱", title: "Verbos: criar frases", kinds: true,
+  kindOptions: [["all","Tudo"],["pr","Presente"],["pa","Passado"],["fu","Futuro"]],
+  desc: "Todos os verbos da apostila. Leia em português e escreva a frase em inglês.",
+  explain: "<h3>Como usar</h3>" +
+    "<p>Aqui embaixo tem <b>todos os verbos</b> da apostila (os das aulas de Simple Past + Present Continuous, mais de 30 no total). Você lê a frase em português e <b>cria a frase em inglês do zero</b> — presente, passado ou futuro.</p>" +
+    "<span class='frm'><b>Presente:</b> sujeito + verbo (+ -s para he/she/it) → <code>She studies English</code></span>" +
+    "<span class='frm'><b>Passado:</b> sujeito + verbo no passado → <code>She studied English yesterday</code></span>" +
+    "<span class='frm'><b>Futuro (going to):</b> sujeito + am/is/are + going to + verbo base → <code>She is going to study English tomorrow</code></span>" +
+    "<p>As frases vêm misturadas em afirmativa, negativa e pergunta — preste atenção no português para saber qual é qual (ex.: \"não\" = negativa, \"?\" no fim = pergunta).</p>" +
+    "<p>Use os filtros acima para treinar só um tempo verbal de cada vez, ou 'Tudo' para misturar.</p>",
+  gen: genVerbs
+}
+];
+
+/* ---------- traduções por tema (escreva em inglês) ---------- */
+var TRANS = {
+past: [
+  {t:"tr", k:"af", pt:"Eu estudei inglês ontem.", answer:"I studied English yesterday", rule:"Passado regular: study → studied. Ordem: sujeito + verbo + complemento + tempo."},
+  {t:"tr", k:"ng", pt:"Ela não bebeu café hoje de manhã.", answer:"she didn't drink coffee this morning", rule:"Negativa: didn't + verbo base (drink, não drank)."},
+  {t:"tr", k:"in", pt:"Você comeu pão no café da manhã?", answer:"did you eat bread for breakfast?", rule:"Pergunta: Did + you + eat (base). Refeição usa for: for breakfast."},
+  {t:"tr", k:"af", pt:"Ele comprou uma camisa nova na semana passada.", answer:"he bought a new shirt last week", rule:"Buy → bought (irregular). Adjetivo antes do substantivo: a NEW shirt."},
+  {t:"tr", k:"af", pt:"Nós fomos ao cinema ontem à noite.", answer:"we went to the movies last night", rule:"Go → went. Cinema = to the movies."},
+  {t:"tr", k:"ng", pt:"Eles não trabalharam ontem.", answer:"they didn't work yesterday", rule:"Didn't + work (base). O didn't já carrega o passado."},
+  {t:"tr", k:"af", pt:"Ela dormiu até tarde.", answer:"she slept until late", rule:"Sleep → slept (irregular). Até tarde = until late (aula da apostila)."},
+  {t:"tr", k:"in", pt:"Você entendeu a aula?", answer:"did you understand the class?", rule:"Did + you + understand (base, não understood)."},
+  {t:"tr", k:"af", pt:"Choveu ontem à noite.", answer:"it rained last night", rule:"Em inglês, chuva precisa de sujeito: IT rained. Nunca só 'rained'."},
+  {t:"tr", k:"ng", pt:"Eu não escrevi o e-mail.", answer:"I didn't write the e-mail", alt:["I didn't write the email"], rule:"Didn't + write (base, não wrote)."}
+],
+modais: [
+  {t:"tr", k:"af", pt:"Eu gostaria de falar com você.", answer:"I would like to talk to you", alt:["I'd like to talk to you","I would like to speak with you","I would like to speak to you"], rule:"Gostaria = would like + to + verbo. Falar com = talk TO."},
+  {t:"tr", k:"in", pt:"Você gostaria de ir ao cinema comigo?", answer:"would you like to go to the movies with me?", rule:"Would + you + like + to go...? Comigo = with me."},
+  {t:"tr", k:"af", pt:"Ela sabe tocar piano.", answer:"she can play the piano", rule:"'Saber fazer' = can. Modal + verbo base: can play (sem -s). Instrumento leva the."},
+  {t:"tr", k:"in", pt:"Posso entrar?", answer:"may I come in?", alt:["can I come in?"], rule:"Permissão: May I...? (formal) ou Can I...? Entrar = come in."},
+  {t:"tr", k:"af", pt:"Você deveria estudar todos os dias.", answer:"you should study every day", rule:"Deveria = should + verbo base."},
+  {t:"tr", k:"ng", pt:"Eu não posso ir à festa hoje à noite.", answer:"I can't go to the party tonight", alt:["I cannot go to the party tonight"], rule:"Can + not = can't. Hoje à noite = tonight."},
+  {t:"tr", k:"af", pt:"Nós temos que terminar a lição de casa hoje.", answer:"we have to finish the homework today", alt:["we must finish the homework today"], rule:"Ter que = have to + verbo base."},
+  {t:"tr", k:"af", pt:"Pode chover amanhã.", answer:"it might rain tomorrow", alt:["it may rain tomorrow"], rule:"Possibilidade = might/may. Chuva com sujeito IT."}
+],
+tobe: [
+  {t:"tr", k:"af", pt:"Tem uma maçã na geladeira.", answer:"there is an apple in the fridge", alt:["there is an apple in the refrigerator","there's an apple in the fridge"], rule:"'Tem' de existir = There is. Vogal → AN apple."},
+  {t:"tr", k:"af", pt:"Tem duas maçãs na geladeira.", answer:"there are two apples in the fridge", alt:["there are two apples in the refrigerator"], rule:"Plural → there ARE."},
+  {t:"tr", k:"ng", pt:"Não tem leite na geladeira.", answer:"there isn't any milk in the fridge", alt:["there is no milk in the fridge","there isn't milk in the fridge"], rule:"Negativa: there isn't + any."},
+  {t:"tr", k:"af", pt:"Ela está ocupada hoje.", answer:"she is busy today", rule:"Estado = to be: she IS busy. Sem outro verbo!"},
+  {t:"tr", k:"af", pt:"Eu estou com fome.", answer:"I am hungry", rule:"Com fome = to be hungry (aula 15). Nunca 'I have hungry'."},
+  {t:"tr", k:"in", pt:"Você está cansado?", answer:"are you tired?", rule:"Pergunta do to be: inverte → Are you...? Sem do!"},
+  {t:"tr", k:"ng", pt:"Ele não está em casa agora.", answer:"he isn't at home now", alt:["he is not at home now","he's not at home now"], rule:"Is + not = isn't. Em casa = at home."},
+  {t:"tr", k:"af", pt:"Teve uma festa ontem à noite.", answer:"there was a party last night", rule:"'Teve' de existir no passado = there was (singular)."}
+],
+cont: [
+  {t:"tr", k:"af", pt:"Eu estou estudando inglês agora.", answer:"I am studying English now", rule:"Estar + -ndo = am/is/are + -ing: am studying."},
+  {t:"tr", k:"af", pt:"Ela está trabalhando hoje.", answer:"she is working today", rule:"She + is + working."},
+  {t:"tr", k:"ng", pt:"Eles não estão saindo hoje à noite.", answer:"they aren't leaving tonight", alt:["they are not leaving tonight"], rule:"Aren't + verbo -ing: aren't leaving."},
+  {t:"tr", k:"in", pt:"Você está indo para casa?", answer:"are you going home?", rule:"Pergunta: inverte o to be → Are you going...? Home sem 'to'."},
+  {t:"tr", k:"af", pt:"Nós estamos ficando com amigos.", answer:"we are staying with friends", rule:"Stay = ficar/hospedar-se (aula 18): are staying."},
+  {t:"tr", k:"af", pt:"Ele está viajando para os EUA amanhã.", answer:"he is traveling to the USA tomorrow", rule:"Continuous também é futuro combinado. EUA = the USA."},
+  {t:"tr", k:"af", pt:"Estou saindo amanhã.", answer:"I am leaving tomorrow", rule:"Futuro já combinado = continuous: I am leaving tomorrow (aula 18)."},
+  {t:"tr", k:"in", pt:"Ela está vendo ele amanhã?", answer:"is she seeing him tomorrow?", rule:"Is + she + seeing + him? Ele depois do verbo = him (object)."}
+],
+horas: [
+  {t:"tr", k:"ot", pt:"São três e quinze.", answer:"it's a quarter after three", alt:["it's three fifteen","it is a quarter after three","it is three fifteen"], rule:"3:15 = a quarter after three ou three fifteen. Sempre começa com It's."},
+  {t:"tr", k:"ot", pt:"São dez e meia.", answer:"it's half past ten", alt:["it's ten thirty","it is half past ten","it is ten thirty"], rule:"Meia hora = half past."},
+  {t:"tr", k:"ot", pt:"Faltam quinze para as seis.", answer:"it's a quarter to six", alt:["it is a quarter to six"], rule:"Faltando para = to: a quarter to six (5:45)."},
+  {t:"tr", k:"ot", pt:"Que horas são?", answer:"what time is it?", rule:"What time is it? — com to be, sem do/does."}
+],
+present: [
+  {t:"tr", k:"af", pt:"Eu vou para a praia no fim de semana.", answer:"I go to the beach on the weekend", alt:["I go to the beach on weekends"], rule:"Praia é lugar público → to the beach. No fim de semana = on the weekend."},
+  {t:"tr", k:"af", pt:"Ela estuda inglês todos os dias.", answer:"she studies English every day", rule:"She → studies (consoante + y → ies)."},
+  {t:"tr", k:"ng", pt:"Ele não come carne.", answer:"he doesn't eat meat", rule:"He nega com doesn't + eat (base). O verbo principal nunca some!"},
+  {t:"tr", k:"in", pt:"Você trabalha de manhã?", answer:"do you work in the morning?", rule:"Pergunta: Do + you + work. De manhã = in the morning."},
+  {t:"tr", k:"af", pt:"Nós falamos português em casa.", answer:"we speak Portuguese at home", rule:"We + speak (base). Idioma com maiúscula: Portuguese."},
+  {t:"tr", k:"af", pt:"Ela quer comprar um vestido novo.", answer:"she wants to buy a new dress", rule:"Dois verbos: wants + TO + buy. Adjetivo antes: a NEW dress."},
+  {t:"tr", k:"af", pt:"Eu preciso estudar inglês hoje.", answer:"I need to study English today", rule:"Need + TO + study (dois verbos)."},
+  {t:"tr", k:"ng", pt:"Eles não entendem alemão.", answer:"they don't understand German", rule:"They → don't + understand (base)."},
+  {t:"tr", k:"af", pt:"Ele dorme até tarde nos fins de semana.", answer:"he sleeps until late on weekends", rule:"He → sleeps. Nos fins de semana (costume) = on weekends."},
+  {t:"tr", k:"in", pt:"Você gosta de caminhar de manhã?", answer:"do you like to walk in the morning?", rule:"Do you like + TO walk? (dois verbos → to)."}
+],
+wh: [
+  {t:"tr", k:"ot", pt:"Onde você trabalha?", answer:"where do you work?", rule:"Where + do + you + work?"},
+  {t:"tr", k:"ot", pt:"Quando você estuda inglês?", answer:"when do you study English?", rule:"When + do + you + study...?"},
+  {t:"tr", k:"ot", pt:"O que você gosta de comer?", answer:"what do you like to eat?", rule:"What + do + you + like + TO eat?"},
+  {t:"tr", k:"ot", pt:"Por que ele trabalha à noite?", answer:"why does he work at night?", rule:"He → does. Verbo base: work. À noite = at night."},
+  {t:"tr", k:"ot", pt:"Quantos anos você tem?", answer:"how old are you?", rule:"Idade = How old + to be. Nunca 'how many years do you have'."},
+  {t:"tr", k:"ot", pt:"Quanto custa isso?", answer:"how much does it cost?", alt:["how much is it?"], rule:"How much does it cost? ou How much is it? (aula 16)."}
+],
+togo: [
+  {t:"tr", k:"af", pt:"Eu vou ao cinema nos fins de semana.", answer:"I go to the movies on weekends", rule:"Cinema = lugar público → to the movies."},
+  {t:"tr", k:"af", pt:"Ela vai à igreja toda semana.", answer:"she goes to church every week", rule:"Church é exceção: to church (sem the). She → goes."},
+  {t:"tr", k:"af", pt:"Nós vamos para casa à noite.", answer:"we go home at night", rule:"Home não leva nada: go home."},
+  {t:"tr", k:"af", pt:"Eles vão ao centro da cidade todos os dias.", answer:"they go downtown every day", rule:"Downtown não leva nada: go downtown."},
+  {t:"tr", k:"in", pt:"Você quer ir ao shopping comigo?", answer:"do you want to go to the mall with me?", rule:"Do you want + to go + to the mall (lugar público)?"},
+  {t:"tr", k:"af", pt:"Eu quero ir para os EUA.", answer:"I want to go to the USA", rule:"Exceção: the USA (país composto leva the)."}
+],
+semanas: [
+  {t:"tr", k:"af", pt:"Nós viajamos nos fins de semana.", answer:"we travel on weekends", rule:"Costume geral, sem the: on weekends."},
+  {t:"tr", k:"af", pt:"Ela trabalha na semana.", answer:"she works on the week", rule:"Na semana = on the week. She → works."},
+  {t:"tr", k:"af", pt:"Eu estudo inglês nos finais de semana.", answer:"I study English on the weekends", rule:"Nos finais de semana (específicos) = on the weekends."},
+  {t:"tr", k:"ng", pt:"Ele não trabalha no final de semana.", answer:"he doesn't work on the weekend", rule:"Doesn't + work (base). No final de semana = on the weekend."}
+],
+pronomes: [
+  {t:"tr", k:"af", pt:"Ela gosta de mim.", answer:"she likes me", rule:"Depois do verbo = object pronoun: me."},
+  {t:"tr", k:"af", pt:"Eu quero falar com ele.", answer:"I want to talk to him", alt:["I want to speak with him","I want to talk with him"], rule:"Depois de preposição = object: him."},
+  {t:"tr", k:"af", pt:"Este é o meu livro.", answer:"this is my book", rule:"Antes do substantivo = possessive: my book."},
+  {t:"tr", k:"af", pt:"Nós amamos nossos pais.", answer:"we love our parents", rule:"Nosso = our (possessive antes de parents)."}
+]
+};
+
+/* ---------- estatísticas ---------- */
+var store = { get: function(){ return null; }, set: function(){} };
+try {
+  localStorage.setItem("__t","1"); localStorage.removeItem("__t");
+  store = {
+    get: function(){ try { return JSON.parse(localStorage.getItem("treinoA1v2")); } catch(e){ return null; } },
+    set: function(v){ try { localStorage.setItem("treinoA1v2", JSON.stringify(v)); } catch(e){} }
+  };
+} catch(e){}
+var stats = store.get() || {};
+function addStat(sec, hit){
+  if (!stats[sec]) stats[sec] = {a:0, c:0};
+  stats[sec].a++; if (hit) stats[sec].c++;
+  store.set(stats);
+}
+function recordResult(q, ok){
+  var secId = q.__origSec || state.sec.id;
+  if (!state.isWeak) addStat(state.sec.id, ok);
+  if (ok) resolveWeak(secId, q); else addWeak(secId, q);
+  var kk = q.k || "ot";
+  if (!state.roundStats[kk]) state.roundStats[kk] = {a:0, c:0};
+  state.roundStats[kk].a++;
+  if (ok) state.roundStats[kk].c++;
+}
+
+/* ---------- erros para reforçar (repetição espaçada simples) ---------- */
+var weakStoreKV = { get: function(){ return null; }, set: function(){} };
+try {
+  weakStoreKV = {
+    get: function(){ try { return JSON.parse(localStorage.getItem("treinoA1v2weak")); } catch(e){ return null; } },
+    set: function(v){ try { localStorage.setItem("treinoA1v2weak", JSON.stringify(v)); } catch(e){} }
+  };
+} catch(e){}
+var weakMap = weakStoreKV.get() || {};
+function hashItem(secId, q){
+  return secId + "|" + q.t + "|" + (
+    q.t === "c" ? q.parts.join(" ") :
+    q.t === "tr" ? q.pt :
+    q.t === "w" ? q.task + "::" + q.given :
+    q.text || ""
+  );
+}
+function weakSecId(q){ return q.__origSec || state.sec.id; }
+function addWeak(secId, q){
+  var key = hashItem(secId, q);
+  var clean = {};
+  for (var k in q) { if (k.indexOf("__") !== 0 && k !== "src") clean[k] = q[k]; }
+  var cur = weakMap[key];
+  weakMap[key] = { sec: secId, item: clean, count: (cur ? cur.count : 0) + 1, ts: Date.now() };
+  var keys = Object.keys(weakMap);
+  if (keys.length > 120) {
+    keys.sort(function(a,b){ return weakMap[a].count - weakMap[b].count || weakMap[a].ts - weakMap[b].ts; });
+    delete weakMap[keys[0]];
+  }
+  weakStoreKV.set(weakMap);
+}
+function resolveWeak(secId, q){
+  var key = hashItem(secId, q);
+  if (!weakMap[key]) return;
+  weakMap[key].count--;
+  if (weakMap[key].count <= 0) delete weakMap[key];
+  weakStoreKV.set(weakMap);
+}
+function weakCount(){ return Object.keys(weakMap).length; }
+function getWeakQueue(limit){
+  var list = Object.keys(weakMap).map(function(k){
+    var w = weakMap[k];
+    var item = JSON.parse(JSON.stringify(w.item));
+    item.__origSec = w.sec; item.__key = k;
+    return item;
+  });
+  list.sort(function(a,b){ return weakMap[b.__key].count - weakMap[a.__key].count; });
+  return shuffle(list.slice(0, Math.max(limit * 2, limit))).slice(0, limit);
+}
+
+/* ---------- estado e navegação ---------- */
+var KINDS = [["all","Tudo"],["af","Afirmativa"],["ng","Negativa"],["in","Pergunta"]];
+var MODES = [["all","Misturado"],["build","Só montar"],["tr","Só traduzir"]];
+var KLABEL = {af:"Afirmativa", ng:"Negativa", in:"Pergunta", pr:"Presente", pa:"Passado", fu:"Futuro", ot:"Estrutura"};
+var state = { sec: null, filter: "all", mode: "all", queue: [], idx: 0, hits: 0, misses: [], phase: "answer", built: [], roundStats: {}, isWeak: false };
+
+function screens(on){
+  ["s-home","s-section","s-quiz","s-done"].forEach(function(id){
+    $(id).classList.toggle("hidden", id !== on);
+  });
+  $("actionbar").classList.toggle("hidden", on !== "s-quiz" && on !== "s-section");
+  window.scrollTo(0,0);
+}
+
+function sectionItems(sec){
+  if (!sec._items) {
+    var base = sec.gen ? sec.gen() : sec.items;
+    sec._items = base.concat(TRANS[sec.id] || []);
+  }
+  return sec._items;
+}
+
+function renderHome(){
+  var host = $("blocks");
+  host.innerHTML = "";
+  SECTIONS.forEach(function(sec){
+    var st = stats[sec.id];
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "block";
+    b.innerHTML = '<span class="ic" aria-hidden="true">' + sec.icon + '</span>' +
+      '<span class="nm">' + sec.title + '</span>' +
+      '<span class="st">' + (st ? st.c + "/" + st.a + " acertos" : "não iniciado") + '</span>';
+    b.addEventListener("click", function(){ openSection(sec); });
+    host.appendChild(b);
+  });
+  var wc = weakCount();
+  var wb = $("btn-weak");
+  wb.textContent = wc ? ("🎯 Treinar meus erros — " + wc + " frase" + (wc > 1 ? "s" : "") + " para reforçar") : "🎯 Treinar meus erros — nenhum erro guardado ainda";
+  wb.disabled = !wc;
+  wb.style.opacity = wc ? "1" : "0.6";
+  screens("s-home");
+}
+
+function openSection(sec){
+  state.sec = sec; state.filter = "all"; state.mode = "all";
+  $("sec-title").textContent = sec.icon + " " + sec.title;
+  $("sec-desc").textContent = sec.desc;
+  $("sec-explain").innerHTML = sec.explain;
+  renderKindBar();
+  $("btn-main").textContent = "Começar exercícios";
+  screens("s-section");
+}
+
+function renderKindBar(){
+  var host = $("sec-kinds");
+  host.innerHTML = "";
+  if (state.sec.kinds) {
+    var list = state.sec.kindOptions || KINDS;
+    list.forEach(function(k){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "kind" + (state.filter === k[0] ? " on" : "");
+      b.textContent = k[1];
+      b.addEventListener("click", function(){
+        state.filter = k[0];
+        renderKindBar();
+      });
+      host.appendChild(b);
+    });
+  }
+  if (TRANS[state.sec.id]) {
+    MODES.forEach(function(m){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "kind" + (state.mode === m[0] ? " on" : "");
+      b.textContent = (m[0] === "tr" ? "✍️ " : "") + m[1];
+      b.style.marginTop = state.sec.kinds ? "4px" : "0";
+      b.addEventListener("click", function(){
+        state.mode = m[0];
+        renderKindBar();
+      });
+      host.appendChild(b);
+    });
+  }
+}
+
+function startQuiz(){
+  state.isWeak = false;
+  var items = sectionItems(state.sec);
+  if (state.mode === "tr") items = items.filter(function(it){ return it.t === "tr"; });
+  else if (state.mode === "build") items = items.filter(function(it){ return it.t !== "tr"; });
+  if (state.filter !== "all") items = items.filter(function(it){ return it.k === state.filter; });
+  if (!items.length) items = sectionItems(state.sec);
+  state.queue = shuffle(items).slice(0, 10);
+  state.idx = 0; state.hits = 0; state.misses = []; state.phase = "answer"; state.roundStats = {};
+  screens("s-quiz");
+  renderQuestion();
+}
+
+function startWeakSession(){
+  var q = getWeakQueue(10);
+  if (!q.length) return;
+  state.isWeak = true;
+  state.sec = { id: "weak", icon: "🎯", title: "Treinar meus erros", kinds: false };
+  state.queue = q;
+  state.idx = 0; state.hits = 0; state.misses = []; state.phase = "answer"; state.roundStats = {};
+  screens("s-quiz");
+  renderQuestion();
+}
+
+/* ---------- render das questões ---------- */
+function renderQuestion(){
+  var q = state.queue[state.idx];
+  state.phase = "answer"; state.built = [];
+  $("count").textContent = (state.idx + 1) + "/" + state.queue.length;
+  $("progress-fill").style.width = (100 * state.idx / state.queue.length) + "%";
+  $("feedback").className = "feedback hidden"; $("feedback").innerHTML = "";
+  $("area-chips").classList.add("hidden");
+  $("area-input").classList.add("hidden");
+  $("area-pick").classList.add("hidden");
+  $("qtask-holder").innerHTML = "";
+  $("btn-main").textContent = "Verificar";
+  $("btn-main").disabled = false;
+
+  var kindName = KLABEL[q.k] || "";
+
+  if (q.t === "c") {
+    $("qlabel").textContent = "Monte a frase" + (kindName ? " · " + kindName : "");
+    $("qtext").innerHTML = q.hint ? '<b>' + q.hint + '</b>' : "";
+    $("area-chips").classList.remove("hidden");
+    $("pt-line").textContent = q.pt || "";
+    $("pt-line").classList.toggle("hidden", !q.pt);
+    renderChips(q);
+  } else if (q.t === "w") {
+    $("qlabel").textContent = "Estrutura" + (kindName ? " · " + kindName : "");
+    $("qtask-holder").innerHTML = '<span class="qtask">' + q.task + '</span>';
+    $("qtext").innerHTML = '<span class="en">' + q.given + '</span>';
+    $("area-input").classList.remove("hidden");
+    $("answer-input").value = "";
+  } else if (q.t === "tr") {
+    $("qlabel").textContent = "Traduza para o inglês" + (kindName ? " · " + kindName : "");
+    $("qtext").textContent = q.pt;
+    $("area-input").classList.remove("hidden");
+    $("answer-input").value = "";
+  } else {
+    $("qlabel").textContent = "Complete";
+    $("qtext").innerHTML = q.text.replace("___", '<span class="gap"></span>');
+    $("area-pick").classList.remove("hidden");
+    renderPick(q);
+  }
+}
+
+function renderChips(q){
+  var pool = $("chip-pool"), built = $("chip-built");
+  pool.innerHTML = "";
+  built.innerHTML = '<span class="built-hint">Toque nas palavras · toque de novo para tirar</span>';
+  shuffle(q.parts).forEach(function(word){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = word;
+    b.addEventListener("click", function(){
+      if (state.phase !== "answer") return;
+      b.disabled = true;
+      state.built.push({ word: word, src: b });
+      renderBuilt();
+    });
+    pool.appendChild(b);
+  });
+}
+
+function renderBuilt(){
+  var built = $("chip-built");
+  built.innerHTML = "";
+  if (!state.built.length) {
+    built.innerHTML = '<span class="built-hint">Toque nas palavras · toque de novo para tirar</span>';
+    return;
+  }
+  state.built.forEach(function(entry, i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = entry.word;
+    b.addEventListener("click", function(){
+      if (state.phase !== "answer") return;
+      state.built.splice(i, 1);
+      entry.src.disabled = false;
+      renderBuilt();
+    });
+    built.appendChild(b);
+  });
+}
+
+function renderPick(q){
+  var host = $("area-pick");
+  host.innerHTML = "";
+  shuffle(q.opts).forEach(function(opt){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "opt"; b.textContent = opt;
+    b.addEventListener("click", function(){
+      if (state.phase !== "answer") return;
+      checkPick(q, opt, b);
+    });
+    host.appendChild(b);
+  });
+}
+
+/* ---------- verificação e "onde errei" ---------- */
+function answerDisplay(q){
+  var a = q.t === "c" ? q.parts.join(" ").replace(" ?","?") : q.answer;
+  return cap(a);
+}
+
+function checkChips(q){
+  if (!state.built.length) return;
+  var builtWords = state.built.map(function(e){ return e.word; });
+  var ok = builtWords.length === q.parts.length &&
+    builtWords.every(function(w, i){ return w === q.parts[i]; });
+  state.phase = "feedback";
+  recordResult(q, ok);
+  var fb = $("feedback");
+  if (ok) {
+    state.hits++;
+    fb.className = "feedback ok";
+    fb.innerHTML = '✓ Correto!<span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>';
+  } else {
+    state.misses.push(q);
+    var where = "";
+    for (var i = 0; i < q.parts.length; i++) {
+      if (builtWords[i] !== q.parts[i]) {
+        where = 'Onde errou: <b>posição ' + (i + 1) + '</b> — você colocou "' + (builtWords[i] || "nada") + '", o certo era "' + q.parts[i] + '".';
+        break;
+      }
+    }
+    state.built.forEach(function(e, i){
+      var chips = $("chip-built").children;
+      if (chips[i]) chips[i].className = "chip " + (e.word === q.parts[i] ? "good" : "bad");
+    });
+    fb.className = "feedback err";
+    fb.innerHTML = '✗ Ainda não.<span class="where">' + where + '</span><span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>';
+  }
+  $("btn-main").textContent = state.idx + 1 < state.queue.length ? "Próxima →" : "Ver resultado";
+}
+
+function wordDiffHtml(q, user){
+  var e = norm(q.answer).split(" ");
+  var u = norm(user).split(" ");
+  var html = "", firstErr = "";
+  for (var i = 0; i < e.length; i++) {
+    var hit = u[i] === e[i];
+    if (!hit && !firstErr) {
+      firstErr = 'Onde errou: <b>palavra ' + (i + 1) + '</b> — você escreveu "' + (u[i] || "nada") + '", o certo era "' + e[i] + '".';
+    }
+    html += '<span class="' + (hit ? "dw-ok" : "dw-bad") + '">' + e[i] + '</span> ';
+  }
+  if (u.length > e.length) {
+    firstErr = firstErr || ('Sobrou palavra: "' + u.slice(e.length).join(" ") + '" não entra nessa frase.');
+  }
+  return { html: html.trim(), where: firstErr };
+}
+
+function checkWrite(q){
+  var user = $("answer-input").value;
+  if (!norm(user)) return;
+  var ok = norm(user) === norm(q.answer) ||
+    (q.alt || []).some(function(a){ return norm(user) === norm(a); });
+  state.phase = "feedback";
+  recordResult(q, ok);
+  var fb = $("feedback");
+  if (ok) {
+    state.hits++;
+    fb.className = "feedback ok";
+    fb.innerHTML = '✓ Correto!<span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>';
+  } else {
+    state.misses.push(q);
+    var d = wordDiffHtml(q, user);
+    fb.className = "feedback err";
+    fb.innerHTML = '✗ Ainda não.' + (d.where ? '<span class="where">' + d.where + '</span>' : "") +
+      '<span class="full">' + d.html + '</span><span class="rule">' + q.rule + '</span>';
+  }
+  $("answer-input").blur();
+  $("btn-main").textContent = state.idx + 1 < state.queue.length ? "Próxima →" : "Ver resultado";
+}
+
+function checkPick(q, opt, btn){
+  var ok = opt === q.answer;
+  state.phase = "feedback";
+  recordResult(q, ok);
+  var fb = $("feedback");
+  Array.prototype.forEach.call($("area-pick").children, function(b){
+    if (b.textContent === q.answer) b.className = "opt good";
+    else if (b === btn && !ok) b.className = "opt bad";
+    b.disabled = true;
+  });
+  if (ok) {
+    state.hits++;
+    fb.className = "feedback ok";
+    fb.innerHTML = '✓ Correto! <span class="full">' + q.text.replace("___", q.answer === "(nada)" ? "" : q.answer).replace(/\s+/g," ") + '</span><span class="rule">' + q.rule + '</span>';
+  } else {
+    state.misses.push(q);
+    fb.className = "feedback err";
+    fb.innerHTML = '✗ Ainda não. Você escolheu "' + opt + '", o certo é "<b>' + q.answer + '</b>".<span class="full">' + q.text.replace("___", q.answer === "(nada)" ? "" : q.answer).replace(/\s+/g," ") + '</span><span class="rule">' + q.rule + '</span>';
+  }
+  $("btn-main").textContent = state.idx + 1 < state.queue.length ? "Próxima →" : "Ver resultado";
+}
+
+function nextQuestion(){
+  state.idx++;
+  if (state.idx < state.queue.length) renderQuestion();
+  else finishQuiz();
+}
+
+function finishQuiz(){
+  $("progress-fill").style.width = "100%";
+  screens("s-done");
+  var total = state.queue.length;
+  $("final-score").textContent = state.hits + "/" + total;
+  var pct = state.hits / total;
+  $("final-msg").textContent =
+    pct === 1 ? "Perfeito. Repita com outro filtro ou outro tema." :
+    pct >= 0.7 ? "Muito bom. Revise abaixo o que escapou." :
+    "Releia a explicação do tema e tente de novo — repetição é o segredo.";
+
+  var sumHost = $("summary");
+  sumHost.innerHTML = "";
+  var weak = weakCount();
+  var cats = Object.keys(state.roundStats)
+    .map(function(k){ return { k:k, a: state.roundStats[k].a, c: state.roundStats[k].c, miss: state.roundStats[k].a - state.roundStats[k].c }; })
+    .filter(function(x){ return x.miss > 0; })
+    .sort(function(a,b){ return (b.miss/b.a) - (a.miss/a.a); });
+  var sc = document.createElement("div");
+  sc.className = "sumcard";
+  var body = "<b>📌 O que fortalecer</b>";
+  if (!cats.length) {
+    body += "<span class='sline'>Nenhum ponto fraco nesta rodada — mandou bem em tudo!</span>";
+  } else {
+    cats.forEach(function(x){
+      body += "<span class='sline'>" + (KLABEL[x.k] || x.k) + ": errou " + x.miss + " de " + x.a + "</span>";
+    });
+  }
+  body += "<span class='sline' style='margin-top:8px; color:var(--muted);'>" +
+    (weak ? ("Total guardado para reforçar: " + weak + " frase" + (weak > 1 ? "s" : "") + ". Use \"Treinar meus erros\" na tela inicial sempre que puder.") :
+    "Nenhum erro pendente — continue assim!") + "</span>";
+  sc.innerHTML = body;
+  sumHost.appendChild(sc);
+
+  var host = $("review");
+  host.innerHTML = "";
+  state.misses.forEach(function(q){
+    var d = document.createElement("div");
+    d.className = "review-item";
+    var prompt = q.t === "w" ? (q.task + ": " + q.given) : (q.t === "tr" ? ("Traduzir: " + q.pt) : (q.t === "p" ? q.text : (q.hint || "Montar frase")));
+    d.innerHTML = '<span>' + prompt + '</span><br><b class="en">' + answerDisplay(q) + '</b>' +
+      '<span class="rule">' + q.rule + '</span>';
+    host.appendChild(d);
+  });
+  var again = document.createElement("button");
+  again.type = "button"; again.className = "btn primary";
+  again.textContent = state.isWeak ? "Treinar meus erros de novo" : "Treinar de novo";
+  again.style.marginTop = "6px";
+  again.addEventListener("click", function(){ state.isWeak ? startWeakSession() : startQuiz(); });
+  host.appendChild(again);
+}
+
+/* ---------- eventos ---------- */
+$("btn-main").addEventListener("click", function(){
+  if (!$("s-section").classList.contains("hidden")) { startQuiz(); return; }
+  var q = state.queue[state.idx];
+  if (state.phase === "feedback") { nextQuestion(); return; }
+  if (q.t === "c") checkChips(q);
+  else if (q.t === "w" || q.t === "tr") checkWrite(q);
+});
+$("answer-input").addEventListener("keydown", function(e){
+  if (e.key === "Enter") {
+    e.preventDefault();
+    var q = state.queue[state.idx];
+    if (state.phase === "answer") checkWrite(q);
+    else nextQuestion();
+  }
+});
+$("btn-back-home").addEventListener("click", renderHome);
+$("btn-done-home").addEventListener("click", renderHome);
+$("btn-back-sec").addEventListener("click", function(){
+  if (state.isWeak) renderHome(); else openSection(state.sec);
+});
+$("btn-weak").addEventListener("click", startWeakSession);
+
+/* ---------- PWA ---------- */
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  navigator.serviceWorker.register("sw.js");
+}
+var deferredPrompt = null;
+window.addEventListener("beforeinstallprompt", function(e){
+  e.preventDefault();
+  deferredPrompt = e;
+  $("btn-install").classList.remove("hidden");
+  $("ios-tip").classList.add("hidden");
+});
+$("btn-install").addEventListener("click", function(){
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt = null;
+  $("btn-install").classList.add("hidden");
+});
+
+renderHome();
+})();
+</script>
+</body>
+</html>
