@@ -877,6 +877,72 @@ var SECTIONS = [
     "<p>As frases vêm misturadas em afirmativa, negativa e pergunta — preste atenção no português para saber qual é qual (ex.: \"não\" = negativa, \"?\" no fim = pergunta).</p>" +
     "<p>Use os filtros acima para treinar só um tempo verbal de cada vez, ou 'Tudo' para misturar.</p>",
   gen: genVerbs
+},
+{
+  id: "feelings", icon: "🌦️", title: "To Be (Passado) + Sentimentos e Clima", kinds: true,
+  desc: "Was / were, vocabulário de clima e de sentimentos/personalidade.",
+  explain: "<h3>Verbo to be no passado</h3>" +
+    "<p>No passado, o verbo <code>to be</code> vira <b>was</b> ou <b>were</b>, dependendo do sujeito.</p>" +
+    "<div class='tblwrap'><table><tr><th>Sujeito</th><th>Forma</th></tr>" +
+    "<tr><td>I / He / She / It</td><td>was</td></tr>" +
+    "<tr><td>You / We / They</td><td>were</td></tr></table></div>" +
+    "<span class='frm'><b>Afirmativa:</b> sujeito + was/were + complemento → <code>She was polite</code></span>" +
+    "<span class='frm'><b>Negativa:</b> sujeito + wasn't/weren't + complemento → <code>She wasn't polite</code></span>" +
+    "<span class='frm'><b>Pergunta:</b> Was/Were + sujeito + complemento? → <code>Was she polite?</code></span>" +
+    "<p><b>Regra de ouro:</b> to be nunca usa do/does/did — nega com <code>not</code> e pergunta invertendo, igual no presente.</p>" +
+    "<h3>Clima (weather)</h3>" +
+    "<div class='tblwrap'><table><tr><th>Inglês</th><th>Português</th></tr>" +
+    "<tr><td>sunny</td><td>ensolarado(a)</td></tr>" +
+    "<tr><td>snowy</td><td>nevado(a)</td></tr>" +
+    "<tr><td>rainy</td><td>chuvoso(a)</td></tr>" +
+    "<tr><td>cloudy</td><td>nublado(a)</td></tr>" +
+    "<tr><td>windy</td><td>ventando, ventoso(a)</td></tr></table></div>" +
+    "<p>Clima sempre usa <code>it</code> como sujeito. Pergunta padrão: <code>What was the weather like...?</code> = Como estava o tempo...?</p>" +
+    "<h3>Sentimentos e personalidade</h3>" +
+    "<div class='tblwrap'><table><tr><th>Inglês</th><th>Português</th></tr>" +
+    "<tr><td>fascinating</td><td>fascinante</td></tr>" +
+    "<tr><td>incredible</td><td>incrível</td></tr>" +
+    "<tr><td>scared</td><td>assustado(a), com medo</td></tr>" +
+    "<tr><td>polite</td><td>educado(a)</td></tr>" +
+    "<tr><td>rude</td><td>grosseiro(a)</td></tr>" +
+    "<tr><td>reliable</td><td>confiável</td></tr>" +
+    "<tr><td>unreliable</td><td>não confiável</td></tr>" +
+    "<tr><td>frustrated</td><td>frustrado(a)</td></tr></table></div>" +
+    "<p><b>Atenção na tradução:</b> em português o verbo muda conforme a palavra — personalidade/qualidade geralmente usa \"ser\" (<i>ele foi educado</i>), já sentimento do momento usa \"estar\" ou \"ficar\" (<i>fiquei com medo</i>). Em inglês não importa: é sempre <code>was/were</code>.</p>" +
+    "<h3>Get + adjetivo (bônus)</h3>" +
+    "<p><code>get scared</code> = ficar com medo · <code>get frustrated</code> = ficar frustrado · <code>get rude</code> = ficar grosseiro. Usado no presente para descrever uma reação: <code>I get scared when I watch horror movies.</code></p>",
+  items: [
+    {t:"c", k:"af", parts:["it","was","sunny","at the beach"], pt:"Estava ensolarado na praia.", rule:"Clima sempre com it + was. Ordem: it + was + adjetivo + lugar."},
+    {t:"c", k:"af", parts:["it","was","rainy","yesterday"], pt:"Estava chuvoso ontem.", rule:"it + was + adjetivo de clima + tempo."},
+    {t:"c", k:"ng", parts:["it","wasn't","windy","this morning"], pt:"Não estava ventando esta manhã.", rule:"Negativa do to be: wasn't + adjetivo. Sem did!"},
+    {t:"c", k:"ng", parts:["it","wasn't","snowy","last week"], pt:"Não estava nevando na semana passada.", rule:"it + wasn't + adjetivo + tempo."},
+    {t:"c", k:"in", parts:["was","it","cloudy","yesterday","?"], pt:"Estava nublado ontem?", rule:"Pergunta do to be: inverte → Was it...? Sem did."},
+    {t:"c", k:"in", parts:["was","it","windy","at the beach","?"], pt:"Estava ventando na praia?", rule:"Was + it + adjetivo + lugar?"},
+    {t:"c", k:"ot", parts:["what","was","the weather","like","at the beach","?"], pt:"Como estava o tempo na praia?", rule:"Frase fixa: What was the weather like...? = Como estava o tempo...?"},
+    {t:"c", k:"ot", parts:["what","was","the weather","like","during your vacation","?"], pt:"Como estava o tempo durante suas férias?", rule:"Mesma estrutura, trocando só o final da pergunta."},
+    {t:"c", k:"af", parts:["she","was","very polite"], pt:"Ela foi muito educada.", rule:"She/He/It usa was. Personalidade geralmente traduz com 'ser' em português, mas em inglês é sempre was/were."},
+    {t:"c", k:"af", parts:["he","was","polite","to us"], pt:"Ele foi educado conosco.", rule:"was + adjetivo + to us (conosco)."},
+    {t:"c", k:"af", parts:["I","was","scared"], pt:"Eu fiquei com medo.", rule:"I usa was. Scared = com medo/assustado."},
+    {t:"c", k:"af", parts:["they","were","scared"], pt:"Eles ficaram com medo.", rule:"They usa were, nunca was."},
+    {t:"c", k:"af", parts:["the movie","was","incredible"], pt:"O filme foi incrível.", rule:"Sujeito 'the movie' = it → was."},
+    {t:"c", k:"af", parts:["the lawyer","was","unreliable"], pt:"O advogado não era confiável.", rule:"unreliable já tem o 'não' embutido no significado (un-)."},
+    {t:"c", k:"ng", parts:["he","wasn't","rude","to the teacher"], pt:"Ele não foi grosseiro com o professor.", rule:"wasn't + adjetivo + to the teacher."},
+    {t:"c", k:"ng", parts:["we","weren't","scared"], pt:"Nós não ficamos com medo.", rule:"We usa weren't (were + not)."},
+    {t:"c", k:"ng", parts:["the business","wasn't","reliable"], pt:"O negócio não era confiável.", rule:"the business = it → wasn't."},
+    {t:"c", k:"ng", parts:["I","wasn't","frustrated"], pt:"Eu não fiquei frustrado.", rule:"I usa wasn't (was + not)."},
+    {t:"c", k:"in", parts:["was","she","polite","to the teacher","?"], pt:"Ela foi educada com o professor?", rule:"Was + she + adjetivo + to the teacher?"},
+    {t:"c", k:"in", parts:["were","they","polite","to you","?"], pt:"Eles foram educados com você?", rule:"They usa were também na pergunta: Were they...?"},
+    {t:"c", k:"in", parts:["was","the movie","fascinating","?"], pt:"O filme foi fascinante?", rule:"the movie = it → Was it fascinating? (aqui escrito 'the movie' no lugar de it)."},
+    {t:"c", k:"in", parts:["were","you","frustrated","?"], pt:"Você ficou frustrado?", rule:"You sempre usa were, mesmo na pergunta: Were you...?"},
+    {t:"c", k:"ot", parts:["why","was","he","so rude","to us","?"], pt:"Por que ele foi tão grosseiro conosco?", rule:"Why + was + he + adjetivo + to us?"},
+    {t:"c", k:"ot", parts:["where","were","you","yesterday","?"], pt:"Onde você estava ontem?", rule:"Where + were + you + tempo? You sempre usa were."},
+    {t:"p", k:"ot", text:"She ___ very polite. (ela foi)", opts:["was","were"], answer:"was", rule:"He/She/It usa was."},
+    {t:"p", k:"ot", text:"They ___ scared. (eles ficaram)", opts:["was","were"], answer:"were", rule:"You/We/They usa were."},
+    {t:"p", k:"ot", text:"___ you at home? (pergunta)", opts:["Was","Were"], answer:"Were", rule:"You usa were, mesmo na pergunta: Were you...?"},
+    {t:"p", k:"ot", text:"It ___ sunny yesterday.", opts:["was","were"], answer:"was", rule:"Clima sempre usa it → was."},
+    {t:"p", k:"ot", text:"We ___ n't at the right place.", opts:["was","were"], answer:"were", rule:"We usa were → weren't."},
+    {t:"p", k:"ot", text:"___ he polite to you?", opts:["Was","Were"], answer:"Was", rule:"He usa was → Was he...?"}
+  ]
 }
 ];
 
@@ -969,6 +1035,17 @@ pronomes: [
   {t:"tr", k:"af", pt:"Eu quero falar com ele.", answer:"I want to talk to him", alt:["I want to speak with him","I want to talk with him"], rule:"Depois de preposição = object: him."},
   {t:"tr", k:"af", pt:"Este é o meu livro.", answer:"this is my book", rule:"Antes do substantivo = possessive: my book."},
   {t:"tr", k:"af", pt:"Nós amamos nossos pais.", answer:"we love our parents", rule:"Nosso = our (possessive antes de parents)."}
+],
+feelings: [
+  {t:"tr", k:"ot", pt:"Como estava o tempo na praia?", answer:"what was the weather like at the beach?", rule:"Frase fixa: What was the weather like...?"},
+  {t:"tr", k:"af", pt:"Estava quente e ensolarado.", answer:"it was hot and sunny", rule:"it + was + dois adjetivos ligados por and."},
+  {t:"tr", k:"ng", pt:"Ela não foi educada com o professor.", answer:"she wasn't polite to the teacher", alt:["she was not polite to the teacher"], rule:"wasn't + adjetivo + to the teacher."},
+  {t:"tr", k:"in", pt:"Vocês estavam em casa esta manhã?", answer:"were you at home this morning?", rule:"You sempre usa were, mesmo na pergunta."},
+  {t:"tr", k:"af", pt:"O filme foi incrível.", answer:"the movie was incredible", rule:"the movie = it → was."},
+  {t:"tr", k:"ot", pt:"Por que ele foi tão grosseiro conosco?", answer:"why was he so rude to us?", rule:"Why + was + he + adjetivo + to us?"},
+  {t:"tr", k:"in", pt:"Nós estávamos no lugar correto?", answer:"were we at the right place?", rule:"We usa were, mesmo na pergunta."},
+  {t:"tr", k:"in", pt:"Você ficou com medo?", answer:"were you scared?", rule:"You usa were. Scared = com medo."},
+  {t:"tr", k:"in", pt:"O negócio era confiável?", answer:"was the business reliable?", rule:"the business = it → was."}
 ]
 };
 
