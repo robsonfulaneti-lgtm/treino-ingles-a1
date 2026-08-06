@@ -188,6 +188,9 @@ input.answer:focus { outline: none; border-color: var(--accent); }
   margin-top: 18px; background: var(--card); border: 1px solid var(--line);
   border-radius: var(--radius); padding: 12px 16px; font-size: 14px; color: var(--muted);
 }
+.backupw { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.backupw .btn { width: auto; flex: 1; min-width: 150px; }
+.backup-hint { color: var(--muted); font-size: 13px; margin-top: 8px; }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .hidden { display: none !important; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
@@ -204,6 +207,12 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
     <div class="blocks" id="blocks"></div>
     <button type="button" class="btn primary hidden" id="btn-install" style="margin-top:16px;">Instalar no celular</button>
     <div class="install-tip" id="ios-tip">No iPhone: Safari → botão compartilhar → "Adicionar à Tela de Início". No Android: Chrome → menu ⋮ → "Adicionar à tela inicial".</div>
+    <div class="backupw">
+      <button type="button" class="btn" id="btn-export">💾 Salvar progresso (backup)</button>
+      <button type="button" class="btn" id="btn-import">📂 Restaurar progresso</button>
+      <input type="file" id="import-file" accept="application/json" class="hidden">
+    </div>
+    <p class="backup-hint">Seu progresso fica salvo só neste link. Se o link mudar algum dia, salve o backup aqui antes e restaure depois — nada se perde.</p>
   </section>
 
   <section id="s-section" class="hidden">
@@ -966,7 +975,15 @@ var SECTIONS = [
     {t:"p", k:"ot", text:"___ you at home? (pergunta)", opts:["Was","Were"], answer:"Were", rule:"You usa were, mesmo na pergunta: Were you...?"},
     {t:"p", k:"ot", text:"It ___ sunny yesterday.", opts:["was","were"], answer:"was", rule:"Clima sempre usa it → was."},
     {t:"p", k:"ot", text:"We ___ n't at the right place.", opts:["was","were"], answer:"were", rule:"We usa were → weren't."},
-    {t:"p", k:"ot", text:"___ he polite to you?", opts:["Was","Were"], answer:"Was", rule:"He usa was → Was he...?"}
+    {t:"p", k:"ot", text:"___ he polite to you?", opts:["Was","Were"], answer:"Was", rule:"He usa was → Was he...?"},
+    {t:"c", k:"af", parts:["I'm","cold"], pt:"Estou com frio.", rule:"To be + adjetivo de sensação térmica: I'm cold (nunca 'I have cold')."},
+    {t:"c", k:"ot", parts:["I","get","scared","when","I watch","horror movies"], pt:"Eu fico com medo quando assisto a filmes de terror.", rule:"get scared = ficar com medo. Presente, não passado — é uma reação habitual."},
+    {t:"c", k:"ot", parts:["I","get","frustrated","when","I lose","something"], pt:"Eu fico frustrado quando perco alguma coisa.", rule:"get frustrated = ficar frustrado (presente)."},
+    {t:"c", k:"ot", parts:["was","the movie","good","?"], pt:"O filme foi bom?", rule:"Was + the movie + good? Pergunta simples com to be."},
+    {t:"c", k:"af", parts:["it","was","incredible"], pt:"Foi incrível.", rule:"it + was + adjetivo. Resposta curta e direta."},
+    {t:"c", k:"af", parts:["it","was","hot","and windy"], pt:"Estava quente e com muito vento.", rule:"it + was + dois adjetivos de clima ligados por and."},
+    {t:"p", k:"ot", text:"That lawyer ___ unreliable. (presente)", opts:["is","was"], answer:"is", rule:"Aqui é presente (afirmação geral sobre o advogado), não passado."},
+    {t:"p", k:"ot", text:"Our boss ___ rude when we talk about deadlines.", opts:["gets","got"], answer:"gets", rule:"get + adjetivo no presente = reação habitual: gets rude."}
   ]
 }
 ];
@@ -1070,7 +1087,19 @@ feelings: [
   {t:"tr", k:"ot", pt:"Por que ele foi tão grosseiro conosco?", answer:"why was he so rude to us?", rule:"Why + was + he + adjetivo + to us?"},
   {t:"tr", k:"in", pt:"Nós estávamos no lugar correto?", answer:"were we at the right place?", rule:"We usa were, mesmo na pergunta."},
   {t:"tr", k:"in", pt:"Você ficou com medo?", answer:"were you scared?", rule:"You usa were. Scared = com medo."},
-  {t:"tr", k:"in", pt:"O negócio era confiável?", answer:"was the business reliable?", rule:"the business = it → was."}
+  {t:"tr", k:"in", pt:"O negócio era confiável?", answer:"was the business reliable?", rule:"the business = it → was."},
+  {t:"tr", k:"af", pt:"Estou com frio. Eu quero tomar um chá quente.", answer:"I'm cold. I want to drink some hot tea", alt:["I am cold. I want to drink some hot tea"], rule:"I'm cold (to be) + I want to drink (dois verbos, precisa do 'to')."},
+  {t:"tr", k:"ot", pt:"Eu fico com medo quando assisto a filmes de terror.", answer:"I get scared when I watch horror movies", rule:"get scared = ficar com medo. Presente para reação habitual, não passado."},
+  {t:"tr", k:"ot", pt:"Onde você estava?", answer:"where were you?", rule:"Where + were + you? You sempre usa were."},
+  {t:"tr", k:"in", pt:"Ela estava com você ontem?", answer:"was she with you yesterday?", rule:"Was + she + with you + yesterday?"},
+  {t:"tr", k:"in", pt:"Estava nevando ontem?", answer:"was it snowy yesterday?", rule:"Clima usa it: was it snowy...?"},
+  {t:"tr", k:"af", pt:"Ela foi muito gentil e educada.", answer:"she was very kind and polite", rule:"was + dois adjetivos ligados por and: kind and polite."},
+  {t:"tr", k:"ot", pt:"Aquele advogado não é confiável.", answer:"that lawyer is unreliable", rule:"Aqui é presente (is), não passado — repare no 'é' em vez de 'era' no português."},
+  {t:"tr", k:"ot", pt:"Nosso chefe fica muito grosseiro quando falamos sobre prazos.", answer:"our boss gets really rude when we talk about deadlines", rule:"gets rude = fica grosseiro (presente, reação repetida, não passado)."},
+  {t:"tr", k:"af", pt:"O filme foi bom, mas não fascinante.", answer:"the movie was good, but not fascinating", rule:"was + adjetivo, but not + outro adjetivo."},
+  {t:"tr", k:"ot", pt:"Como estava o tempo durante suas últimas férias?", answer:"what was the weather like during your last vacation?", rule:"Mesma estrutura do weather, trocando só o final."},
+  {t:"tr", k:"ot", pt:"Ela fica com muito medo quando vai ao dentista.", answer:"she gets really scared when she goes to the dentist", rule:"gets scared = fica com medo. She → goes (regra do Simple Present)."},
+  {t:"tr", k:"ot", pt:"Nós sempre ficamos frustrados com as ideias dele.", answer:"we always get frustrated with his ideas", rule:"get frustrated = ficar frustrado. Always = sempre."}
 ]
 };
 
@@ -1584,6 +1613,46 @@ function startRecognition(button, onResult){
   r.onend = function(){ reset(); };
   try { r.start(); } catch (e) { reset(); }
 }
+
+/* ---------- backup / restauração de progresso ---------- */
+function exportProgress(){
+  var payload = { v: 1, exportedAt: new Date().toISOString(), stats: stats, weak: weakMap };
+  var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  var stamp = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = "treino-ingles-backup-" + stamp + ".json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+}
+function importProgress(file){
+  var reader = new FileReader();
+  reader.onload = function(){
+    try {
+      var data = JSON.parse(reader.result);
+      if (!data || typeof data !== "object") throw new Error("formato inválido");
+      stats = data.stats || {};
+      weakMap = data.weak || {};
+      store.set(stats);
+      weakStoreKV.set(weakMap);
+      renderHome();
+      alert("Progresso restaurado! " + weakCount() + " frase(s) na lista de reforço.");
+    } catch (e) {
+      alert("Não consegui ler esse arquivo de backup. Confira se é o arquivo certo.");
+    }
+  };
+  reader.readAsText(file);
+}
+$("btn-export").addEventListener("click", exportProgress);
+$("btn-import").addEventListener("click", function(){ $("import-file").click(); });
+$("import-file").addEventListener("change", function(e){
+  var file = e.target.files && e.target.files[0];
+  if (file) importProgress(file);
+  e.target.value = "";
+});
 
 $("mic-btn-chips").addEventListener("click", function(){
   if (state.phase !== "answer") return;
