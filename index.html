@@ -121,6 +121,23 @@ h2 { font-size: 20px; margin: 0 0 2px; }
 .built .chip { background: var(--card); border-color: var(--accent); }
 .built-hint { color: var(--muted); font-size: 14px; padding-left: 4px; }
 .ptline { color: var(--muted); font-size: 15px; margin: 10px 2px 0; font-style: italic; }
+.microw { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 14px; }
+.mic-btn {
+  font: inherit; font-weight: 500; font-size: 15px; border-radius: 999px;
+  padding: 10px 20px; cursor: pointer; border: 1.5px solid var(--accent);
+  background: var(--card); color: var(--accent); display: flex; align-items: center; gap: 8px;
+}
+.mic-btn .mic-ic { font-style: normal; font-size: 17px; }
+.mic-btn.listening { background: var(--err); border-color: var(--err); color: #fff; animation: micpulse 1.1s ease-in-out infinite; }
+.mic-btn:disabled { opacity: 0.45; }
+.mic-hint { font-size: 12px; color: var(--muted); }
+@keyframes micpulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.tts-btn {
+  font: inherit; font-weight: 500; font-size: 14px; border-radius: 999px;
+  padding: 7px 14px; cursor: pointer; border: 1px solid var(--line);
+  background: var(--card); color: var(--ink); display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px;
+}
 .sumcard { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--marker); border-radius: 0 12px 12px 0; padding: 12px 14px; margin-top: 16px; font-size: 15px; }
 .sumcard b { display: block; margin-bottom: 6px; }
 .sumcard .sline { display: block; margin: 3px 0; }
@@ -173,7 +190,7 @@ input.answer:focus { outline: none; border-color: var(--accent); }
 }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .hidden { display: none !important; }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
@@ -213,9 +230,17 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
         <div class="chips" id="chip-pool"></div>
         <div class="built" id="chip-built"></div>
         <p class="ptline hidden" id="pt-line"></p>
+        <div class="microw hidden" id="mic-row-chips">
+          <button type="button" class="mic-btn" id="mic-btn-chips"><i class="mic-ic">🎤</i> Falar a frase</button>
+          <span class="mic-hint">ouve as palavras, não avalia sotaque</span>
+        </div>
       </div>
       <div id="area-input" class="hidden">
         <input type="text" class="answer" id="answer-input" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" enterkeyhint="done" placeholder="Escreva a frase em inglês">
+        <div class="microw hidden" id="mic-row-input">
+          <button type="button" class="mic-btn" id="mic-btn-input"><i class="mic-ic">🎤</i> Falar em vez de digitar</button>
+          <span class="mic-hint">ouve as palavras, não avalia sotaque</span>
+        </div>
       </div>
       <div id="area-pick" class="opts hidden"></div>
       <div id="feedback" class="feedback hidden"></div>
@@ -1254,6 +1279,7 @@ function renderQuestion(){
     $("area-chips").classList.remove("hidden");
     $("pt-line").textContent = q.pt || "";
     $("pt-line").classList.toggle("hidden", !q.pt);
+    $("mic-row-chips").classList.toggle("hidden", !speechSupported);
     renderChips(q);
   } else if (q.t === "w") {
     $("qlabel").textContent = "Estrutura" + (kindName ? " · " + kindName : "");
@@ -1261,11 +1287,13 @@ function renderQuestion(){
     $("qtext").innerHTML = '<span class="en">' + q.given + '</span>';
     $("area-input").classList.remove("hidden");
     $("answer-input").value = "";
+    $("mic-row-input").classList.toggle("hidden", !speechSupported);
   } else if (q.t === "tr") {
     $("qlabel").textContent = "Traduza para o inglês" + (kindName ? " · " + kindName : "");
     $("qtext").textContent = q.pt;
     $("area-input").classList.remove("hidden");
     $("answer-input").value = "";
+    $("mic-row-input").classList.toggle("hidden", !speechSupported);
   } else {
     $("qlabel").textContent = "Complete";
     $("qtext").innerHTML = q.text.replace("___", '<span class="gap"></span>');
@@ -1342,7 +1370,7 @@ function checkChips(q){
   if (ok) {
     state.hits++;
     fb.className = "feedback ok";
-    fb.innerHTML = '✓ Correto!<span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>';
+    fb.innerHTML = '✓ Correto!<span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   } else {
     state.misses.push(q);
     var where = "";
@@ -1357,8 +1385,30 @@ function checkChips(q){
       if (chips[i]) chips[i].className = "chip " + (e.word === q.parts[i] ? "good" : "bad");
     });
     fb.className = "feedback err";
-    fb.innerHTML = '✗ Ainda não.<span class="where">' + where + '</span><span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>';
+    fb.innerHTML = '✗ Ainda não.<span class="where">' + where + '</span><span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   }
+  attachTtsButton(fb, q.parts.join(" ").replace(" ?","?"));
+  $("btn-main").textContent = state.idx + 1 < state.queue.length ? "Próxima →" : "Ver resultado";
+}
+
+function checkSpokenSentence(q, transcript){
+  if (state.phase !== "answer") return;
+  var target = q.parts.join(" ").replace(" ?","?");
+  var ok = norm(transcript) === norm(target);
+  state.phase = "feedback";
+  recordResult(q, ok);
+  var fb = $("feedback");
+  if (ok) {
+    state.hits++;
+    fb.className = "feedback ok";
+    fb.innerHTML = '✓ Correto! Você falou certinho.<span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+  } else {
+    state.misses.push(q);
+    var d = wordDiffHtml({ answer: target }, transcript);
+    fb.className = "feedback err";
+    fb.innerHTML = '✗ Ainda não.<span class="where">O reconhecimento entendeu: “' + transcript + '”' + (d.where ? '<br>' + d.where : '') + '</span><span class="full">' + d.html + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+  }
+  attachTtsButton(fb, target);
   $("btn-main").textContent = state.idx + 1 < state.queue.length ? "Próxima →" : "Ver resultado";
 }
 
@@ -1390,14 +1440,15 @@ function checkWrite(q){
   if (ok) {
     state.hits++;
     fb.className = "feedback ok";
-    fb.innerHTML = '✓ Correto!<span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>';
+    fb.innerHTML = '✓ Correto!<span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   } else {
     state.misses.push(q);
     var d = wordDiffHtml(q, user);
     fb.className = "feedback err";
     fb.innerHTML = '✗ Ainda não.' + (d.where ? '<span class="where">' + d.where + '</span>' : "") +
-      '<span class="full">' + d.html + '</span><span class="rule">' + q.rule + '</span>';
+      '<span class="full">' + d.html + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   }
+  attachTtsButton(fb, q.answer);
   $("answer-input").blur();
   $("btn-main").textContent = state.idx + 1 < state.queue.length ? "Próxima →" : "Ver resultado";
 }
@@ -1481,6 +1532,72 @@ function finishQuiz(){
   again.addEventListener("click", function(){ state.isWeak ? startWeakSession() : startQuiz(); });
   host.appendChild(again);
 }
+
+/* ---------- fala: reconhecimento de voz + pronúncia ---------- */
+var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+var speechSupported = !!SR;
+var ttsSupported = "speechSynthesis" in window;
+
+function speak(text){
+  if (!ttsSupported || !text) return;
+  try {
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    u.rate = 0.85;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function ttsBtnHtml(){
+  return ttsSupported ? '<button type="button" class="tts-btn">🔊 Ouvir pronúncia</button>' : "";
+}
+function attachTtsButton(container, text){
+  var btn = container.querySelector(".tts-btn");
+  if (btn) btn.addEventListener("click", function(){ speak(text); });
+}
+
+function startRecognition(button, onResult){
+  if (!speechSupported) return;
+  if (button.disabled) return;
+  var r = new SR();
+  r.lang = "en-US";
+  r.interimResults = false;
+  r.maxAlternatives = 1;
+  var original = button.innerHTML;
+  button.classList.add("listening");
+  button.disabled = true;
+  button.innerHTML = '<i class="mic-ic">🎙️</i> Ouvindo...';
+  var done = false;
+  function reset(){
+    if (done) return;
+    done = true;
+    button.classList.remove("listening");
+    button.disabled = false;
+    button.innerHTML = original;
+  }
+  r.onresult = function(e){
+    var transcript = e.results[0][0].transcript;
+    reset();
+    onResult(transcript);
+  };
+  r.onerror = function(){ reset(); };
+  r.onend = function(){ reset(); };
+  try { r.start(); } catch (e) { reset(); }
+}
+
+$("mic-btn-chips").addEventListener("click", function(){
+  if (state.phase !== "answer") return;
+  var q = state.queue[state.idx];
+  startRecognition(this, function(transcript){ checkSpokenSentence(q, transcript); });
+});
+$("mic-btn-input").addEventListener("click", function(){
+  if (state.phase !== "answer") return;
+  var q = state.queue[state.idx];
+  startRecognition(this, function(transcript){
+    $("answer-input").value = transcript.toLowerCase();
+    checkWrite(q);
+  });
+});
 
 /* ---------- eventos ---------- */
 $("btn-main").addEventListener("click", function(){
