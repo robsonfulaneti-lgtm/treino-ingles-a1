@@ -132,11 +132,11 @@ h2 { font-size: 20px; margin: 0 0 2px; }
 .mic-btn:disabled { opacity: 0.45; }
 .mic-hint { font-size: 12px; color: var(--muted); }
 @keyframes micpulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.ttsrow { display: inline-flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
 .tts-btn {
   font: inherit; font-weight: 500; font-size: 14px; border-radius: 999px;
   padding: 7px 14px; cursor: pointer; border: 1px solid var(--line);
   background: var(--card); color: var(--ink); display: inline-flex; align-items: center; gap: 6px;
-  margin-top: 10px;
 }
 .sumcard { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--marker); border-radius: 0 12px 12px 0; padding: 12px 14px; margin-top: 16px; font-size: 15px; }
 .sumcard b { display: block; margin-bottom: 6px; }
@@ -1567,22 +1567,28 @@ var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 var speechSupported = !!SR;
 var ttsSupported = "speechSynthesis" in window;
 
-function speak(text){
+function speak(text, rate){
   if (!ttsSupported || !text) return;
   try {
     window.speechSynthesis.cancel();
     var u = new SpeechSynthesisUtterance(text);
     u.lang = "en-US";
-    u.rate = 0.85;
+    u.rate = rate || 0.85;
     window.speechSynthesis.speak(u);
   } catch (e) {}
 }
 function ttsBtnHtml(){
-  return ttsSupported ? '<button type="button" class="tts-btn">🔊 Ouvir pronúncia</button>' : "";
+  if (!ttsSupported) return "";
+  return '<span class="ttsrow">' +
+    '<button type="button" class="tts-btn" data-rate="0.55">🐢 Devagar</button>' +
+    '<button type="button" class="tts-btn" data-rate="1">🔊 Normal</button>' +
+    '</span>';
 }
 function attachTtsButton(container, text){
-  var btn = container.querySelector(".tts-btn");
-  if (btn) btn.addEventListener("click", function(){ speak(text); });
+  var btns = container.querySelectorAll(".tts-btn");
+  btns.forEach(function(btn){
+    btn.addEventListener("click", function(){ speak(text, parseFloat(btn.dataset.rate)); });
+  });
 }
 
 function startRecognition(button, onResult){
