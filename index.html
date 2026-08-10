@@ -132,6 +132,12 @@ h2 { font-size: 20px; margin: 0 0 2px; }
 .mic-btn:disabled { opacity: 0.45; }
 .mic-hint { font-size: 12px; color: var(--muted); }
 @keyframes micpulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.flash { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 18px 0 6px; }
+.flash-hint { font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.flash-word { font-size: 32px; font-family: Georgia, serif; }
+.flash-answer { font-size: 22px; font-weight: 600; color: var(--accent); }
+.flash-grade { display: flex; gap: 10px; width: 100%; margin-top: 8px; }
+.flash-grade .btn { flex: 1; }
 .ttsrow { display: inline-flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
 .tts-btn {
   font: inherit; font-weight: 500; font-size: 14px; border-radius: 999px;
@@ -175,6 +181,8 @@ input.answer:focus { outline: none; border-color: var(--accent); }
   background: var(--card); color: var(--ink); width: 100%;
 }
 .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.good { background: var(--ok); color: #fff; border-color: var(--ok); }
+.btn.bad { background: var(--err); color: #fff; border-color: var(--err); }
 .btn:active { transform: scale(0.98); }
 .result-score { font-size: 44px; font-weight: 700; font-variant-numeric: tabular-nums; margin: 4px 0; }
 .review { margin-top: 16px; display: grid; gap: 10px; }
@@ -252,6 +260,15 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
         </div>
       </div>
       <div id="area-pick" class="opts hidden"></div>
+      <div id="area-flash" class="flash hidden">
+        <span class="flash-hint">Traduza mentalmente, depois confira</span>
+        <span class="flash-word en" id="flash-word"></span>
+        <span class="flash-answer hidden" id="flash-answer"></span>
+        <div class="flash-grade hidden" id="flash-grade">
+          <button type="button" class="btn good" id="flash-good">✓ Eu sabia</button>
+          <button type="button" class="btn bad" id="flash-bad">✗ Não sabia</button>
+        </div>
+      </div>
       <div id="feedback" class="feedback hidden"></div>
     </div>
   </section>
@@ -572,6 +589,46 @@ function genVerbs(){
   });
   return items;
 }
+function genTenseId(){
+  var TMAP = { pr: "Presente", pa: "Passado", fu: "Futuro" };
+  return genVerbs().map(function(q){
+    return {
+      t: "p", k: q.k,
+      text: cap(q.answer) + " — que tempo verbal é esse?",
+      opts: ["Presente", "Passado", "Futuro"],
+      answer: TMAP[q.k],
+      rule: q.rule
+    };
+  });
+}
+
+/* ---------- banco de vocabulário (nomes e adjetivos da apostila) ---------- */
+var VOCAB = [
+  {en:"bread", pt:"pão"}, {en:"cheese", pt:"queijo"}, {en:"coffee", pt:"café"},
+  {en:"ham", pt:"presunto"}, {en:"tea", pt:"chá"}, {en:"apple", pt:"maçã"},
+  {en:"milk", pt:"leite"}, {en:"fish", pt:"peixe"}, {en:"juice", pt:"suco"},
+  {en:"banana", pt:"banana"}, {en:"soda", pt:"refrigerante"}, {en:"chicken", pt:"frango"},
+  {en:"sandwich", pt:"sanduíche"}, {en:"beef", pt:"carne bovina"}, {en:"pork", pt:"carne suína"},
+  {en:"father", pt:"pai"}, {en:"mother", pt:"mãe"}, {en:"son", pt:"filho"},
+  {en:"daughter", pt:"filha"}, {en:"brother", pt:"irmão"}, {en:"sister", pt:"irmã"},
+  {en:"parents", pt:"pais"}, {en:"siblings", pt:"irmãos"},
+  {en:"small", pt:"pequeno"}, {en:"big", pt:"grande"}, {en:"new", pt:"novo"},
+  {en:"old", pt:"velho"}, {en:"busy", pt:"ocupado"}, {en:"tired", pt:"cansado"},
+  {en:"happy", pt:"feliz"}, {en:"sad", pt:"triste"}, {en:"fast", pt:"rápido"},
+  {en:"slow", pt:"lento"}, {en:"boring", pt:"chato"}, {en:"rich", pt:"rico"},
+  {en:"dress", pt:"vestido"}, {en:"skirt", pt:"saia"}, {en:"shirt", pt:"camisa"},
+  {en:"boots", pt:"botas"}, {en:"shoes", pt:"sapatos"}, {en:"jacket", pt:"jaqueta"},
+  {en:"pants", pt:"calça"}, {en:"coat", pt:"casaco"},
+  {en:"store", pt:"loja"}, {en:"church", pt:"igreja"}, {en:"downtown", pt:"centro da cidade"},
+  {en:"supermarket", pt:"supermercado"}, {en:"mall", pt:"shopping"},
+  {en:"week", pt:"semana"}, {en:"weekend", pt:"fim de semana"}, {en:"today", pt:"hoje"},
+  {en:"tonight", pt:"hoje à noite"}, {en:"yesterday", pt:"ontem"}, {en:"tomorrow", pt:"amanhã"},
+  {en:"sunny", pt:"ensolarado"}, {en:"rainy", pt:"chuvoso"}, {en:"cloudy", pt:"nublado"},
+  {en:"windy", pt:"ventoso"}, {en:"snowy", pt:"nevado"},
+  {en:"polite", pt:"educado"}, {en:"rude", pt:"grosseiro"}, {en:"reliable", pt:"confiável"},
+  {en:"unreliable", pt:"não confiável"}, {en:"scared", pt:"assustado, com medo"},
+  {en:"fascinating", pt:"fascinante"}, {en:"incredible", pt:"incrível"}, {en:"frustrated", pt:"frustrado"}
+];
 
 /* ---------- seções ---------- */
 var SECTIONS = [
@@ -985,6 +1042,16 @@ var SECTIONS = [
     {t:"p", k:"ot", text:"That lawyer ___ unreliable. (presente)", opts:["is","was"], answer:"is", rule:"Aqui é presente (afirmação geral sobre o advogado), não passado."},
     {t:"p", k:"ot", text:"Our boss ___ rude when we talk about deadlines.", opts:["gets","got"], answer:"gets", rule:"get + adjetivo no presente = reação habitual: gets rude."}
   ]
+},
+{
+  id: "vocab", icon: "🃏", title: "Vocabulário", kinds: true,
+  kindOptions: [["all","Tudo"],["voc","Palavras"],["pr","Presente"],["pa","Passado"],["fu","Futuro"]],
+  desc: "Cartões de palavras da apostila + identificar o tempo verbal de uma frase.",
+  explain: "<h3>Como usar</h3>" +
+    "<p><b>Palavras:</b> aparece a palavra em inglês — pensa na tradução, toca em \"Ver resposta\" pra conferir, e avalia você mesmo se sabia ou não. É o que vai te dizer no fim quais palavras precisam de mais reforço.</p>" +
+    "<p><b>Presente / Passado / Futuro:</b> aparece uma frase em inglês inteira — você identifica qual tempo verbal ela está, sem escrever nada. Serve pra treinar o olho pra reconhecer was/were, did, going to, etc.</p>" +
+    "<p>Use os filtros acima pra treinar só um tipo de cada vez.</p>",
+  gen: function(){ return VOCAB.map(function(w){ return {t:"f", k:"voc", en:w.en, pt:w.pt}; }).concat(genTenseId()); }
 }
 ];
 
@@ -1181,7 +1248,7 @@ function getWeakQueue(limit){
 /* ---------- estado e navegação ---------- */
 var KINDS = [["all","Tudo"],["af","Afirmativa"],["ng","Negativa"],["in","Pergunta"]];
 var MODES = [["all","Misturado"],["build","Só montar"],["tr","Só traduzir"]];
-var KLABEL = {af:"Afirmativa", ng:"Negativa", in:"Pergunta", pr:"Presente", pa:"Passado", fu:"Futuro", ot:"Estrutura"};
+var KLABEL = {af:"Afirmativa", ng:"Negativa", in:"Pergunta", pr:"Presente", pa:"Passado", fu:"Futuro", ot:"Estrutura", voc:"Vocabulário"};
 var state = { sec: null, filter: "all", mode: "all", queue: [], idx: 0, hits: 0, misses: [], phase: "answer", built: [], roundStats: {}, isWeak: false };
 
 function screens(on){
@@ -1296,8 +1363,12 @@ function renderQuestion(){
   $("area-chips").classList.add("hidden");
   $("area-input").classList.add("hidden");
   $("area-pick").classList.add("hidden");
+  $("area-flash").classList.add("hidden");
+  $("flash-answer").classList.add("hidden");
+  $("flash-grade").classList.add("hidden");
   $("qtask-holder").innerHTML = "";
   $("btn-main").textContent = "Verificar";
+  $("btn-main").classList.remove("hidden");
   $("btn-main").disabled = false;
 
   var kindName = KLABEL[q.k] || "";
@@ -1323,8 +1394,14 @@ function renderQuestion(){
     $("area-input").classList.remove("hidden");
     $("answer-input").value = "";
     $("mic-row-input").classList.toggle("hidden", !speechSupported);
+  } else if (q.t === "f") {
+    $("qlabel").textContent = "Vocabulário";
+    $("flash-word").textContent = q.en;
+    $("flash-answer").textContent = q.pt;
+    $("area-flash").classList.remove("hidden");
+    $("btn-main").textContent = "Ver resposta";
   } else {
-    $("qlabel").textContent = "Complete";
+    $("qlabel").textContent = q.text.indexOf("tempo verbal") > -1 ? "Identifique o tempo verbal" : "Complete";
     $("qtext").innerHTML = q.text.replace("___", '<span class="gap"></span>');
     $("area-pick").classList.remove("hidden");
     renderPick(q);
@@ -1384,7 +1461,7 @@ function renderPick(q){
 
 /* ---------- verificação e "onde errei" ---------- */
 function answerDisplay(q){
-  var a = q.t === "c" ? q.parts.join(" ").replace(" ?","?") : q.answer;
+  var a = q.t === "c" ? q.parts.join(" ").replace(" ?","?") : q.t === "f" ? q.pt : q.answer;
   return cap(a);
 }
 
@@ -1549,7 +1626,7 @@ function finishQuiz(){
   state.misses.forEach(function(q){
     var d = document.createElement("div");
     d.className = "review-item";
-    var prompt = q.t === "w" ? (q.task + ": " + q.given) : (q.t === "tr" ? ("Traduzir: " + q.pt) : (q.t === "p" ? q.text : (q.hint || "Montar frase")));
+    var prompt = q.t === "w" ? (q.task + ": " + q.given) : (q.t === "tr" ? ("Traduzir: " + q.pt) : (q.t === "f" ? ("Palavra: " + q.en) : (q.t === "p" ? q.text : (q.hint || "Montar frase"))));
     d.innerHTML = '<span>' + prompt + '</span><br><b class="en">' + answerDisplay(q) + '</b>' +
       '<span class="rule">' + q.rule + '</span>';
     host.appendChild(d);
@@ -1674,10 +1751,26 @@ $("mic-btn-input").addEventListener("click", function(){
   });
 });
 
+/* ---------- flashcards de vocabulário ---------- */
+function revealFlash(){
+  $("flash-answer").classList.remove("hidden");
+  $("flash-grade").classList.remove("hidden");
+  $("btn-main").classList.add("hidden");
+}
+function gradeFlash(knew){
+  var q = state.queue[state.idx];
+  recordResult(q, knew);
+  if (knew) state.hits++; else state.misses.push(q);
+  nextQuestion();
+}
+$("flash-good").addEventListener("click", function(){ gradeFlash(true); });
+$("flash-bad").addEventListener("click", function(){ gradeFlash(false); });
+
 /* ---------- eventos ---------- */
 $("btn-main").addEventListener("click", function(){
   if (!$("s-section").classList.contains("hidden")) { startQuiz(); return; }
   var q = state.queue[state.idx];
+  if (q.t === "f") { revealFlash(); return; }
   if (state.phase === "feedback") { nextQuestion(); return; }
   if (q.t === "c") checkChips(q);
   else if (q.t === "w" || q.t === "tr") checkWrite(q);
