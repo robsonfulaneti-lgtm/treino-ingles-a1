@@ -18,6 +18,7 @@
   --muted: #66707E;
   --line: #E4E2DA;
   --accent: #2D4A8A;
+  --accent-2: #7C5CFA;
   --accent-ink: #FFFFFF;
   --marker: #FFD34D;
   --marker-ink: #4A3A05;
@@ -25,14 +26,17 @@
   --ok-bg: #E7F4EE;
   --err: #C94F4A;
   --err-bg: #FBEDEC;
+  --glow: rgba(45,74,138,0.18);
+  --bg-accent-soft: rgba(45,74,138,0.10);
   --radius: 14px;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #12161E; --card: #1B222D; --ink: #E9ECF2; --muted: #98A2B5;
-    --line: #2C3542; --accent: #7FA3E8; --accent-ink: #0E1520;
+    --line: #2C3542; --accent: #7FA3E8; --accent-2: #B9A6FF; --accent-ink: #0E1520;
     --marker: #E8B93B; --marker-ink: #2A2104;
     --ok: #4CC08F; --ok-bg: #17352A; --err: #E8837F; --err-bg: #3B2323;
+    --glow: rgba(127,163,232,0.28); --bg-accent-soft: rgba(127,163,232,0.18);
   }
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -52,16 +56,73 @@ h2 { font-size: 20px; margin: 0 0 2px; }
   text-transform: uppercase; color: var(--marker-ink); background: var(--marker);
   padding: 3px 10px; border-radius: 999px; margin-bottom: 8px;
 }
-.blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.block {
-  display: flex; flex-direction: column; gap: 6px; text-align: left;
-  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 14px; cursor: pointer; color: var(--ink); font: inherit; min-height: 108px;
+.hero-title {
+  background: linear-gradient(100deg, var(--ink) 30%, var(--accent) 55%, var(--accent-2) 70%, var(--ink) 90%);
+  background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: heroshift 7s ease-in-out infinite;
 }
-.block:active { transform: scale(0.985); }
-.block .ic { font-size: 22px; }
-.block .nm { font-weight: 600; font-size: 15px; line-height: 1.25; }
-.block .st { font-size: 12px; color: var(--muted); margin-top: auto; font-variant-numeric: tabular-nums; }
+@keyframes heroshift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+.levelcard {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  padding: 14px 16px; margin-bottom: 16px;
+}
+.ring-wrap { position: relative; flex: none; width: 76px; height: 76px; }
+.ring { display: block; }
+.ring-track { fill: none; stroke: var(--line); stroke-width: 8; }
+.ring-fill {
+  fill: none; stroke: url(#ringGrad); stroke-width: 8; stroke-linecap: round;
+  transform: rotate(-90deg); transform-origin: 50px 50px;
+  stroke-dasharray: 264; stroke-dashoffset: 264;
+  transition: stroke-dashoffset 1s cubic-bezier(.22,1,.36,1);
+}
+.ring-stop-a { stop-color: var(--accent); }
+.ring-stop-b { stop-color: var(--accent-2); }
+.ring-pct {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink);
+}
+.levelcard-label { font-size: 13px; color: var(--muted); font-weight: 500; }
+.levelcard-stats { font-size: 14.5px; margin-top: 2px; }
+
+.path { display: flex; flex-direction: column; }
+.path-node {
+  position: relative; display: flex; align-items: flex-start; gap: 14px;
+  text-align: left; background: none; border: none; padding: 0 0 20px; cursor: pointer;
+  color: var(--ink); font: inherit; width: 100%;
+  opacity: 0; transform: translateY(6px);
+  animation: nodein 0.4s ease forwards;
+}
+@keyframes nodein { to { opacity: 1; transform: translateY(0); } }
+.path-node:last-child { padding-bottom: 0; }
+.path-node:last-child .path-line { display: none; }
+.path-line {
+  position: absolute; left: 21px; top: 44px; bottom: -20px; width: 2px;
+  background: var(--line);
+}
+.path-node.done .path-line { background: var(--ok); }
+.path-dot {
+  flex: none; width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 19px;
+  background: var(--card); border: 2px solid var(--line); position: relative; z-index: 1;
+}
+.path-node.progress .path-dot { border-color: var(--accent); box-shadow: 0 0 0 4px var(--glow); }
+.path-node.done .path-dot { border-color: var(--ok); background: var(--ok-bg); }
+.path-card {
+  flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 14px; min-width: 0;
+}
+.path-node:active .path-card { transform: scale(0.98); }
+.path-title { font-weight: 600; font-size: 15px; line-height: 1.3; }
+.path-sub { font-size: 12.5px; color: var(--muted); margin-top: 3px; font-variant-numeric: tabular-nums; }
+.path-badge {
+  display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+  padding: 2px 8px; border-radius: 999px; margin-top: 6px;
+}
+.path-node.todo .path-badge { background: var(--line); color: var(--muted); }
+.path-node.progress .path-badge { background: var(--bg-accent-soft); color: var(--accent); }
+.path-node.done .path-badge { background: var(--ok-bg); color: var(--ok); }
 .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .back {
   flex: none; background: var(--card); border: 1px solid var(--line); color: var(--ink);
@@ -134,7 +195,13 @@ h2 { font-size: 20px; margin: 0 0 2px; }
 @keyframes micpulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 .flash { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 18px 0 6px; }
 .flash-hint { font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.flash-wordrow { display: flex; align-items: center; gap: 10px; }
 .flash-word { font-size: 32px; font-family: Georgia, serif; }
+.flash-speak {
+  font-size: 18px; line-height: 1; border: 1px solid var(--line); background: var(--card);
+  color: var(--accent); border-radius: 50%; width: 38px; height: 38px; cursor: pointer;
+}
+.flash-speak:active { transform: scale(0.92); }
 .flash-answer { font-size: 22px; font-weight: 600; color: var(--accent); }
 .flash-grade { display: flex; gap: 10px; width: 100%; margin-top: 8px; }
 .flash-grade .btn { flex: 1; }
@@ -201,7 +268,13 @@ input.answer:focus { outline: none; border-color: var(--accent); }
 .backup-hint { color: var(--muted); font-size: 13px; margin-top: 8px; }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .hidden { display: none !important; }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+#s-home, #s-section, #s-quiz, #s-done { animation: screenin 0.28s ease; }
+@keyframes screenin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+  .path-node { opacity: 1 !important; transform: none !important; }
+  .hero-title { background-position: 0% 50% !important; -webkit-background-clip: initial; background-clip: initial; color: var(--ink) !important; background: none !important; }
+}
 </style>
 </head>
 <body>
@@ -209,10 +282,33 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 
   <section id="s-home">
     <span class="eyebrow">Apostila A1 · aulas 01–23</span>
-    <h1>Treino de Inglês</h1>
-    <p class="sub">Escolha um tema. Cada bloco tem explicação e exercícios de estrutura: afirmativa, negativa e pergunta.</p>
-    <button type="button" class="btn" id="btn-weak" style="margin: 0 0 12px; text-align: left;">🎯 Treinar meus erros — repete o que você mais errou</button>
-    <div class="blocks" id="blocks"></div>
+    <h1 class="hero-title">Treino de Inglês</h1>
+    <p class="sub">Sua trilha de estudos, na ordem certa pra aprender. Cada etapa tem explicação e exercícios de estrutura: afirmativa, negativa e pergunta.</p>
+
+    <div class="levelcard" id="levelcard">
+      <div class="ring-wrap">
+        <svg class="ring" viewBox="0 0 100 100" width="76" height="76" aria-hidden="true">
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" class="ring-stop-a"></stop>
+              <stop offset="100%" class="ring-stop-b"></stop>
+            </linearGradient>
+          </defs>
+          <circle class="ring-track" cx="50" cy="50" r="42"></circle>
+          <circle class="ring-fill" id="ring-fill" cx="50" cy="50" r="42"></circle>
+        </svg>
+        <div class="ring-pct" id="ring-pct">0%</div>
+      </div>
+      <div class="levelcard-body">
+        <div class="levelcard-label">Domínio geral</div>
+        <div class="levelcard-stats" id="levelcard-stats">Nenhum exercício respondido ainda</div>
+      </div>
+    </div>
+
+    <button type="button" class="btn" id="btn-weak" style="margin: 0 0 16px; text-align: left;">🎯 Treinar meus erros — repete o que você mais errou</button>
+
+    <div class="path" id="blocks"></div>
+
     <button type="button" class="btn primary hidden" id="btn-install" style="margin-top:16px;">Instalar no celular</button>
     <div class="install-tip" id="ios-tip">No iPhone: Safari → botão compartilhar → "Adicionar à Tela de Início". No Android: Chrome → menu ⋮ → "Adicionar à tela inicial".</div>
     <div class="backupw">
@@ -262,7 +358,10 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
       <div id="area-pick" class="opts hidden"></div>
       <div id="area-flash" class="flash hidden">
         <span class="flash-hint">Traduza mentalmente, depois confira</span>
-        <span class="flash-word en" id="flash-word"></span>
+        <span class="flash-wordrow">
+          <span class="flash-word en" id="flash-word"></span>
+          <button type="button" class="flash-speak hidden" id="flash-speak" aria-label="Ouvir pronúncia da palavra">🔊</button>
+        </span>
         <span class="flash-answer hidden" id="flash-answer"></span>
         <div class="flash-grade hidden" id="flash-grade">
           <button type="button" class="btn good" id="flash-good">✓ Eu sabia</button>
@@ -621,6 +720,8 @@ var VOCAB = [
   {en:"pants", pt:"calça"}, {en:"coat", pt:"casaco"},
   {en:"store", pt:"loja"}, {en:"church", pt:"igreja"}, {en:"downtown", pt:"centro da cidade"},
   {en:"supermarket", pt:"supermercado"}, {en:"mall", pt:"shopping"},
+  {en:"bathroom", pt:"banheiro"}, {en:"gym", pt:"academia"}, {en:"dentist", pt:"dentista"},
+  {en:"park", pt:"parque"}, {en:"teacher", pt:"professor(a)"},
   {en:"week", pt:"semana"}, {en:"weekend", pt:"fim de semana"}, {en:"today", pt:"hoje"},
   {en:"tonight", pt:"hoje à noite"}, {en:"yesterday", pt:"ontem"}, {en:"tomorrow", pt:"amanhã"},
   {en:"sunny", pt:"ensolarado"}, {en:"rainy", pt:"chuvoso"}, {en:"cloudy", pt:"nublado"},
@@ -819,7 +920,9 @@ var SECTIONS = [
     "<li><b>Why</b> = por quê → pergunta motivo</li>" +
     "<li><b>How</b> = como → pergunta modo (e How much/How many/How old...)</li></ul>" +
     "<span class='frm'><b>Estrutura:</b> WH + do/does + sujeito + verbo base + resto<br><code>Where do you like to go for a walk?</code></span>" +
-    "<p>A resposta nunca é yes/no — a WH question pede informação. Com o verbo to be, inverte direto: <code>How old are you?</code> / <code>What time is it?</code></p>",
+    "<p>A resposta nunca é yes/no — a WH question pede informação. Com o verbo to be, inverte direto: <code>How old are you?</code> / <code>What time is it?</code></p>" +
+    "<p><b>Pegadinha do who:</b> quando <code>who</code> é o SUJEITO da frase (quem faz a ação), não usa do/does — vai direto: <code>Who works with you?</code>, <code>Who is your teacher?</code> (não \"who does...\").</p>" +
+    "<p>Outras palavrinhas úteis: <code>which</code> = qual (entre opções) · <code>whose</code> = de quem · <code>how many</code> = quantos · <code>how often</code> = com que frequência.</p>",
   items: [
     {t:"c", k:"ot", parts:["where","do","you","like","to go","for a walk","?"], rule:"Where pergunta o LUGAR: Where + do + you + like + to go...?"},
     {t:"c", k:"ot", parts:["when","do","you","like","to go","for a walk","?"], rule:"When pergunta o TEMPO. A estrutura é a mesma, só troca a palavrinha WH."},
@@ -835,7 +938,17 @@ var SECTIONS = [
     {t:"c", k:"ot", parts:["how much","does","it","cost","?"], rule:"How much = quanto (preço): How much does it cost?"},
     {t:"w", k:"ot", given:"She likes to go to the beach.", task:"Pergunte o LUGAR (where)", answer:"where does she like to go?", rule:"Where + does + she + like + to go? O lugar (the beach) sai da pergunta — é ele que você quer saber."},
     {t:"w", k:"ot", given:"They study English in the morning.", task:"Pergunte o TEMPO (when)", answer:"when do they study English?", rule:"When + do + they + study English? O tempo sai da pergunta."},
-    {t:"w", k:"ot", given:"He wants to eat chicken.", task:"Pergunte a COISA (what)", answer:"what does he want to eat?", rule:"What + does + he + want + to eat? Want volta à base (sem -s)."}
+    {t:"w", k:"ot", given:"He wants to eat chicken.", task:"Pergunte a COISA (what)", answer:"what does he want to eat?", rule:"What + does + he + want + to eat? Want volta à base (sem -s)."},
+    {t:"c", k:"ot", parts:["which","one","do","you","want","?"], rule:"Which = qual, entre opções. Which one = qual (deles)."},
+    {t:"c", k:"ot", parts:["whose","book","is","this","?"], rule:"Whose = de quem. Whose + substantivo + is this?"},
+    {t:"c", k:"ot", parts:["how many","brothers","do","you","have","?"], rule:"How many + substantivo no plural + do you have?"},
+    {t:"c", k:"ot", parts:["how often","do","you","go","to the movies","?"], rule:"How often = com que frequência."},
+    {t:"c", k:"ot", parts:["who","is","your teacher","?"], rule:"Who como SUJEITO da frase não usa do/does: Who is...? (nunca 'who does is')."},
+    {t:"c", k:"ot", parts:["who","works","with","you","?"], rule:"Who + verbo com -s (igual he/she/it): Who works with you? Sem do!"},
+    {t:"c", k:"ot", parts:["what","time","do","you","wake up","?"], rule:"What time = a que horas."},
+    {t:"c", k:"ot", parts:["where","is","the bathroom","?"], rule:"Where + is (to be, sem do — pergunta simples de localização)."},
+    {t:"w", k:"ot", given:"I have three brothers.", task:"Pergunte QUANTOS (how many)", answer:"how many brothers do you have?", rule:"How many + substantivo + do you have?"},
+    {t:"w", k:"ot", given:"She goes to the gym every day.", task:"Pergunte a FREQUÊNCIA (how often)", answer:"how often does she go to the gym?", rule:"How often + does + she + go...? She → does."}
   ]
 },
 {
@@ -862,7 +975,12 @@ var SECTIONS = [
     {t:"c", k:"af", parts:["he","goes","home","at night"], rule:"Home sem nada: goes home."},
     {t:"c", k:"ng", parts:["they","don't","go","to the supermarket","on weekends"], rule:"Negativa: don't + go (base). Supermercado → to the."},
     {t:"c", k:"af", parts:["we","go","downtown","every day"], rule:"Downtown sem nada: go downtown."},
-    {t:"c", k:"af", parts:["I","want","to go","to the USA"], rule:"Want + to go (dois verbos) + to the USA (exceção do the)."}
+    {t:"c", k:"af", parts:["I","want","to go","to the USA"], rule:"Want + to go (dois verbos) + to the USA (exceção do the)."},
+    {t:"p", k:"ot", text:"I need to go ___ dentist tomorrow.", opts:["to the","to","(nada)"], answer:"to the", rule:"Dentista é um lugar/profissional → to the dentist."},
+    {t:"c", k:"in", parts:["does","he","go","to school","every day","?"], rule:"He → does. School é exceção, sem the."},
+    {t:"c", k:"ng", parts:["I","don't","go","to church","on weekends"], rule:"Negativa: don't + go (base) + to church."},
+    {t:"c", k:"af", parts:["they","want","to go","to the park"], rule:"Want + to go (dois verbos) + to the park (lugar público)."},
+    {t:"c", k:"af", parts:["she","is","going","to Portugal"], rule:"Present continuous também funciona: is going + to + país (nome próprio)."}
   ]
 },
 {
@@ -889,7 +1007,11 @@ var SECTIONS = [
     {t:"c", k:"af", parts:["I","go","to the mall","on weekends"], rule:"Costume → on weekends (sem the). Frase da aula 13."},
     {t:"c", k:"in", parts:["do","you","go","to church","every week","?"], rule:"Every week = toda semana. Do + you + go...?"},
     {t:"c", k:"ng", parts:["she","doesn't","work","on the weekend"], rule:"Negativa: doesn't + work (base) + on the weekend."},
-    {t:"c", k:"af", parts:["we","like","to travel","on the weekends"], rule:"Like + to travel (dois verbos) + on the weekends."}
+    {t:"c", k:"af", parts:["we","like","to travel","on the weekends"], rule:"Like + to travel (dois verbos) + on the weekends."},
+    {t:"c", k:"af", parts:["he","studies","every week"], rule:"Every week = toda semana. He → studies."},
+    {t:"c", k:"in", parts:["do","you","work","this afternoon","?"], rule:"This afternoon = hoje à tarde."},
+    {t:"c", k:"ng", parts:["I","don't","want","to go","tonight"], rule:"Tonight = hoje à noite."},
+    {t:"p", k:"ot", text:"See you ___ (despedida, hoje à noite).", opts:["tonight","today","this week"], answer:"tonight", rule:"Despedida comum: see you tonight = te vejo hoje à noite."}
   ]
 },
 {
@@ -1146,7 +1268,13 @@ wh: [
   {t:"tr", k:"ot", pt:"O que você gosta de comer?", answer:"what do you like to eat?", rule:"What + do + you + like + TO eat?"},
   {t:"tr", k:"ot", pt:"Por que ele trabalha à noite?", answer:"why does he work at night?", rule:"He → does. Verbo base: work. À noite = at night."},
   {t:"tr", k:"ot", pt:"Quantos anos você tem?", answer:"how old are you?", rule:"Idade = How old + to be. Nunca 'how many years do you have'."},
-  {t:"tr", k:"ot", pt:"Quanto custa isso?", answer:"how much does it cost?", alt:["how much is it?"], rule:"How much does it cost? ou How much is it? (aula 16)."}
+  {t:"tr", k:"ot", pt:"Quanto custa isso?", answer:"how much does it cost?", alt:["how much is it?"], rule:"How much does it cost? ou How much is it? (aula 16)."},
+  {t:"tr", k:"ot", pt:"Qual você quer?", answer:"which one do you want?", rule:"Which one = qual (deles). Which + one + do + you + want?"},
+  {t:"tr", k:"ot", pt:"De quem é esse livro?", answer:"whose book is this?", rule:"Whose = de quem, vem antes do substantivo."},
+  {t:"tr", k:"ot", pt:"Quantos irmãos você tem?", answer:"how many brothers do you have?", rule:"How many + substantivo plural + do you have?"},
+  {t:"tr", k:"ot", pt:"Com que frequência você vai ao cinema?", answer:"how often do you go to the movies?", rule:"How often = com que frequência."},
+  {t:"tr", k:"ot", pt:"Quem é seu professor?", answer:"who is your teacher?", rule:"Who como sujeito não usa do/does: Who is...?"},
+  {t:"tr", k:"ot", pt:"Onde fica o banheiro?", answer:"where is the bathroom?", rule:"Where + is (to be, sem do)."}
 ],
 togo: [
   {t:"tr", k:"af", pt:"Eu vou ao cinema nos fins de semana.", answer:"I go to the movies on weekends", rule:"Cinema = lugar público → to the movies."},
@@ -1154,13 +1282,17 @@ togo: [
   {t:"tr", k:"af", pt:"Nós vamos para casa à noite.", answer:"we go home at night", rule:"Home não leva nada: go home."},
   {t:"tr", k:"af", pt:"Eles vão ao centro da cidade todos os dias.", answer:"they go downtown every day", rule:"Downtown não leva nada: go downtown."},
   {t:"tr", k:"in", pt:"Você quer ir ao shopping comigo?", answer:"do you want to go to the mall with me?", rule:"Do you want + to go + to the mall (lugar público)?"},
-  {t:"tr", k:"af", pt:"Eu quero ir para os EUA.", answer:"I want to go to the USA", rule:"Exceção: the USA (país composto leva the)."}
+  {t:"tr", k:"af", pt:"Eu quero ir para os EUA.", answer:"I want to go to the USA", rule:"Exceção: the USA (país composto leva the)."},
+  {t:"tr", k:"af", pt:"Ele precisa ir ao dentista amanhã.", answer:"he needs to go to the dentist tomorrow", rule:"Need + TO + go. Dentista → to the dentist."},
+  {t:"tr", k:"ng", pt:"Nós não vamos à igreja nos fins de semana.", answer:"we don't go to church on weekends", rule:"Negativa: don't + go (base) + to church (sem the)."}
 ],
 semanas: [
   {t:"tr", k:"af", pt:"Nós viajamos nos fins de semana.", answer:"we travel on weekends", rule:"Costume geral, sem the: on weekends."},
   {t:"tr", k:"af", pt:"Ela trabalha na semana.", answer:"she works on the week", rule:"Na semana = on the week. She → works."},
   {t:"tr", k:"af", pt:"Eu estudo inglês nos finais de semana.", answer:"I study English on the weekends", rule:"Nos finais de semana (específicos) = on the weekends."},
-  {t:"tr", k:"ng", pt:"Ele não trabalha no final de semana.", answer:"he doesn't work on the weekend", rule:"Doesn't + work (base). No final de semana = on the weekend."}
+  {t:"tr", k:"ng", pt:"Ele não trabalha no final de semana.", answer:"he doesn't work on the weekend", rule:"Doesn't + work (base). No final de semana = on the weekend."},
+  {t:"tr", k:"af", pt:"Ele estuda toda semana.", answer:"he studies every week", rule:"Every week = toda semana. He → studies."},
+  {t:"tr", k:"in", pt:"Você trabalha hoje à tarde?", answer:"do you work this afternoon?", rule:"This afternoon = hoje à tarde."}
 ],
 pronomes: [
   {t:"tr", k:"af", pt:"Ela gosta de mim.", answer:"she likes me", rule:"Depois do verbo = object pronoun: me."},
@@ -1298,19 +1430,53 @@ function sectionItems(sec){
   return sec._items;
 }
 
+var PATH_ORDER = ["present","conj","pronomes","tobe","cont","feelings","past","verbos","modais","wh","togo","semanas","horas","vocab"];
+function nodeStatus(st){
+  if (!st || !st.a) return "todo";
+  if (st.a >= 8 && (st.c / st.a) >= 0.75) return "done";
+  return "progress";
+}
 function renderHome(){
   var host = $("blocks");
   host.innerHTML = "";
-  SECTIONS.forEach(function(sec){
+  var totalA = 0, totalC = 0, doneCount = 0;
+  var byId = {};
+  SECTIONS.forEach(function(sec){ byId[sec.id] = sec; });
+
+  PATH_ORDER.forEach(function(id, i){
+    var sec = byId[id];
+    if (!sec) return;
     var st = stats[sec.id];
-    var b = document.createElement("button");
-    b.type = "button"; b.className = "block";
-    b.innerHTML = '<span class="ic" aria-hidden="true">' + sec.icon + '</span>' +
-      '<span class="nm">' + sec.title + '</span>' +
-      '<span class="st">' + (st ? st.c + "/" + st.a + " acertos" : "não iniciado") + '</span>';
-    b.addEventListener("click", function(){ openSection(sec); });
-    host.appendChild(b);
+    if (st) { totalA += st.a; totalC += st.c; }
+    var status = nodeStatus(st);
+    if (status === "done") doneCount++;
+
+    var node = document.createElement("button");
+    node.type = "button";
+    node.className = "path-node " + status;
+    node.style.animationDelay = (i * 0.04) + "s";
+    var badgeText = status === "done" ? "✓ Dominado" : status === "progress" ? "Em progresso" : "Não iniciado";
+    var subText = st ? (st.c + "/" + st.a + " acertos") : "Toque para começar";
+    node.innerHTML =
+      '<div class="path-line"></div>' +
+      '<span class="path-dot" aria-hidden="true">' + (status === "done" ? "✓" : sec.icon) + '</span>' +
+      '<span class="path-card">' +
+        '<span class="path-title">' + sec.title + '</span>' +
+        '<span class="path-sub">' + subText + '</span>' +
+        '<span class="path-badge">' + badgeText + '</span>' +
+      '</span>';
+    node.addEventListener("click", function(){ openSection(sec); });
+    host.appendChild(node);
   });
+
+  var pct = totalA ? Math.round(100 * totalC / totalA) : 0;
+  var C = 264;
+  $("ring-fill").style.strokeDashoffset = String(C - (pct / 100) * C);
+  $("ring-pct").textContent = pct + "%";
+  $("levelcard-stats").textContent = totalA
+    ? (totalC + " de " + totalA + " certas · " + doneCount + "/" + PATH_ORDER.length + " temas dominados")
+    : "Nenhum exercício respondido ainda";
+
   var wc = weakCount();
   var wb = $("btn-weak");
   wb.textContent = wc ? ("🎯 Treinar meus erros — " + wc + " frase" + (wc > 1 ? "s" : "") + " para reforçar") : "🎯 Treinar meus erros — nenhum erro guardado ainda";
@@ -1430,6 +1596,7 @@ function renderQuestion(){
     $("flash-word").textContent = q.en;
     $("flash-answer").textContent = q.pt;
     $("area-flash").classList.remove("hidden");
+    $("flash-speak").classList.toggle("hidden", !ttsSupported);
     $("btn-main").textContent = "Ver resposta";
   } else {
     $("qlabel").textContent = q.text.indexOf("tempo verbal") > -1 ? "Identifique o tempo verbal" : "Complete";
@@ -1796,6 +1963,10 @@ function gradeFlash(knew){
 }
 $("flash-good").addEventListener("click", function(){ gradeFlash(true); });
 $("flash-bad").addEventListener("click", function(){ gradeFlash(false); });
+$("flash-speak").addEventListener("click", function(){
+  var q = state.queue[state.idx];
+  if (q && q.t === "f") speak(q.en, 0.85);
+});
 
 /* ---------- eventos ---------- */
 $("btn-main").addEventListener("click", function(){
