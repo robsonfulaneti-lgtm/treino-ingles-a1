@@ -90,7 +90,7 @@ h2 { font-size: 20px; margin: 0 0 2px; }
 .path-node {
   position: relative; display: flex; align-items: flex-start; gap: 14px;
   text-align: left; background: none; border: none; padding: 0 0 20px; cursor: pointer;
-  color: var(--ink); font: inherit; width: 100%;
+  color: var(--ink); font: inherit; width: 100%; -webkit-tap-highlight-color: transparent;
   opacity: 0; transform: translateY(6px);
   animation: nodein 0.4s ease forwards;
 }
@@ -113,7 +113,6 @@ h2 { font-size: 20px; margin: 0 0 2px; }
   flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
   padding: 12px 14px; min-width: 0;
 }
-.path-node:active .path-card { transform: scale(0.98); }
 .path-title { font-weight: 600; font-size: 15px; line-height: 1.3; }
 .path-sub { font-size: 12.5px; color: var(--muted); margin-top: 3px; font-variant-numeric: tabular-nums; }
 .path-badge {
