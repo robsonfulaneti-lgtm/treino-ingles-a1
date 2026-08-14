@@ -1,4 +1,4 @@
-var CACHE = "treino-a1-v10";
+var CACHE = "treino-a1-v11";
 var ASSETS = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", function (e) {

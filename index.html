@@ -1040,7 +1040,30 @@ var SECTIONS = [
     {t:"c", k:"af", parts:["it","was","incredible"], pt:"Foi incrível.", rule:"it + was + adjetivo. Resposta curta e direta."},
     {t:"c", k:"af", parts:["it","was","hot","and windy"], pt:"Estava quente e com muito vento.", rule:"it + was + dois adjetivos de clima ligados por and."},
     {t:"p", k:"ot", text:"That lawyer ___ unreliable. (presente)", opts:["is","was"], answer:"is", rule:"Aqui é presente (afirmação geral sobre o advogado), não passado."},
-    {t:"p", k:"ot", text:"Our boss ___ rude when we talk about deadlines.", opts:["gets","got"], answer:"gets", rule:"get + adjetivo no presente = reação habitual: gets rude."}
+    {t:"p", k:"ot", text:"Our boss ___ rude when we talk about deadlines.", opts:["gets","got"], answer:"gets", rule:"get + adjetivo no presente = reação habitual: gets rude."},
+    {t:"c", k:"af", parts:["the","book","was","fascinating"], pt:"O livro foi fascinante.", rule:"fascinating descreve a coisa que causa fascínio (o livro), não a pessoa."},
+    {t:"c", k:"ng", parts:["the","trip","wasn't","fascinating"], pt:"A viagem não foi fascinante.", rule:"the trip = it → wasn't."},
+    {t:"c", k:"in", parts:["was","the","class","fascinating","?"], pt:"A aula foi fascinante?", rule:"Was + the class + fascinating?"},
+    {t:"c", k:"af", parts:["the","trip","was","incredible"], pt:"A viagem foi incrível.", rule:"the trip = it → was."},
+    {t:"c", k:"ng", parts:["the","show","wasn't","incredible"], pt:"O show não foi incrível.", rule:"the show = it → wasn't."},
+    {t:"c", k:"in", parts:["was","the","concert","incredible","?"], pt:"O show foi incrível?", rule:"Was + the concert + incredible?"},
+    {t:"c", k:"af", parts:["he","was","scared","of the dog"], pt:"Ele ficou com medo do cachorro.", rule:"scared of + substantivo = com medo de algo."},
+    {t:"c", k:"ng", parts:["she","wasn't","scared","of the movie"], pt:"Ela não ficou com medo do filme.", rule:"wasn't scared of + substantivo."},
+    {t:"c", k:"in", parts:["were","you","scared","of the dark","?"], pt:"Você tinha medo do escuro?", rule:"scared of the dark = medo do escuro."},
+    {t:"c", k:"af", parts:["the","waiter","was","polite"], pt:"O garçom foi educado.", rule:"the waiter = he → was."},
+    {t:"c", k:"ng", parts:["they","weren't","polite","to us"], pt:"Eles não foram educados conosco.", rule:"they → weren't (were + not)."},
+    {t:"c", k:"in", parts:["was","the","taxi driver","polite","?"], pt:"O motorista de táxi foi educado?", rule:"Was + sujeito + polite?"},
+    {t:"c", k:"af", parts:["the","customer","was","rude"], pt:"O cliente foi grosseiro.", rule:"the customer = he/she → was."},
+    {t:"c", k:"ng", parts:["he","wasn't","rude","to me"], pt:"Ele não foi grosseiro comigo.", rule:"wasn't rude to me = não foi grosseiro comigo."},
+    {t:"c", k:"in", parts:["was","she","rude","to the waiter","?"], pt:"Ela foi grosseira com o garçom?", rule:"Was + she + rude + to the waiter?"},
+    {t:"c", k:"af", parts:["my","car","was","reliable"], pt:"Meu carro era confiável.", rule:"my car = it → was."},
+    {t:"c", k:"ng", parts:["the","internet","wasn't","reliable"], pt:"A internet não era confiável.", rule:"the internet = it → wasn't."},
+    {t:"c", k:"in", parts:["was","the","information","reliable","?"], pt:"A informação era confiável?", rule:"Was + the information + reliable?"},
+    {t:"c", k:"af", parts:["the","witness","was","unreliable"], pt:"A testemunha não era confiável.", rule:"unreliable já tem o 'não' embutido no significado (un-)."},
+    {t:"c", k:"in", parts:["was","the","source","unreliable","?"], pt:"A fonte não era confiável?", rule:"Was + the source + unreliable?"},
+    {t:"c", k:"af", parts:["the","students","were","frustrated"], pt:"Os alunos ficaram frustrados.", rule:"the students = they → were."},
+    {t:"c", k:"ng", parts:["I","wasn't","frustrated","with the test"], pt:"Eu não fiquei frustrado com a prova.", rule:"wasn't frustrated with + substantivo."},
+    {t:"c", k:"in", parts:["were","you","frustrated","with the test","?"], pt:"Você ficou frustrado com a prova?", rule:"Were + you + frustrated + with the test?"}
   ]
 },
 {
@@ -1166,7 +1189,15 @@ feelings: [
   {t:"tr", k:"af", pt:"O filme foi bom, mas não fascinante.", answer:"the movie was good, but not fascinating", rule:"was + adjetivo, but not + outro adjetivo."},
   {t:"tr", k:"ot", pt:"Como estava o tempo durante suas últimas férias?", answer:"what was the weather like during your last vacation?", rule:"Mesma estrutura do weather, trocando só o final."},
   {t:"tr", k:"ot", pt:"Ela fica com muito medo quando vai ao dentista.", answer:"she gets really scared when she goes to the dentist", rule:"gets scared = fica com medo. She → goes (regra do Simple Present)."},
-  {t:"tr", k:"ot", pt:"Nós sempre ficamos frustrados com as ideias dele.", answer:"we always get frustrated with his ideas", rule:"get frustrated = ficar frustrado. Always = sempre."}
+  {t:"tr", k:"ot", pt:"Nós sempre ficamos frustrados com as ideias dele.", answer:"we always get frustrated with his ideas", rule:"get frustrated = ficar frustrado. Always = sempre."},
+  {t:"tr", k:"af", pt:"O livro foi fascinante.", answer:"the book was fascinating", rule:"fascinating = fascinante (causa fascínio). Não confundir com fascinated (sente fascínio)."},
+  {t:"tr", k:"af", pt:"A viagem foi incrível.", answer:"the trip was incredible", rule:"the trip = it → was."},
+  {t:"tr", k:"af", pt:"Ele ficou com medo do cachorro.", answer:"he was scared of the dog", rule:"scared of + substantivo = com medo de algo."},
+  {t:"tr", k:"af", pt:"O garçom foi educado.", answer:"the waiter was polite", rule:"the waiter = he → was."},
+  {t:"tr", k:"af", pt:"O cliente foi grosseiro.", answer:"the customer was rude", rule:"the customer = he/she → was."},
+  {t:"tr", k:"af", pt:"Meu carro era confiável.", answer:"my car was reliable", rule:"my car = it → was."},
+  {t:"tr", k:"af", pt:"A testemunha não era confiável.", answer:"the witness was unreliable", rule:"unreliable já tem o 'não' embutido no significado."},
+  {t:"tr", k:"af", pt:"Os alunos ficaram frustrados.", answer:"the students were frustrated", rule:"the students = they → were."}
 ]
 };
 
