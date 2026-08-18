@@ -12,13 +12,15 @@
 <title>Treino de Inglês A1</title>
 <style>
 :root {
-  --bg: #FBFAF7;
+  --bg: #F4F5FA;
   --card: #FFFFFF;
-  --ink: #1E2733;
-  --muted: #66707E;
-  --line: #E4E2DA;
-  --accent: #2D4A8A;
-  --accent-2: #7C5CFA;
+  --card-glass: rgba(255,255,255,0.72);
+  --ink: #171B2B;
+  --muted: #666C85;
+  --line: #DFE1EE;
+  --line-soft: rgba(45,74,138,0.14);
+  --accent: #3457D5;
+  --accent-2: #8B5CF6;
   --accent-ink: #FFFFFF;
   --marker: #FFD34D;
   --marker-ink: #4A3A05;
@@ -26,17 +28,20 @@
   --ok-bg: #E7F4EE;
   --err: #C94F4A;
   --err-bg: #FBEDEC;
-  --glow: rgba(45,74,138,0.18);
-  --bg-accent-soft: rgba(45,74,138,0.10);
+  --glow: rgba(52,87,213,0.20);
+  --bg-accent-soft: rgba(52,87,213,0.10);
+  --shadow: 0 8px 28px rgba(23,27,43,0.08);
+  --mono: "SF Mono", "JetBrains Mono", "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
   --radius: 14px;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #12161E; --card: #1B222D; --ink: #E9ECF2; --muted: #98A2B5;
-    --line: #2C3542; --accent: #7FA3E8; --accent-2: #B9A6FF; --accent-ink: #0E1520;
+    --bg: #090C14; --card: #131826; --card-glass: rgba(24,30,48,0.62); --ink: #EEF1FC; --muted: #9099BC;
+    --line: #262E48; --line-soft: rgba(127,163,232,0.16); --accent: #6C8DF5; --accent-2: #B18CFF; --accent-ink: #06070C;
     --marker: #E8B93B; --marker-ink: #2A2104;
-    --ok: #4CC08F; --ok-bg: #17352A; --err: #E8837F; --err-bg: #3B2323;
-    --glow: rgba(127,163,232,0.28); --bg-accent-soft: rgba(127,163,232,0.18);
+    --ok: #45D394; --ok-bg: #10281F; --err: #F0837E; --err-bg: #2E1519;
+    --glow: rgba(108,141,245,0.35); --bg-accent-soft: rgba(108,141,245,0.16);
+    --shadow: 0 12px 32px rgba(0,0,0,0.45);
   }
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -45,8 +50,27 @@ body {
   background: var(--bg); color: var(--ink);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased;
+  position: relative; overflow-x: hidden;
 }
-.wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 120px; }
+.bg-fx {
+  position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+}
+.bg-fx i {
+  position: absolute; display: block; border-radius: 50%; filter: blur(70px);
+  opacity: 0.5; will-change: transform;
+}
+.bg-fx i:nth-child(1) { width: 320px; height: 320px; top: -80px; left: -60px; background: var(--accent); animation: drift1 22s ease-in-out infinite; }
+.bg-fx i:nth-child(2) { width: 280px; height: 280px; top: 40%; right: -100px; background: var(--accent-2); animation: drift2 26s ease-in-out infinite; }
+.bg-fx i:nth-child(3) { width: 240px; height: 240px; bottom: -80px; left: 20%; background: var(--ok); opacity: 0.28; animation: drift3 30s ease-in-out infinite; }
+@media (prefers-color-scheme: light) {
+  .bg-fx i { opacity: 0.22; }
+  .bg-fx i:nth-child(3) { opacity: 0.14; }
+}
+@keyframes drift1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(40px,60px); } }
+@keyframes drift2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-50px,40px); } }
+@keyframes drift3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px,-40px); } }
+@media (prefers-reduced-motion: reduce) { .bg-fx i { animation: none !important; } }
+.wrap { max-width: 520px; margin: 0 auto; padding: 16px 16px 120px; position: relative; }
 .en { font-family: Georgia, "Times New Roman", serif; }
 h1 { font-size: 24px; line-height: 1.2; margin: 8px 0 4px; }
 h2 { font-size: 20px; margin: 0 0 2px; }
@@ -65,8 +89,9 @@ h2 { font-size: 20px; margin: 0 0 2px; }
 
 .levelcard {
   display: flex; align-items: center; gap: 16px;
-  background: var(--card); border: 1px solid var(--line); border-radius: 16px;
-  padding: 14px 16px; margin-bottom: 16px;
+  background: var(--card-glass); border: 1px solid var(--line-soft); border-radius: 18px;
+  padding: 14px 16px; margin-bottom: 16px; box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
 }
 .ring-wrap { position: relative; flex: none; width: 76px; height: 76px; }
 .ring { display: block; }
@@ -81,10 +106,10 @@ h2 { font-size: 20px; margin: 0 0 2px; }
 .ring-stop-b { stop-color: var(--accent-2); }
 .ring-pct {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink);
+  font-family: var(--mono); font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink);
 }
-.levelcard-label { font-size: 13px; color: var(--muted); font-weight: 500; }
-.levelcard-stats { font-size: 14.5px; margin-top: 2px; }
+.levelcard-label { font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.levelcard-stats { font-size: 14.5px; margin-top: 3px; font-family: var(--mono); }
 
 .path { display: flex; flex-direction: column; animation: pathin 0.35s ease; }
 @keyframes pathin { from { opacity: 0; } to { opacity: 1; } }
@@ -96,23 +121,34 @@ h2 { font-size: 20px; margin: 0 0 2px; }
 .path-node:last-child { padding-bottom: 0; }
 .path-node:last-child .path-line { display: none; }
 .path-line {
-  position: absolute; left: 21px; top: 44px; bottom: -20px; width: 2px;
-  background: var(--line);
+  position: absolute; left: 23px; top: 48px; bottom: -20px; width: 2px;
+  background: linear-gradient(var(--line), transparent);
 }
-.path-node.done .path-line { background: var(--ok); }
+.path-node.done .path-line { background: linear-gradient(var(--ok), var(--line)); }
 .path-dot {
-  flex: none; width: 44px; height: 44px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; font-size: 19px;
-  background: var(--card); border: 2px solid var(--line); position: relative; z-index: 1;
+  flex: none; width: 48px; height: 48px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+  background: linear-gradient(150deg, var(--card), var(--bg));
+  border: 1px solid var(--line); position: relative; z-index: 1;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
 }
-.path-node.progress .path-dot { border-color: var(--accent); box-shadow: 0 0 0 4px var(--glow); }
-.path-node.done .path-dot { border-color: var(--ok); background: var(--ok-bg); }
+.path-node.progress .path-dot {
+  border-color: transparent;
+  background: linear-gradient(var(--card), var(--card)) padding-box,
+              linear-gradient(135deg, var(--accent), var(--accent-2)) border-box;
+  border: 2px solid transparent; box-shadow: 0 0 0 5px var(--glow);
+}
+.path-node.done .path-dot {
+  border-color: transparent; background: linear-gradient(135deg, var(--ok), #1FA97A); box-shadow: 0 4px 14px var(--glow);
+}
 .path-card {
-  flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-  padding: 12px 14px; min-width: 0;
+  flex: 1; background: var(--card-glass); border: 1px solid var(--line-soft); border-radius: 16px;
+  padding: 12px 14px; min-width: 0; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 }
+.path-node.progress .path-card { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.path-node.done .path-card { opacity: 0.82; }
 .path-title { font-weight: 600; font-size: 15px; line-height: 1.3; }
-.path-sub { font-size: 12.5px; color: var(--muted); margin-top: 3px; font-variant-numeric: tabular-nums; }
+.path-sub { font-size: 12.5px; color: var(--muted); margin-top: 3px; font-variant-numeric: tabular-nums; font-family: var(--mono); }
 .path-badge {
   display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
   padding: 2px 8px; border-radius: 999px; margin-top: 6px;
@@ -126,11 +162,12 @@ h2 { font-size: 20px; margin: 0 0 2px; }
   border-radius: 10px; padding: 8px 12px; font: inherit; font-size: 15px; cursor: pointer;
 }
 .progress { flex: 1; height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; }
-.progress i { display: block; height: 100%; width: 0%; background: var(--accent); border-radius: 999px; transition: width 0.25s ease; }
-.count { flex: none; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.progress i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 999px; transition: width 0.25s ease; }
+.count { flex: none; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; font-family: var(--mono); }
 .card {
-  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 18px; margin-bottom: 12px;
+  background: var(--card-glass); border: 1px solid var(--line-soft); border-radius: var(--radius);
+  padding: 18px; margin-bottom: 12px; box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
 }
 .explain { font-size: 15.5px; }
 .explain h3 { font-size: 16px; margin: 14px 0 6px; }
@@ -244,11 +281,14 @@ input.answer:focus { outline: none; border-color: var(--accent); }
   padding: 14px 18px; cursor: pointer; border: 1px solid var(--line);
   background: var(--card); color: var(--ink); width: 100%;
 }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--accent-ink); border-color: transparent; box-shadow: 0 4px 16px var(--glow); }
 .btn.good { background: var(--ok); color: #fff; border-color: var(--ok); }
 .btn.bad { background: var(--err); color: #fff; border-color: var(--err); }
 .btn:active { transform: scale(0.98); }
-.result-score { font-size: 44px; font-weight: 700; font-variant-numeric: tabular-nums; margin: 4px 0; }
+.result-score {
+  font-family: var(--mono); font-size: 44px; font-weight: 700; font-variant-numeric: tabular-nums; margin: 4px 0;
+  background: linear-gradient(100deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
 .review { margin-top: 16px; display: grid; gap: 10px; }
 .review-item {
   background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--err);
@@ -277,6 +317,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 </style>
 </head>
 <body>
+<div class="bg-fx" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="wrap">
 
   <section id="s-home">
@@ -1189,13 +1230,20 @@ var SECTIONS = [
 },
 {
   id: "vocab", icon: "🃏", title: "Vocabulário", kinds: true,
-  kindOptions: [["all","Tudo"],["voc","Palavras"],["pr","Presente"],["pa","Passado"],["fu","Futuro"]],
-  desc: "Cartões de palavras da apostila + identificar o tempo verbal de uma frase.",
+  kindOptions: [["all","Tudo"],["voc","Palavras"],["typ","🔤 Adivinhe a palavra"],["pr","Presente"],["pa","Passado"],["fu","Futuro"]],
+  desc: "Cartões de palavras, adivinhação e identificar o tempo verbal de uma frase.",
   explain: "<h3>Como usar</h3>" +
     "<p><b>Palavras:</b> aparece a palavra em inglês — pensa na tradução, toca em \"Ver resposta\" pra conferir, e avalia você mesmo se sabia ou não. É o que vai te dizer no fim quais palavras precisam de mais reforço.</p>" +
+    "<p><b>🔤 Adivinhe a palavra:</b> o caminho inverso — aparece a palavra em <b>português</b> e você <b>digita</b> a palavra em inglês do zero. Mais difícil que Palavras, porque exige lembrar sem pista nenhuma.</p>" +
     "<p><b>Presente / Passado / Futuro:</b> aparece uma frase em inglês inteira — você identifica qual tempo verbal ela está, sem escrever nada. Serve pra treinar o olho pra reconhecer was/were, did, going to, etc.</p>" +
     "<p>Use os filtros acima pra treinar só um tipo de cada vez.</p>",
-  gen: function(){ return VOCAB.map(function(w){ return {t:"f", k:"voc", en:w.en, pt:w.pt}; }).concat(genTenseId()); }
+  gen: function(){
+    return VOCAB.map(function(w){ return {t:"f", k:"voc", en:w.en, pt:w.pt}; })
+      .concat(VOCAB.map(function(w){
+        return {t:"tr", k:"typ", pt:w.pt, answer:w.en, rule:"A palavra é: " + w.en + "."};
+      }))
+      .concat(genTenseId());
+  }
 }
 ];
 
@@ -1410,7 +1458,7 @@ function getWeakQueue(limit){
 /* ---------- estado e navegação ---------- */
 var KINDS = [["all","Tudo"],["af","Afirmativa"],["ng","Negativa"],["in","Pergunta"]];
 var MODES = [["all","Misturado"],["build","Só montar"],["tr","Só traduzir"]];
-var KLABEL = {af:"Afirmativa", ng:"Negativa", in:"Pergunta", pr:"Presente", pa:"Passado", fu:"Futuro", ot:"Estrutura", voc:"Vocabulário"};
+var KLABEL = {af:"Afirmativa", ng:"Negativa", in:"Pergunta", pr:"Presente", pa:"Passado", fu:"Futuro", ot:"Estrutura", voc:"Vocabulário", typ:"Adivinhe a palavra"};
 var state = { sec: null, filter: "all", mode: "all", queue: [], idx: 0, hits: 0, misses: [], phase: "answer", built: [], roundStats: {}, isWeak: false };
 
 function screens(on){
