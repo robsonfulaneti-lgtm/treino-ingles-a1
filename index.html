@@ -280,6 +280,22 @@ input.answer:focus { outline: none; border-color: var(--accent); }
 .backup-hint { color: var(--muted); font-size: 13px; margin-top: 8px; }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .path-node:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.trans-input {
+  width: 100%; font: inherit; font-size: 17px; color: var(--ink); background: var(--bg);
+  border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; resize: vertical;
+}
+.trans-input:focus { outline: none; border-color: var(--accent); }
+.trans-result { margin-top: 14px; border-top: 1px solid var(--line-soft); padding-top: 14px; }
+.trans-out { font-family: Georgia, serif; font-size: 22px; line-height: 1.35; }
+.trans-out.pt { font-family: inherit; }
+.trans-src {
+  display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+  padding: 2px 9px; border-radius: 999px; margin-bottom: 8px;
+}
+.trans-src.local { background: var(--ok-bg); color: var(--ok); }
+.trans-src.web { background: var(--bg-accent-soft); color: var(--accent); }
+.trans-src.err { background: var(--err-bg); color: var(--err); }
+.trans-note { font-size: 13.5px; color: var(--muted); margin-top: 10px; }
 .hidden { display: none !important; }
 #s-home, #s-section, #s-quiz, #s-done { animation: screenin 0.28s ease; }
 @keyframes screenin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -318,7 +334,8 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
       </div>
     </div>
 
-    <button type="button" class="btn" id="btn-weak" style="margin: 0 0 16px; text-align: left;">🎯 Treinar meus erros — repete o que você mais errou</button>
+    <button type="button" class="btn" id="btn-weak" style="margin: 0 0 10px; text-align: left;">🎯 Treinar meus erros — repete o que você mais errou</button>
+    <button type="button" class="btn" id="btn-translate" style="margin: 0 0 16px; text-align: left;">🌐 Tradutor — traduza qualquer frase na hora</button>
 
     <div class="path" id="blocks"></div>
 
@@ -398,6 +415,25 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
     <div class="review" id="review"></div>
   </section>
 
+  <section id="s-trans" class="hidden">
+    <div class="topbar">
+      <button type="button" class="back" id="btn-trans-home">← Temas</button>
+    </div>
+    <h2>🌐 Tradutor</h2>
+    <p class="sub">Traduza qualquer palavra ou frase. Primeiro procura no vocabulário da sua apostila; se não achar, busca na internet.</p>
+
+    <div class="kinds">
+      <button type="button" class="kind on" id="dir-pt-en">Português → Inglês</button>
+      <button type="button" class="kind" id="dir-en-pt">Inglês → Português</button>
+    </div>
+
+    <div class="card">
+      <textarea id="trans-input" class="trans-input" rows="3" placeholder="Escreva aqui o que você quer traduzir"></textarea>
+      <button type="button" class="btn primary" id="btn-do-trans" style="margin-top:12px;">Traduzir</button>
+      <div id="trans-result" class="trans-result hidden"></div>
+    </div>
+  </section>
+
 </div>
 
 <div class="actionbar hidden" id="actionbar">
@@ -428,7 +464,7 @@ var CONTR = [
   ["they're","they are"],["you're","you are"],["there's","there is"]
 ];
 function norm(s){
-  s = (s || "").toLowerCase().trim().replace(/’/g,"'").replace(/\s+/g," ").replace(/\s+\?/g,"?").replace(/[.!?]+$/g,"");
+  s = (s || "").normalize("NFC").toLowerCase().trim().replace(/’/g,"'").replace(/\s+/g," ").replace(/\s+\?/g,"?").replace(/[.!?]+$/g,"");
   CONTR.forEach(function(c){ s = s.split(c[0]).join(c[1]); });
   return s;
 }
@@ -1435,7 +1471,7 @@ var KLABEL = {af:"Afirmativa", ng:"Negativa", in:"Pergunta", pr:"Presente", pa:"
 var state = { sec: null, filter: "all", mode: "all", queue: [], idx: 0, hits: 0, misses: [], phase: "answer", built: [], roundStats: {}, isWeak: false };
 
 function screens(on){
-  ["s-home","s-section","s-quiz","s-done"].forEach(function(id){
+  ["s-home","s-section","s-quiz","s-done","s-trans"].forEach(function(id){
     $(id).classList.toggle("hidden", id !== on);
   });
   $("actionbar").classList.toggle("hidden", on !== "s-quiz" && on !== "s-section");
@@ -1984,6 +2020,126 @@ $("flash-bad").addEventListener("click", function(){ gradeFlash(false); });
 $("flash-speak").addEventListener("click", function(){
   var q = state.queue[state.idx];
   if (q && q.t === "f") speak(q.en, 0.85);
+});
+
+/* ---------- tradutor ---------- */
+var transDir = "pt-en";
+var transBank = null;
+
+function buildTransBank(){
+  if (transBank) return transBank;
+  var pt2en = {}, en2pt = {};
+  VOCAB.forEach(function(w){
+    var kp = norm(w.pt), ke = norm(w.en);
+    if (!pt2en[kp]) pt2en[kp] = w.en;
+    if (!en2pt[ke]) en2pt[ke] = w.pt;
+  });
+  SECTIONS.forEach(function(sec){
+    var items = sectionItems(sec);
+    items.forEach(function(it){
+      if (it.t === "tr" && it.pt && it.answer) {
+        var kp = norm(it.pt), ke = norm(it.answer);
+        if (!pt2en[kp]) pt2en[kp] = it.answer;
+        if (!en2pt[ke]) en2pt[ke] = it.pt;
+      } else if (it.t === "f" && it.en && it.pt) {
+        var kf = norm(it.pt), kg = norm(it.en);
+        if (!pt2en[kf]) pt2en[kf] = it.en;
+        if (!en2pt[kg]) en2pt[kg] = it.pt;
+      } else if (it.t === "c" && it.pt && it.parts) {
+        var sentence = it.parts.join(" ").replace(" ?", "?");
+        var kc = norm(it.pt);
+        if (!pt2en[kc]) pt2en[kc] = cap(sentence);
+        var kd = norm(sentence);
+        if (!en2pt[kd]) en2pt[kd] = it.pt;
+      }
+    });
+  });
+  transBank = { "pt-en": pt2en, "en-pt": en2pt };
+  return transBank;
+}
+
+function localTranslate(text, dir){
+  var bank = buildTransBank();
+  return bank[dir][norm(text)] || null;
+}
+
+function remoteTranslate(text, dir){
+  var pair = dir === "pt-en" ? "pt-BR|en-US" : "en-US|pt-BR";
+  var url = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text) + "&langpair=" + encodeURIComponent(pair);
+  return fetch(url).then(function(res){
+    if (!res.ok) throw new Error("http " + res.status);
+    return res.json();
+  }).then(function(data){
+    var out = data && data.responseData && data.responseData.translatedText;
+    if (!out) throw new Error("sem resposta");
+    return out;
+  });
+}
+
+function renderTransResult(html){
+  var box = $("trans-result");
+  box.innerHTML = html;
+  box.classList.remove("hidden");
+}
+
+function doTranslate(){
+  var text = $("trans-input").value.trim();
+  if (!text) return;
+  var outIsEnglish = transDir === "pt-en";
+
+  var local = localTranslate(text, transDir);
+  if (local) {
+    renderTransResult(
+      '<span class="trans-src local">✓ Está na sua apostila</span>' +
+      '<div class="trans-out' + (outIsEnglish ? '' : ' pt') + '">' + local + '</div>' +
+      (outIsEnglish ? ttsBtnHtml() : '') +
+      '<p class="trans-note">Essa você já tem nos exercícios do app — vale treinar na aba certa!</p>'
+    );
+    if (outIsEnglish) attachTtsButton($("trans-result"), local);
+    return;
+  }
+
+  renderTransResult('<span class="trans-src web">Traduzindo...</span>');
+  remoteTranslate(text, transDir).then(function(out){
+    renderTransResult(
+      '<span class="trans-src web">🌐 Tradução da internet</span>' +
+      '<div class="trans-out' + (outIsEnglish ? '' : ' pt') + '">' + out + '</div>' +
+      (outIsEnglish ? ttsBtnHtml() : '') +
+      '<p class="trans-note">Tradução automática — pode não ser perfeita em frases longas ou gírias.</p>'
+    );
+    if (outIsEnglish) attachTtsButton($("trans-result"), out);
+  }).catch(function(){
+    renderTransResult(
+      '<span class="trans-src err">Não consegui traduzir</span>' +
+      '<p class="trans-note">Precisa de internet para traduzir palavras que não estão na sua apostila. Confira sua conexão e tente de novo.</p>'
+    );
+  });
+}
+
+function setTransDir(dir){
+  transDir = dir;
+  $("dir-pt-en").classList.toggle("on", dir === "pt-en");
+  $("dir-en-pt").classList.toggle("on", dir === "en-pt");
+  $("trans-input").placeholder = dir === "pt-en"
+    ? "Escreva em português o que você quer dizer em inglês"
+    : "Escreva em inglês o que você quer entender em português";
+  $("trans-result").classList.add("hidden");
+}
+
+function openTranslator(){
+  setTransDir(transDir);
+  $("trans-input").value = "";
+  $("trans-result").classList.add("hidden");
+  screens("s-trans");
+}
+
+$("btn-translate").addEventListener("click", openTranslator);
+$("btn-trans-home").addEventListener("click", renderHome);
+$("btn-do-trans").addEventListener("click", doTranslate);
+$("dir-pt-en").addEventListener("click", function(){ setTransDir("pt-en"); });
+$("dir-en-pt").addEventListener("click", function(){ setTransDir("en-pt"); });
+$("trans-input").addEventListener("keydown", function(e){
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); doTranslate(); }
 });
 
 /* ---------- eventos ---------- */
