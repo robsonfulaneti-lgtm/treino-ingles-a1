@@ -244,6 +244,7 @@ input.answer:focus { outline: none; border-color: var(--accent); }
 .feedback .dw-ok { color: var(--ok); }
 .feedback .dw-bad { color: var(--err); font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
 .feedback .where { display: block; margin-top: 4px; }
+.feedback .ptfb, .review-item .ptfb { display: block; font-size: 14.5px; color: var(--muted); font-style: italic; margin: 2px 0 4px; }
 .feedback .rule { display: block; margin-top: 8px; font-size: 14.5px; color: var(--ink); opacity: 0.85; }
 .actionbar {
   position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg);
@@ -461,7 +462,9 @@ var CONTR = [
   ["aren't","are not"],["wasn't","was not"],["weren't","were not"],["i'm","i am"],
   ["can't","cannot"],["shouldn't","should not"],["wouldn't","would not"],
   ["she's","she is"],["he's","he is"],["it's","it is"],["we're","we are"],
-  ["they're","they are"],["you're","you are"],["there's","there is"]
+  ["they're","they are"],["you're","you are"],["there's","there is"],
+  ["won't","will not"],["i'll","i will"],["you'll","you will"],["he'll","he will"],
+  ["she'll","she will"],["we'll","we will"],["they'll","they will"],["it'll","it will"]
 ];
 function norm(s){
   s = (s || "").normalize("NFC").toLowerCase().trim().replace(/’/g,"'").replace(/\s+/g," ").replace(/\s+\?/g,"?").replace(/[.!?]+$/g,"");
@@ -741,7 +744,7 @@ function genTenseId(){
   var TMAP = { pr: "Presente", pa: "Passado", fu: "Futuro" };
   return genVerbs().map(function(q){
     return {
-      t: "p", k: q.k,
+      t: "p", k: q.k, pt: q.pt,
       text: cap(q.answer) + " — que tempo verbal é esse?",
       opts: ["Presente", "Passado", "Futuro"],
       answer: TMAP[q.k],
@@ -779,6 +782,88 @@ var VOCAB = [
   {en:"unreliable", pt:"não confiável"}, {en:"scared", pt:"assustado, com medo"},
   {en:"fascinating", pt:"fascinante"}, {en:"incredible", pt:"incrível"}, {en:"frustrated", pt:"frustrado"}
 ];
+
+/* ---------- traduções dos exercícios de montar frase (chave = frase em inglês) ---------- */
+var PT_HINTS = {
+  "would you like to go to the movies with me?": "Você gostaria de ir ao cinema comigo?",
+  "I would like to talk to you": "Eu gostaria de falar com você.",
+  "I wouldn't like to live here": "Eu não gostaria de morar aqui.",
+  "she can play the piano": "Ela sabe tocar piano.",
+  "can you speak English?": "Você sabe falar inglês?",
+  "I can't go to the party tonight": "Eu não posso ir à festa hoje à noite.",
+  "you should study every day": "Você deveria estudar todos os dias.",
+  "he shouldn't drink soda at night": "Ele não deveria beber refrigerante à noite.",
+  "may I come in?": "Posso entrar?",
+  "we must finish the homework today": "Nós temos que terminar a lição de casa hoje.",
+  "I have to work in the morning": "Eu tenho que trabalhar de manhã.",
+  "shall we go now?": "Vamos agora?",
+  "it might rain tomorrow": "Pode chover amanhã.",
+  "I will have a sandwich": "Eu vou querer um sanduíche.",
+  "there is an apple in the refrigerator": "Tem uma maçã na geladeira.",
+  "there are two apples in the fridge": "Tem duas maçãs na geladeira.",
+  "there isn't any milk in the fridge": "Não tem leite na geladeira.",
+  "are there any apples?": "Tem maçãs?",
+  "is there a supermarket downtown?": "Tem um supermercado no centro?",
+  "there was a party last night": "Teve uma festa ontem à noite.",
+  "there were two men in the store": "Tinha dois homens na loja.",
+  "she is busy today": "Ela está ocupada hoje.",
+  "I am not late": "Eu não estou atrasado.",
+  "are you tired?": "Você está cansado?",
+  "he isn't at home now": "Ele não está em casa agora.",
+  "was she sad yesterday?": "Ela estava triste ontem?",
+  "we were happy on Christmas": "Nós estávamos felizes no Natal.",
+  "aren't you hungry?": "Você não está com fome?",
+  "it's one o'clock": "É uma hora em ponto.",
+  "it's four fifteen": "São quatro e quinze.",
+  "it's a quarter after three": "São três e quinze.",
+  "it's half past ten": "São dez e meia.",
+  "it's a quarter to six": "Faltam quinze para as seis.",
+  "it's ten to four": "Faltam dez para as quatro.",
+  "it's seven o five": "São sete e cinco.",
+  "it's nine twenty-five": "São nove e vinte e cinco.",
+  "it's five thirty": "São cinco e meia.",
+  "what time is it?": "Que horas são?",
+  "I work from nine to five": "Eu trabalho das nove às cinco.",
+  "where do you like to go for a walk?": "Onde você gosta de ir para caminhar?",
+  "when do you like to go for a walk?": "Quando você gosta de ir caminhar?",
+  "what do you like to eat?": "O que você gosta de comer?",
+  "where do you want to go tomorrow?": "Onde você quer ir amanhã?",
+  "when do you study your English lessons?": "Quando você estuda suas lições de inglês?",
+  "how do you spell chicken?": "Como se escreve \"chicken\"?",
+  "why do you study English?": "Por que você estuda inglês?",
+  "who do you work with?": "Com quem você trabalha?",
+  "where does she like to go on weekends?": "Onde ela gosta de ir nos fins de semana?",
+  "why does he work at night?": "Por que ele trabalha à noite?",
+  "how old are you?": "Quantos anos você tem?",
+  "how much does it cost?": "Quanto custa?",
+  "which one do you want?": "Qual você quer?",
+  "whose book is this?": "De quem é este livro?",
+  "how many brothers do you have?": "Quantos irmãos você tem?",
+  "how often do you go to the movies?": "Com que frequência você vai ao cinema?",
+  "who is your teacher?": "Quem é seu professor?",
+  "who works with you?": "Quem trabalha com você?",
+  "what time do you wake up?": "A que horas você acorda?",
+  "where is the bathroom?": "Onde fica o banheiro?",
+  "do you want to go to the mall with me?": "Você quer ir ao shopping comigo?",
+  "she goes to church every week": "Ela vai à igreja toda semana.",
+  "he goes home at night": "Ele vai para casa à noite.",
+  "they don't go to the supermarket on weekends": "Eles não vão ao supermercado nos fins de semana.",
+  "we go downtown every day": "Nós vamos ao centro todos os dias.",
+  "I want to go to the USA": "Eu quero ir para os EUA.",
+  "does he go to school every day?": "Ele vai à escola todos os dias?",
+  "I don't go to church on weekends": "Eu não vou à igreja nos fins de semana.",
+  "they want to go to the park": "Eles querem ir ao parque.",
+  "she is going to Portugal": "Ela está indo para Portugal.",
+  "I go to the mall on weekends": "Eu vou ao shopping nos fins de semana.",
+  "do you go to church every week?": "Você vai à igreja toda semana?",
+  "she doesn't work on the weekend": "Ela não trabalha no fim de semana.",
+  "we like to travel on the weekends": "Nós gostamos de viajar nos fins de semana.",
+  "he studies every week": "Ele estuda toda semana.",
+  "do you work this afternoon?": "Você trabalha hoje à tarde?",
+  "I don't want to go tonight": "Eu não quero ir hoje à noite.",
+  "she works with her parents": "Ela trabalha com os pais dela.",
+  "I learn how to cook with my mother": "Eu aprendo a cozinhar com a minha mãe."
+};
 
 /* ---------- seções ---------- */
 var SECTIONS = [
@@ -1253,6 +1338,39 @@ var SECTIONS = [
       }))
       .concat(genTenseId());
   }
+},
+{
+  id: "diaadia", icon: "☀️", title: "Dia a dia", kinds: true,
+  kindOptions: [["all","Tudo"],["pr","Presente"],["pa","Passado"],["fu","Futuro"]],
+  desc: "Frases reais do seu cotidiano — trabalho, comida, rotina — no presente, passado e futuro.",
+  explain: "<h3>A pergunta-chave: quando aconteceu?</h3>" +
+    "<p>Antes de escrever, decida o tempo. Isso resolve a maioria dos erros do dia a dia:</p>" +
+    "<span class='frm'><b>Rotina / sempre</b> → Simple Present<br><code>I work from home on Fridays</code> (toda sexta)</span>" +
+    "<span class='frm'><b>Já aconteceu, acabou</b> → Simple Past<br><code>I ate rice for lunch</code> (comi, terminou)</span>" +
+    "<span class='frm'><b>Plano / vai acontecer</b> → going to (ou will)<br><code>I'm going to work from home today</code> (hoje, plano)</span>" +
+    "<h3>Os 2 erros mais comuns (e a correção)</h3>" +
+    "<ul><li><b>\"Hoje eu vou trabalhar em casa\" → <s>I go to work at home</s></b><br>" +
+    "<code>I go</code> é rotina (todo dia). Pra um plano de HOJE, use <code>I'm going to work from home today</code>. " +
+    "Vale também <code>I'm working from home today</code> (continuous pra futuro combinado) ou <code>I will work from home today</code>.</li>" +
+    "<li><b>\"Eu comi arroz no almoço\" → <s>I eating rice</s></b><br>" +
+    "<code>eating</code> sozinho não existe — o <code>-ing</code> precisa de <code>am/is/are</code> e é pra AGORA (<code>I am eating</code> = estou comendo). " +
+    "Coisa que já terminou é passado simples: <code>I ate rice for lunch</code>.</li></ul>" +
+    "<h3>Vocabulário de rotina</h3>" +
+    "<p><code>wake up</code> acordar · <code>have breakfast/lunch/dinner</code> tomar café/almoçar/jantar · <code>get home</code> chegar em casa · " +
+    "<code>take the bus</code> pegar o ônibus · <code>work from home</code> trabalhar de casa · <code>go to bed</code> ir dormir · <code>call</code> ligar.</p>" +
+    "<p>Refeição usa <b>for</b>: <code>for breakfast / for lunch / for dinner</code>. Horário usa <b>at</b>: <code>at seven</code>, <code>at noon</code>.</p>" +
+    "<p>Várias traduções podem estar certas — o app aceita as formas mais comuns. Se a sua ficar diferente, compare com a resposta e veja se o TEMPO verbal bateu; é isso que importa aqui.</p>",
+  items: [
+    {t:"c", k:"pr", parts:["I","wake up","at seven","in the morning"], pt:"Eu acordo às sete da manhã.", rule:"Rotina → simple present. Horário com at: at seven."},
+    {t:"c", k:"pr", parts:["she","takes","the bus","to work"], pt:"Ela pega o ônibus para o trabalho.", rule:"Rotina de she → verbo com -s: takes."},
+    {t:"c", k:"pr", parts:["we","have lunch","at noon"], pt:"Nós almoçamos ao meio-dia.", rule:"Almoçar = have lunch. Meio-dia = noon."},
+    {t:"c", k:"pa", parts:["I","ate","rice","for lunch"], pt:"Eu comi arroz no almoço.", rule:"Já aconteceu → passado: eat → ate. Refeição com for: for lunch. (Nunca 'I eating'.)"},
+    {t:"c", k:"pa", parts:["we","watched","a movie","last night"], pt:"Nós assistimos um filme ontem à noite.", rule:"Passado regular: watch → watched."},
+    {t:"c", k:"pa", parts:["I","didn't","have","breakfast"], pt:"Eu não tomei café da manhã.", rule:"Negativa no passado: didn't + have (base). Tomar café da manhã = have breakfast."},
+    {t:"c", k:"fu", parts:["I'm","going to","work","from home","today"], pt:"Hoje eu vou trabalhar em casa.", rule:"Plano pra hoje → going to. Não é rotina, então NÃO é 'I go'."},
+    {t:"c", k:"fu", parts:["she's","going to","cook","tonight"], pt:"Ela vai cozinhar hoje à noite.", rule:"she's going to + verbo base."},
+    {t:"c", k:"fu", parts:["are","you","going to","the party","tomorrow","?"], pt:"Você vai à festa amanhã?", rule:"Pergunta no futuro: inverte o to be → Are you going...?"}
+  ]
 }
 ];
 
@@ -1386,6 +1504,55 @@ feelings: [
   {t:"tr", k:"af", pt:"Meu carro era confiável.", answer:"my car was reliable", rule:"my car = it → was."},
   {t:"tr", k:"af", pt:"A testemunha não era confiável.", answer:"the witness was unreliable", rule:"unreliable já tem o 'não' embutido no significado."},
   {t:"tr", k:"af", pt:"Os alunos ficaram frustrados.", answer:"the students were frustrated", rule:"the students = they → were."}
+],
+diaadia: [
+  {t:"tr", k:"pr", pt:"Eu acordo às sete da manhã.", answer:"I wake up at seven in the morning", alt:["I wake up at 7 in the morning","I wake up at seven am","I wake up at 7 am"], rule:"Rotina → simple present. Acordar = wake up. Horário com at."},
+  {t:"tr", k:"pr", pt:"Eu tomo café da manhã em casa.", answer:"I have breakfast at home", alt:["I eat breakfast at home"], rule:"Tomar café da manhã = have breakfast (não 'drink coffee' — isso é beber café)."},
+  {t:"tr", k:"pr", pt:"Eu trabalho de segunda a sexta.", answer:"I work from Monday to Friday", alt:["I work Monday to Friday","I work Monday through Friday"], rule:"De... a... = from... to... Dias da semana com maiúscula."},
+  {t:"tr", k:"pr", pt:"Ela pega o ônibus para o trabalho.", answer:"she takes the bus to work", rule:"She → takes (-s). Pegar o ônibus = take the bus. Para o trabalho = to work (sem the)."},
+  {t:"tr", k:"pr", pt:"Nós almoçamos ao meio-dia.", answer:"we have lunch at noon", alt:["we eat lunch at noon","we have lunch at 12","we have lunch at twelve"], rule:"Almoçar = have lunch. Meio-dia = noon."},
+  {t:"tr", k:"pr", pt:"Eu estudo inglês à noite.", answer:"I study English at night", alt:["I study English in the evening"], rule:"À noite = at night. Idioma com maiúscula."},
+  {t:"tr", k:"pr", pt:"Ele não toma café.", answer:"he doesn't drink coffee", rule:"He → doesn't + drink (base). Tomar café (bebida) = drink coffee."},
+  {t:"tr", k:"pr", pt:"Você trabalha em casa?", answer:"do you work from home?", alt:["do you work at home?"], rule:"Pergunta de rotina: Do + you + work. Trabalhar de casa = work from home."},
+  {t:"tr", k:"pr", pt:"Eu escovo os dentes depois do café da manhã.", answer:"I brush my teeth after breakfast", rule:"Em inglês o possessivo é obrigatório: brush MY teeth. Tooth → teeth (plural irregular)."},
+  {t:"tr", k:"pr", pt:"Meus pais moram no centro.", answer:"my parents live downtown", rule:"Downtown não leva 'in the'. Morar = live."},
+  {t:"tr", k:"pr", pt:"Eu vou à academia três vezes por semana.", answer:"I go to the gym three times a week", alt:["I go to the gym 3 times a week"], rule:"Rotina → I go. Academia = the gym. Três vezes por semana = three times a week."},
+  {t:"tr", k:"pr", pt:"Ela chega em casa às seis.", answer:"she gets home at six", alt:["she arrives home at six","she gets home at 6","she arrives home at 6"], rule:"Chegar em casa = get home (sem 'to'). She → gets."},
+  {t:"tr", k:"pr", pt:"A gente janta juntos.", answer:"we have dinner together", alt:["we eat dinner together"], rule:"'A gente' = we. Jantar = have dinner."},
+  {t:"tr", k:"pr", pt:"Eu durmo até tarde nos fins de semana.", answer:"I sleep late on weekends", alt:["I sleep late on the weekends","I sleep in on weekends"], rule:"Costume → on weekends (sem the). Dormir até tarde = sleep late / sleep in."},
+  {t:"tr", k:"pr", pt:"Que horas você almoça?", answer:"what time do you have lunch?", alt:["what time do you eat lunch?"], rule:"What time + do + you + have lunch? A hora sai da pergunta."},
+
+  {t:"tr", k:"pa", pt:"Eu comi arroz no almoço.", answer:"I ate rice for lunch", alt:["I ate rice at lunch"], rule:"Já aconteceu → simple past: eat → ate. Nunca 'I eating' — o -ing sozinho não existe. Refeição com for."},
+  {t:"tr", k:"pa", pt:"Ontem eu trabalhei em casa.", answer:"I worked from home yesterday", alt:["I worked at home yesterday","yesterday I worked from home","yesterday I worked at home"], rule:"Passado regular: work → worked. 'Ontem' pode ir no início ou no fim."},
+  {t:"tr", k:"pa", pt:"Eu acordei tarde hoje.", answer:"I woke up late today", rule:"Passado irregular: wake up → woke up."},
+  {t:"tr", k:"pa", pt:"Ela foi ao mercado de manhã.", answer:"she went to the market in the morning", alt:["she went to the supermarket in the morning","she went to the store in the morning"], rule:"Go → went (irregular). Mercado = the market / the supermarket."},
+  {t:"tr", k:"pa", pt:"Nós assistimos um filme ontem à noite.", answer:"we watched a movie last night", rule:"Passado regular: watch → watched. Ontem à noite = last night."},
+  {t:"tr", k:"pa", pt:"Eu não tomei café da manhã.", answer:"I didn't have breakfast", alt:["I didn't eat breakfast"], rule:"Negativa no passado: didn't + have (base, não 'had')."},
+  {t:"tr", k:"pa", pt:"Você dormiu bem?", answer:"did you sleep well?", rule:"Pergunta no passado: Did + you + sleep (base). Bem = well."},
+  {t:"tr", k:"pa", pt:"Ele chegou atrasado no trabalho.", answer:"he arrived late to work", alt:["he arrived late at work","he got to work late","he was late for work"], rule:"Arrive → arrived. Atrasado = late."},
+  {t:"tr", k:"pa", pt:"Eu peguei o ônibus às oito.", answer:"I took the bus at eight", alt:["I took the bus at 8"], rule:"Take → took (irregular). Horário com at."},
+  {t:"tr", k:"pa", pt:"Choveu muito ontem.", answer:"it rained a lot yesterday", alt:["it rained a lot yesterday"], rule:"Chuva precisa de sujeito: IT rained. Muito = a lot."},
+  {t:"tr", k:"pa", pt:"Eu esqueci minha chave em casa.", answer:"I forgot my key at home", alt:["I forgot my keys at home"], rule:"Forget → forgot (irregular). Em casa = at home."},
+  {t:"tr", k:"pa", pt:"Nós fomos a uma festa no sábado.", answer:"we went to a party on Saturday", rule:"Go → went. Dia da semana com on e maiúscula: on Saturday."},
+  {t:"tr", k:"pa", pt:"Ela ligou para a mãe dela.", answer:"she called her mother", alt:["she called her mom"], rule:"Ligar = call (sem 'to' depois). Her = dela."},
+  {t:"tr", k:"pa", pt:"Eu estava cansado ontem.", answer:"I was tired yesterday", rule:"Estado no passado = was/were: I was tired."},
+  {t:"tr", k:"pa", pt:"Vocês estudaram ontem?", answer:"did you study yesterday?", rule:"Did + you + study (base). 'Vocês' também é you."},
+
+  {t:"tr", k:"fu", pt:"Hoje eu vou trabalhar em casa.", answer:"I'm going to work from home today", alt:["I'm going to work at home today","today I'm going to work from home","today I'm going to work at home","I'm working from home today","I'm working at home today","I will work from home today","I will work at home today","today I will work from home"], rule:"Plano pra hoje → going to (ou continuous, ou will). NÃO é 'I go' — simple present é só pra rotina."},
+  {t:"tr", k:"fu", pt:"Amanhã eu vou ao dentista.", answer:"I'm going to the dentist tomorrow", alt:["tomorrow I'm going to the dentist","I'm going to go to the dentist tomorrow","I will go to the dentist tomorrow"], rule:"Compromisso marcado → I'm going to the dentist. Dentista = the dentist."},
+  {t:"tr", k:"fu", pt:"Nós vamos viajar no fim de semana.", answer:"we're going to travel on the weekend", alt:["we're going to travel this weekend","we will travel on the weekend","we will travel this weekend","we're traveling on the weekend","we're traveling this weekend"], rule:"Plano → we're going to travel. Fim de semana = the weekend."},
+  {t:"tr", k:"fu", pt:"Ela vai cozinhar hoje à noite.", answer:"she's going to cook tonight", alt:["she will cook tonight","she's cooking tonight"], rule:"She's going to + verbo base. Hoje à noite = tonight."},
+  {t:"tr", k:"fu", pt:"Eu vou comprar pão mais tarde.", answer:"I'm going to buy bread later", alt:["I will buy bread later"], rule:"Going to + buy. Mais tarde = later."},
+  {t:"tr", k:"fu", pt:"Você vai à festa amanhã?", answer:"are you going to the party tomorrow?", alt:["are you going to go to the party tomorrow?","will you go to the party tomorrow?"], rule:"Pergunta no futuro: inverte → Are you going...?"},
+  {t:"tr", k:"fu", pt:"Eu não vou trabalhar amanhã.", answer:"I'm not going to work tomorrow", alt:["I'm not working tomorrow","I won't work tomorrow"], rule:"Negativa: I'm not going to + verbo. Ou I won't (will not)."},
+  {t:"tr", k:"fu", pt:"Eles vão chegar às nove.", answer:"they're going to arrive at nine", alt:["they're going to arrive at 9","they will arrive at nine","they will arrive at 9","they're arriving at nine","they're arriving at 9"], rule:"They're going to + arrive. Horário com at."},
+  {t:"tr", k:"fu", pt:"Vai chover amanhã.", answer:"it's going to rain tomorrow", alt:["it will rain tomorrow"], rule:"Chuva com sujeito IT: it's going to rain."},
+  {t:"tr", k:"fu", pt:"Eu vou estudar inglês hoje à noite.", answer:"I'm going to study English tonight", alt:["I will study English tonight","I'm studying English tonight"], rule:"Going to + study. Tonight = hoje à noite."},
+  {t:"tr", k:"fu", pt:"Nós vamos almoçar fora hoje.", answer:"we're going to have lunch out today", alt:["we're going to eat out today","we're going to eat lunch out today","we're having lunch out today","we will have lunch out today"], rule:"Almoçar fora = have lunch out / eat out."},
+  {t:"tr", k:"fu", pt:"Ele vai te ligar mais tarde.", answer:"he's going to call you later", alt:["he will call you later","he'll call you later"], rule:"Te ligar = call you (sem 'to'). Later = mais tarde."},
+  {t:"tr", k:"fu", pt:"Eu vou dormir cedo hoje.", answer:"I'm going to sleep early tonight", alt:["I'm going to sleep early today","I'm going to go to bed early tonight","I'm going to go to bed early today","I will sleep early tonight","I will go to bed early tonight"], rule:"Dormir cedo = sleep early / go to bed early. 'Hoje' à noite = tonight."},
+  {t:"tr", k:"fu", pt:"O que você vai fazer no fim de semana?", answer:"what are you going to do on the weekend?", alt:["what are you going to do this weekend?","what will you do on the weekend?","what will you do this weekend?","what are you doing this weekend?"], rule:"What + are + you + going to do...? Fazer = do."},
+  {t:"tr", k:"fu", pt:"Eu vou pegar o ônibus amanhã.", answer:"I'm going to take the bus tomorrow", alt:["I will take the bus tomorrow","I'm taking the bus tomorrow"], rule:"Going to + take the bus."}
 ]
 };
 
@@ -1482,11 +1649,17 @@ function sectionItems(sec){
   if (!sec._items) {
     var base = sec.gen ? sec.gen() : sec.items;
     sec._items = base.concat(TRANS[sec.id] || []);
+    sec._items.forEach(function(it){
+      if (it.t === "c" && !it.pt) {
+        var hint = PT_HINTS[it.parts.join(" ").replace(" ?", "?")];
+        if (hint) it.pt = hint;
+      }
+    });
   }
   return sec._items;
 }
 
-var PATH_ORDER = ["present","conj","pronomes","tobe","cont","feelings","past","verbos","modais","wh","togo","semanas","horas","vocab"];
+var PATH_ORDER = ["present","conj","pronomes","tobe","cont","feelings","past","verbos","diaadia","modais","wh","togo","semanas","horas","vocab"];
 function nodeStatus(st){
   if (!st || !st.a) return "todo";
   if (st.a >= 8 && (st.c / st.a) >= 0.75) return "done";
@@ -1712,6 +1885,10 @@ function renderPick(q){
 }
 
 /* ---------- verificação e "onde errei" ---------- */
+function ptFb(q){
+  if (!q.pt || q.t === "tr" || q.t === "f") return "";
+  return '<span class="ptfb">' + q.pt + '</span>';
+}
 function answerDisplay(q){
   var a = q.t === "c" ? q.parts.join(" ").replace(" ?","?") : q.t === "f" ? q.pt : q.answer;
   return cap(a);
@@ -1728,7 +1905,7 @@ function checkChips(q){
   if (ok) {
     state.hits++;
     fb.className = "feedback ok";
-    fb.innerHTML = '✓ Correto!<span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+    fb.innerHTML = '✓ Correto!<span class="full">' + answerDisplay(q) + '</span>' + ptFb(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   } else {
     state.misses.push(q);
     var where = "";
@@ -1743,7 +1920,7 @@ function checkChips(q){
       if (chips[i]) chips[i].className = "chip " + (e.word === q.parts[i] ? "good" : "bad");
     });
     fb.className = "feedback err";
-    fb.innerHTML = '✗ Ainda não.<span class="where">' + where + '</span><span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+    fb.innerHTML = '✗ Ainda não.<span class="where">' + where + '</span><span class="full">' + answerDisplay(q) + '</span>' + ptFb(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   }
   attachTtsButton(fb, q.parts.join(" ").replace(" ?","?"));
   $("btn-main").textContent = state.idx + 1 < state.queue.length ? "Próxima →" : "Ver resultado";
@@ -1759,12 +1936,12 @@ function checkSpokenSentence(q, transcript){
   if (ok) {
     state.hits++;
     fb.className = "feedback ok";
-    fb.innerHTML = '✓ Correto! Você falou certinho.<span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+    fb.innerHTML = '✓ Correto! Você falou certinho.<span class="full">' + answerDisplay(q) + '</span>' + ptFb(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   } else {
     state.misses.push(q);
     var d = wordDiffHtml({ answer: target }, transcript);
     fb.className = "feedback err";
-    fb.innerHTML = '✗ Ainda não.<span class="where">O reconhecimento entendeu: “' + transcript + '”' + (d.where ? '<br>' + d.where : '') + '</span><span class="full">' + d.html + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+    fb.innerHTML = '✗ Ainda não.<span class="where">O reconhecimento entendeu: “' + transcript + '”' + (d.where ? '<br>' + d.where : '') + '</span><span class="full">' + d.html + '</span>' + ptFb(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   }
   attachTtsButton(fb, target);
   $("btn-main").textContent = state.idx + 1 < state.queue.length ? "Próxima →" : "Ver resultado";
@@ -1798,13 +1975,13 @@ function checkWrite(q){
   if (ok) {
     state.hits++;
     fb.className = "feedback ok";
-    fb.innerHTML = '✓ Correto!<span class="full">' + answerDisplay(q) + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+    fb.innerHTML = '✓ Correto!<span class="full">' + answerDisplay(q) + '</span>' + ptFb(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   } else {
     state.misses.push(q);
     var d = wordDiffHtml(q, user);
     fb.className = "feedback err";
     fb.innerHTML = '✗ Ainda não.' + (d.where ? '<span class="where">' + d.where + '</span>' : "") +
-      '<span class="full">' + d.html + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+      '<span class="full">' + d.html + '</span>' + ptFb(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   }
   attachTtsButton(fb, q.answer);
   $("answer-input").blur();
@@ -1824,11 +2001,11 @@ function checkPick(q, opt, btn){
   if (ok) {
     state.hits++;
     fb.className = "feedback ok";
-    fb.innerHTML = '✓ Correto! <span class="full">' + q.text.replace("___", q.answer === "(nada)" ? "" : q.answer).replace(/\s+/g," ") + '</span><span class="rule">' + q.rule + '</span>';
+    fb.innerHTML = '✓ Correto! <span class="full">' + q.text.replace("___", q.answer === "(nada)" ? "" : q.answer).replace(/\s+/g," ") + '</span>' + ptFb(q) + '<span class="rule">' + q.rule + '</span>';
   } else {
     state.misses.push(q);
     fb.className = "feedback err";
-    fb.innerHTML = '✗ Ainda não. Você escolheu "' + opt + '", o certo é "<b>' + q.answer + '</b>".<span class="full">' + q.text.replace("___", q.answer === "(nada)" ? "" : q.answer).replace(/\s+/g," ") + '</span><span class="rule">' + q.rule + '</span>';
+    fb.innerHTML = '✗ Ainda não. Você escolheu "' + opt + '", o certo é "<b>' + q.answer + '</b>".<span class="full">' + q.text.replace("___", q.answer === "(nada)" ? "" : q.answer).replace(/\s+/g," ") + '</span>' + ptFb(q) + '<span class="rule">' + q.rule + '</span>';
   }
   $("btn-main").textContent = state.idx + 1 < state.queue.length ? "Próxima →" : "Ver resultado";
 }
@@ -1880,7 +2057,7 @@ function finishQuiz(){
     d.className = "review-item";
     var prompt = q.t === "w" ? (q.task + ": " + q.given) : (q.t === "tr" ? ("Traduzir: " + q.pt) : (q.t === "f" ? ("Palavra: " + q.en) : (q.t === "p" ? q.text : (q.hint || "Montar frase"))));
     d.innerHTML = '<span>' + prompt + '</span><br><b class="en">' + answerDisplay(q) + '</b>' +
-      '<span class="rule">' + q.rule + '</span>';
+      ptFb(q) + '<span class="rule">' + q.rule + '</span>';
     host.appendChild(d);
   });
   var again = document.createElement("button");

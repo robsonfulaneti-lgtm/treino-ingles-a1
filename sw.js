@@ -1,4 +1,4 @@
-var CACHE = "treino-a1-v21";
+var CACHE = "treino-a1-v22";
 var ASSETS = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", function (e) {
@@ -16,7 +16,7 @@ self.addEventListener("activate", function (e) {
 });
 
 self.addEventListener("fetch", function (e) {
-  // Chamadas a serviços externos (ex.: API de tradução) passam direto, sem cache.
+  // Chamadas a servicos externos (ex.: API de traducao) passam direto, sem cache.
   if (new URL(e.request.url).origin !== self.location.origin) return;
 
   var isPage = e.request.mode === "navigate" || e.request.destination === "document";
