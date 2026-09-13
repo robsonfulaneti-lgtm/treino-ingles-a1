@@ -663,6 +663,148 @@ function genCont(){
   return items;
 }
 function goingPt(slot){ return {eu:"vou", sing3:"vai", nos:"vamos", plur3:"vão"}[slot]; }
+/* ---------- To Be em 3 tempos (gerado) ---------- */
+var BE_COMP = [
+  {en:"tired", pt:"cansado", ptp:"cansados", v:"estar"}, {en:"hungry", pt:"com fome", v:"estar"},
+  {en:"happy", pt:"feliz", ptp:"felizes", v:"estar"}, {en:"scared", pt:"com medo", v:"estar"},
+  {en:"frustrated", pt:"frustrado", ptp:"frustrados", v:"estar"}, {en:"at home", pt:"em casa", v:"estar"},
+  {en:"at work", pt:"no trabalho", v:"estar"}, {en:"in the countryside", pt:"no interior", v:"estar"},
+  {en:"at the party", pt:"na festa", v:"estar"}, {en:"late", pt:"atrasado", ptp:"atrasados", v:"estar"},
+  {en:"a teacher", pt:"professor", ptp:"professores", v:"ser"}, {en:"a lawyer", pt:"advogado", ptp:"advogados", v:"ser"},
+  {en:"polite", pt:"educado", ptp:"educados", v:"ser"}, {en:"reliable", pt:"confiável", ptp:"confiáveis", v:"ser"},
+  {en:"rude", pt:"grosseiro", ptp:"grosseiros", v:"ser"}, {en:"messy", pt:"bagunceiro", ptp:"bagunceiros", v:"ser"},
+  {en:"busy", pt:"ocupado", ptp:"ocupados", v:"estar"}, {en:"sick", pt:"doente", ptp:"doentes", v:"estar"},
+  {en:"ready", pt:"pronto", ptp:"prontos", v:"estar"}, {en:"in love", pt:"apaixonado", ptp:"apaixonados", v:"estar"},
+  {en:"cold", pt:"frio", v:"estar", it:1}, {en:"sunny", pt:"ensolarado", v:"estar", it:1},
+  {en:"cloudy", pt:"nublado", v:"estar", it:1}, {en:"windy", pt:"ventando", v:"estar", it:1}
+];
+var SER_PT = {
+  pres: {eu:"sou", sing3:"é", nos:"somos", plur3:"são"},
+  past: {eu:"era", sing3:"era", nos:"éramos", plur3:"eram"},
+  fut:  {eu:"vou ser", sing3:"vai ser", nos:"vamos ser", plur3:"vão ser"}
+};
+var ESTAR_PT = {
+  pres: ESTAR,
+  past: {eu:"estava", sing3:"estava", nos:"estávamos", plur3:"estavam"},
+  fut:  {eu:"vou estar", sing3:"vai estar", nos:"vamos estar", plur3:"vão estar"}
+};
+function wasFor(s){ return (s === "I" || s === "he" || s === "she" || s === "it") ? "was" : "were"; }
+function beParts(s, tense, pol){
+  /* devolve {af, ng, in} em inglês pro sujeito s */
+  if (tense === "pres") {
+    var b = beFor(s);
+    return {af:b, ng: b === "am" ? "am not" : b === "is" ? "isn't" : "aren't", q:b};
+  }
+  if (tense === "past") {
+    var w = wasFor(s);
+    return {af:w, ng: w + "n't", q:w};
+  }
+  return {af:"will be", ng:"won't be", q:"will", rest:"be"};
+}
+function genToBe(){
+  var items = [];
+  var TENSES = ["pres","past","fut"];
+  var TK = {pres:"pr", past:"pa", fut:"fu"};
+  var TIME = {
+    pres: [["today","hoje"],["now","agora"],["",""],["this week","esta semana"]],
+    past: [["yesterday","ontem"],["last night","ontem à noite"],["last week","na semana passada"],["two weeks ago","duas semanas atrás"]],
+    fut:  [["tomorrow","amanhã"],["next week","semana que vem"],["tonight","hoje à noite"],["later","mais tarde"]]
+  };
+  var TNAME = {pres:"presente", past:"passado", fut:"futuro"};
+
+  /* parte 1: to be + adjetivo / lugar / profissão */
+  BE_COMP.forEach(function(c, i){
+    TENSES.forEach(function(tense, ti){
+      var pol = (i + ti) % 3;
+      var s = c.it ? "it" : SUBJ[(i * 5 + ti * 2) % SUBJ.length];
+      var sp = SUBJ_PT[s];
+      var be = beParts(s, tense);
+      var tm = (c.v === "ser" && tense !== "fut") ? ["",""] : TIME[tense][(i + ti) % TIME[tense].length];
+      var ptV = (c.v === "ser" ? SER_PT : ESTAR_PT)[tense][sp.slot];
+      var subjPt = c.it ? "" : sp.w;
+      var ptC = (sp.slot === "plur3" || sp.slot === "nos") && c.ptp ? c.ptp : c.pt;
+      var ptTime = tm[1];
+      var enC = (s === "we" || s === "they" || s === "you") && /^a /.test(c.en) ? c.en.slice(2) + "s" : c.en;
+      var expl, answer, ptText;
+      if (pol === 0) {
+        ptText = ptSentence([subjPt, ptV, ptC, ptTime], ".");
+        if (c.it) ptText = ptSentence([ptV, ptC, ptTime], ".");
+        answer = parts([s, be.af, enC, tm[0]]).join(" ");
+        expl = "To be no " + TNAME[tense] + " (afirmativa): " + s + " + " + be.af + " + " + enC + ". " +
+          (tense === "pres" ? "am/is/are conforme o sujeito." : tense === "past" ? "was (I/he/she/it) ou were (you/we/they)." : "will be pra todo mundo — will nunca muda.");
+      } else if (pol === 1) {
+        ptText = c.it ? ptSentence(["não", ptV, ptC, ptTime], ".") : ptSentence([subjPt, "não", ptV, ptC, ptTime], ".");
+        answer = parts([s, be.ng, enC, tm[0]]).join(" ");
+        expl = "To be no " + TNAME[tense] + " (negativa): " + be.ng + ". O to be nega com not — nunca don't/didn't.";
+      } else {
+        ptText = c.it ? ptSentence([ptV, ptC, ptTime], "?") : ptSentence([subjPt, ptV, ptC, ptTime], "?");
+        answer = tense === "fut"
+          ? parts(["will", s, "be", enC, tm[0]]).join(" ") + "?"
+          : parts([be.q, s, enC, tm[0]]).join(" ") + "?";
+        expl = "Pergunta com to be no " + TNAME[tense] + ": inverte → " + cap(tense === "fut" ? "Will " + s + " be" : be.q + " " + s) + "...? Sem do/does/did.";
+      }
+      var alt = [];
+      if (pol === 1 && tense === "past") alt.push(parts([s, be.af, "not", enC, tm[0]]).join(" "));
+      if (pol === 1 && tense === "pres" && be.ng !== "am not") alt.push(parts([s, be.af, "not", enC, tm[0]]).join(" "));
+      if (pol === 1 && tense === "fut") alt.push(parts([s, "will not be", enC, tm[0]]).join(" "));
+      if (pol === 0 && tense === "fut") alt.push(parts([s, beFor(s), "going to be", enC, tm[0]]).join(" "));
+      items.push({t:"tr", k:TK[tense], pt:ptText, answer:answer, alt:alt, rule:expl + " (" + (c.v === "ser" ? "ser" : "estar") + " → to be)"});
+    });
+  });
+
+  /* parte 2: to be + verbo -ing (todos os verbos) nos 3 tempos */
+  var extra = CVERBS.filter(function(cv){ return !VERBS.some(function(v){ return v.b === cv.b; }); });
+  var STATIVE = {want:1, need:1, hate:1, love:1, know:1, understand:1, remember:1};
+  var ALL = VERBS.filter(function(v){ return !STATIVE[v.b]; }).map(function(v){
+    var cv = CVERBS.filter(function(x){ return x.b === v.b; })[0];
+    return {b:v.b, g: cv ? cv.g : ing(v.b), c:v.c, pt:v.pt, cls:v.cls, cpt:v.cpt, it:v.it};
+  }).concat(extra.map(function(cv){ return {b:cv.b, g:cv.g, c:cv.c, pt:cv.pinf, cls:cv.cls, cpt:cv.cpt, it:0}; }));
+
+  ALL.forEach(function(v, i){
+    TENSES.forEach(function(tense, ti){
+      var pol = (i + ti) % 3;
+      var s = v.it ? "it" : SUBJ[(i + ti * 2) % SUBJ.length];
+      var sp = SUBJ_PT[s];
+      var be = beParts(s, tense);
+      var tm = TIME[tense][(i + ti + 1) % TIME[tense].length];
+      var ger = ptGerund(v);
+      var estar = ESTAR_PT[tense][sp.slot];
+      var subjPt = v.it ? "" : sp.w;
+      var ptText, answer, expl, alt = [];
+      var head = tense === "fut" ? "will be" : be.af;
+      if (pol === 0) {
+        ptText = ptSentence([subjPt, estar, ger, v.cpt, tm[1]], ".");
+        answer = parts([s, head, v.g, v.c, tm[0]]).join(" ");
+        expl = "To be + " + v.g + " no " + TNAME[tense] + ": " + s + " " + head + " " + v.g + ". O -ing nunca anda sozinho — sempre com am/is/are, was/were ou will be.";
+        if (tense === "fut") alt.push(parts([s, beFor(s), "going to be", v.g, v.c, tm[0]]).join(" "));
+      } else if (pol === 1) {
+        ptText = ptSentence([subjPt, "não", estar, ger, v.cpt, tm[1]], ".");
+        answer = parts([s, be.ng, v.g, v.c, tm[0]]).join(" ");
+        expl = "Negativa: " + be.ng + " + " + v.g + ". O not gruda no to be, e o verbo continua com -ing.";
+        if (tense === "past") alt.push(parts([s, be.af, "not", v.g, v.c, tm[0]]).join(" "));
+        if (tense === "pres" && be.ng !== "am not") alt.push(parts([s, be.af, "not", v.g, v.c, tm[0]]).join(" "));
+        if (tense === "fut") alt.push(parts([s, "will not be", v.g, v.c, tm[0]]).join(" "));
+      } else {
+        ptText = ptSentence([subjPt, estar, ger, v.cpt, tm[1]], "?");
+        answer = tense === "fut"
+          ? parts(["will", s, "be", v.g, v.c, tm[0]]).join(" ") + "?"
+          : parts([be.q, s, v.g, v.c, tm[0]]).join(" ") + "?";
+        expl = "Pergunta: inverte o to be → " + cap(tense === "fut" ? "Will " + s + " be" : be.q + " " + s) + " " + v.g + "...? Nada de do/does/did.";
+      }
+      items.push({t:"tr", k:TK[tense], pt:ptText, answer:answer, alt:alt, rule:expl + " (" + v.pt + " → " + v.b + " → " + v.g + ")"});
+    });
+  });
+  return items;
+}
+function ing(b){
+  var fixed = {begin:"beginning", stop:"stopping", travel:"traveling"};
+  if (fixed[b]) return fixed[b];
+  if (/ie$/.test(b)) return b.slice(0, -2) + "ying";
+  if (/[^e]e$/.test(b) && !/ee$/.test(b)) return b.slice(0, -1) + "ing";
+  if (/^[^aeiou]*[aeiou][^aeiouwxy]$/.test(b)) return b + b.slice(-1) + "ing";
+  return b + "ing";
+}
+
 function genVerbs(){
   var items = [];
   var extra = CVERBS.filter(function(cv){ return !VERBS.some(function(v){ return v.b === cv.b; }); });
@@ -1371,6 +1513,98 @@ var SECTIONS = [
     {t:"c", k:"fu", parts:["she's","going to","cook","tonight"], pt:"Ela vai cozinhar hoje à noite.", rule:"she's going to + verbo base."},
     {t:"c", k:"fu", parts:["are","you","going to","the party","tomorrow","?"], pt:"Você vai à festa amanhã?", rule:"Pergunta no futuro: inverte o to be → Are you going...?"}
   ]
+},
+{
+  id: "tobe3", icon: "🔺", title: "To Be: presente, passado e futuro", kinds: true,
+  kindOptions: [["all","Tudo"],["pr","Presente"],["pa","Passado"],["fu","Futuro"]],
+  desc: "am/is/are · was/were · will be — com adjetivos, lugares e TODOS os verbos em -ing. Leia em português e escreva em inglês.",
+  explain: "<h3>O verbo to be nos 3 tempos</h3>" +
+    "<span class='frm'><b>Presente</b> — <code>I am · he/she/it is · you/we/they are</code><br><code>I am tired.</code> Eu estou cansado.</span>" +
+    "<span class='frm'><b>Passado</b> — <code>I/he/she/it was · you/we/they were</code><br><code>She was at home.</code> Ela estava em casa.</span>" +
+    "<span class='frm'><b>Futuro</b> — <code>will be</code> pra todo mundo<br><code>We will be ready tomorrow.</code> Nós vamos estar prontos amanhã. (Também vale <code>going to be</code>.)</span>" +
+    "<h3>Negativa e pergunta — sem do/does/did!</h3>" +
+    "<ul><li><b>Negativa:</b> <code>not</code> depois do to be → <code>I'm not / isn't / aren't / wasn't / weren't / won't be</code>.</li>" +
+    "<li><b>Pergunta:</b> inverte → <code>Is he...? Were you...? Will she be...?</code></li>" +
+    "<li>Erro clássico: <s>Did you was</s> → <code>Were you...?</code> · <s>I don't am</s> → <code>I'm not</code>.</li></ul>" +
+    "<h3>To be + verbo com -ing (todos os verbos)</h3>" +
+    "<p>O <code>-ing</code> nunca fica sozinho. Ele sempre vem com o to be, e é o to be que marca o tempo:</p>" +
+    "<span class='frm'><code>I am eating</code> — estou comendo (agora)<br><code>I was eating</code> — estava comendo (naquela hora, no passado)<br><code>I will be eating</code> — vou estar comendo (futuro)</span>" +
+    "<p>Por isso <s>I eating rice</s> está errado: falta o <code>am</code> (ou, se já terminou, use o passado simples <code>I ate</code>).</p>" +
+    "<h3>Ser ou estar?</h3>" +
+    "<p>Em inglês os dois são <code>to be</code>. <code>He is a teacher</code> (é) e <code>He is tired</code> (está) usam o mesmo <code>is</code>. Clima usa <code>it</code>: <code>It was cold yesterday.</code></p>" +
+    "<p>Os exercícios são gerados com todos os verbos da apostila, misturando afirmativa, negativa e pergunta nos três tempos. A correção mostra a explicação e a tradução.</p>",
+  gen: genToBe
+},
+{
+  id: "mystory", icon: "📖", title: "My Story: To Be no passado", kinds: true,
+  kindOptions: [["all","Tudo"],["af","Afirmativa (+)"],["ng","Negativa (−)"],["in","Pergunta (?)"],["ot","Diálogo"]],
+  desc: "Talk to your friend, Questions e There and around — was/were em frases reais (+ / − / ?).",
+  explain: "<h3>1. Talk to your friend — a fórmula</h3>" +
+    "<p>A aula te dá <b>sujeito – complemento</b> e um sinal. Você monta a frase com <code>was/were</code>:</p>" +
+    "<span class='frm'><b>Your boss – rude to the secretary</b><br>(+) <code>Your boss was rude to the secretary.</code><br>(−) <code>Your boss wasn't rude to the secretary.</code><br>(?) <code>Was your boss rude to the secretary?</code></span>" +
+    "<p><b>was</b> → I, he, she, it, e sujeitos no singular (Maria, the weather, my roommate).<br>" +
+    "<b>were</b> → you, we, they, e sujeitos no plural (Anna and I, the last meetings, all your friends).</p>" +
+    "<ul><li><b>Negativa:</b> só coloca <code>n't</code>: <code>wasn't / weren't</code>. Nunca <code>didn't was</code>.</li>" +
+    "<li><b>Pergunta:</b> inverte: <code>Was Maria...? Were you...?</code> Nunca <code>Did ... was</code>.</li>" +
+    "<li>O sujeito <b>Anna and I</b> = we → <code>were</code>. <b>It</b> (clima) = <code>was</code>.</li></ul>" +
+    "<h3>2. Questions — respostas curtas</h3>" +
+    "<span class='frm'><code>Was your last job incredible?</code> → <code>Yes, it was.</code> / <code>No, it wasn't.</code><br>" +
+    "<code>Were you at home last night?</code> → <code>Yes, I was.</code> / <code>No, I wasn't.</code><br>" +
+    "<code>Were all your friends at the party?</code> → <code>Yes, they were.</code> / <code>No, they weren't.</code></span>" +
+    "<p>Na resposta curta o sujeito vira pronome: <code>your last job → it</code>, <code>your friends → they</code>, <code>you → I</code>.</p>" +
+    "<p>Perguntas com <b>What</b>: <code>What's the weather like today?</code> (hoje → is) e <code>What was the weather like last weekend?</code> (passado → was). Resposta: <code>It's sunny.</code> / <code>It was rainy.</code></p>" +
+    "<h3>3. There and around — o diálogo</h3>" +
+    "<span class='frm'><code>Can I walk you home?</code> — Posso levá-la para casa?<br>" +
+    "<code>It was awesome. Now, I have to go back home.</code> — Foi incrível. Agora eu tenho que voltar para casa.<br>" +
+    "<code>Is there anything you want to say?</code> — Tem alguma coisa que você quer dizer?<br>" +
+    "<code>You are a fascinating woman... I think I am in love with you.</code> — Você é uma mulher fascinante... Eu acho que eu estou apaixonado por você.</span>" +
+    "<p><code>walk you home</code> = acompanhar até em casa · <code>have to</code> = ter que · <code>go back home</code> = voltar pra casa · <code>Is there...?</code> = Tem...? · <code>in love with</code> = apaixonado por.</p>",
+  items: [
+    {t:"c", k:"af", parts:["Maria","was","very hungry"], pt:"A Maria estava com muita fome.", rule:"Maria = she → was."},
+    {t:"c", k:"ng", parts:["the weather","wasn't","hot and sunny","last spring"], pt:"O tempo não estava quente e ensolarado na primavera passada.", rule:"The weather = it → wasn't."},
+    {t:"c", k:"in", parts:["were","you","frustrated","with the game","yesterday","?"], pt:"Você ficou frustrado com o jogo ontem?", rule:"Pergunta: Were + you + adjetivo...?"},
+    {t:"c", k:"ng", parts:["your aunt","wasn't","really scared","of the movie"], pt:"Sua tia não estava com muito medo do filme.", rule:"Your aunt = she → wasn't. Medo DE = scared OF."},
+    {t:"c", k:"in", parts:["was","it","cloudy and windy","?"], pt:"Estava nublado e ventando?", rule:"Clima usa it → Was it...?"},
+    {t:"c", k:"af", parts:["Anna and I","were","in the countryside","two weeks ago"], pt:"Anna e eu estávamos no interior duas semanas atrás.", rule:"Anna and I = we → were. Duas semanas atrás = two weeks ago."},
+    {t:"c", k:"ng", parts:["her birthday party","wasn't","incredible"], pt:"A festa de aniversário dela não foi incrível.", rule:"Her birthday party = it → wasn't."},
+    {t:"c", k:"in", parts:["was","that lawyer","reliable","?"], pt:"Aquele advogado era confiável?", rule:"Was + that lawyer + reliable?"},
+    {t:"c", k:"af", parts:["the last meetings","were","awkward"], pt:"As últimas reuniões foram constrangedoras.", rule:"Meetings = plural (they) → were."},
+    {t:"c", k:"af", parts:["my roommate","was","messy"], pt:"Meu colega de quarto era bagunceiro.", rule:"My roommate = he/she → was."},
+    {t:"c", k:"in", parts:["were","all your friends","at your last birthday party","?"], pt:"Todos os seus amigos estavam na sua última festa de aniversário?", rule:"All your friends = they → Were...?"},
+    {t:"c", k:"in", parts:["what","was","the weather","like","last weekend","?"], pt:"Como estava o tempo no fim de semana passado?", rule:"What + was + the weather + like...? O 'like' vai no final."},
+    {t:"c", k:"in", parts:["were","you","scared","of horror movies","when you were","five years old","?"], pt:"Você tinha medo de filmes de terror quando tinha cinco anos?", rule:"Scared OF. Idade no passado: when you were five years old."},
+    {t:"c", k:"ot", parts:["can","I","walk","you","home","?"], pt:"Posso levá-la para casa?", rule:"Can + I + walk you home? Sem 'to' depois do can."},
+    {t:"c", k:"ot", parts:["now","I have to","go back","home"], pt:"Agora eu tenho que voltar para casa.", rule:"Have to = ter que. Go back home = voltar pra casa."},
+    {t:"c", k:"ot", parts:["is there","anything","you want","to say","?"], pt:"Tem alguma coisa que você quer dizer?", rule:"Tem...? = Is there...? Anything em pergunta."},
+    {t:"c", k:"ot", parts:["I think","I am","in love","with you"], pt:"Eu acho que eu estou apaixonado por você.", rule:"Apaixonado POR = in love WITH."},
+    {t:"w", k:"af", given:"Maria – very hungry", task:"Monte a frase afirmativa (+)", answer:"Maria was very hungry", pt:"A Maria estava com muita fome.", rule:"Maria = she → was."},
+    {t:"w", k:"ng", given:"The weather – hot and sunny last spring", task:"Monte a frase negativa (−)", answer:"the weather wasn't hot and sunny last spring", alt:["the weather was not hot and sunny last spring"], pt:"O tempo não estava quente e ensolarado na primavera passada.", rule:"The weather = it → wasn't."},
+    {t:"w", k:"in", given:"You – frustrated with the game yesterday", task:"Monte a pergunta (?)", answer:"were you frustrated with the game yesterday?", pt:"Você ficou frustrado com o jogo ontem?", rule:"Were + you + ...? Inverte o were com o sujeito."},
+    {t:"w", k:"ng", given:"Your aunt – really scared of the movie", task:"Monte a frase negativa (−)", answer:"your aunt wasn't really scared of the movie", alt:["your aunt was not really scared of the movie"], pt:"Sua tia não estava com muito medo do filme.", rule:"Your aunt = she → wasn't. Scared OF."},
+    {t:"w", k:"in", given:"It – cloudy and windy", task:"Monte a pergunta (?)", answer:"was it cloudy and windy?", pt:"Estava nublado e ventando?", rule:"Was + it + ...?"},
+    {t:"w", k:"af", given:"Anna and I – in the countryside two weeks ago", task:"Monte a frase afirmativa (+)", answer:"Anna and I were in the countryside two weeks ago", pt:"Anna e eu estávamos no interior duas semanas atrás.", rule:"Anna and I = we → were."},
+    {t:"w", k:"ng", given:"Her birthday party – incredible", task:"Monte a frase negativa (−)", answer:"her birthday party wasn't incredible", alt:["her birthday party was not incredible"], pt:"A festa de aniversário dela não foi incrível.", rule:"Party = it → wasn't."},
+    {t:"w", k:"in", given:"That lawyer – reliable", task:"Monte a pergunta (?)", answer:"was that lawyer reliable?", pt:"Aquele advogado era confiável?", rule:"Was + that lawyer + reliable?"},
+    {t:"w", k:"af", given:"The last meetings – awkward", task:"Monte a frase afirmativa (+)", answer:"the last meetings were awkward", pt:"As últimas reuniões foram constrangedoras.", rule:"Meetings = plural → were."},
+    {t:"w", k:"af", given:"My roommate – messy", task:"Monte a frase afirmativa (+)", answer:"my roommate was messy", pt:"Meu colega de quarto era bagunceiro.", rule:"Roommate = singular → was."},
+    {t:"w", k:"ng", given:"Your boss – rude to the secretary", task:"Monte a frase negativa (−)", answer:"your boss wasn't rude to the secretary", alt:["your boss was not rude to the secretary"], pt:"Seu chefe não foi grosseiro com a secretária.", rule:"O exemplo da aula: wasn't. Grosseiro COM = rude TO."},
+    {t:"w", k:"in", given:"Was your last job incredible?", task:"Responda SIM com resposta curta", answer:"yes, it was", pt:"Seu último emprego era incrível? — Sim, era.", rule:"Your last job = it → Yes, it was."},
+    {t:"w", k:"in", given:"Were all your friends at your last birthday party?", task:"Responda NÃO com resposta curta", answer:"no, they weren't", alt:["no, they were not"], pt:"Todos os seus amigos estavam na festa? — Não, não estavam.", rule:"Your friends = they → No, they weren't."},
+    {t:"w", k:"in", given:"Were you happy with your last test results?", task:"Responda SIM com resposta curta", answer:"yes, I was", pt:"Você ficou feliz com os resultados das provas? — Sim, fiquei.", rule:"Pergunta com you → resposta com I: Yes, I was."},
+    {t:"w", k:"in", given:"Were you at home last night?", task:"Responda NÃO com resposta curta", answer:"no, I wasn't", alt:["no, I was not"], pt:"Você estava em casa ontem à noite? — Não, não estava.", rule:"You → I. Negativa curta: No, I wasn't."},
+    {t:"w", k:"in", given:"Was your last trip to the beach good?", task:"Responda SIM com resposta curta", answer:"yes, it was", pt:"Sua última viagem à praia foi boa? — Sim, foi.", rule:"Your last trip = it → Yes, it was."},
+    {t:"w", k:"in", given:"Were you scared of horror movies when you were five years old?", task:"Responda SIM com resposta curta", answer:"yes, I was", pt:"Você tinha medo de filmes de terror aos cinco anos? — Sim, tinha.", rule:"You → I. Yes, I was."},
+    {t:"w", k:"in", given:"Were you tired before class?", task:"Responda NÃO com resposta curta", answer:"no, I wasn't", alt:["no, I was not"], pt:"Você estava cansado antes da aula? — Não, não estava.", rule:"No, I wasn't."},
+    {t:"w", k:"in", given:"Are your teachers polite?", task:"Responda SIM com resposta curta (atenção: é presente!)", answer:"yes, they are", pt:"Seus professores são educados? — Sim, são.", rule:"Are (presente) → Yes, they are. Não é 'were'!"},
+    {t:"w", k:"in", given:"Is your last job incredible?", task:"Corrija: a pergunta é sobre o PASSADO", answer:"was your last job incredible?", pt:"Seu último emprego era incrível?", rule:"Last job = passado → Was, não Is."},
+    {t:"w", k:"ng", given:"Was it cloudy and windy?", task:"Transforme em frase negativa (−)", answer:"it wasn't cloudy and windy", alt:["it was not cloudy and windy"], pt:"Não estava nublado e ventando.", rule:"Pergunta → negativa: It wasn't..."},
+    {t:"w", k:"in", given:"The last meetings were awkward.", task:"Passe para pergunta (?)", answer:"were the last meetings awkward?", pt:"As últimas reuniões foram constrangedoras?", rule:"Inverte: Were the last meetings...?"},
+    {t:"w", k:"af", given:"My roommate wasn't messy.", task:"Passe para afirmativa (+)", answer:"my roommate was messy", pt:"Meu colega de quarto era bagunceiro.", rule:"Tira o n't: was."},
+    {t:"p", k:"ot", text:"'Posso levá-la para casa?' — qual é a frase correta?", opts:["Can I walk you home?","Can I walk you to home?","Can I to walk you home?"], answer:"Can I walk you home?", rule:"Home não usa 'to' (go home, walk you home). Depois de can, verbo sem 'to'."},
+    {t:"p", k:"ot", text:"'Agora eu tenho que voltar para casa.'", opts:["Now, I have to go back home.","Now, I have go back home.","Now, I have to go back to home."], answer:"Now, I have to go back home.", rule:"Ter que = have TO. Home sem 'to'."},
+    {t:"p", k:"ot", text:"'Tem alguma coisa que você quer dizer?'", opts:["Is there anything you want to say?","Has anything you want to say?","There is anything you want say?"], answer:"Is there anything you want to say?", rule:"Tem...? = Is there...? (não 'has'). Want TO say."},
+    {t:"p", k:"ot", text:"'Eu acho que eu estou apaixonado por você.'", opts:["I think I am in love with you.","I think I am in love for you.","I think I am in love by you."], answer:"I think I am in love with you.", rule:"Apaixonado POR alguém = in love WITH."}
+  ]
 }
 ];
 
@@ -1553,6 +1787,39 @@ diaadia: [
   {t:"tr", k:"fu", pt:"Eu vou dormir cedo hoje.", answer:"I'm going to sleep early tonight", alt:["I'm going to sleep early today","I'm going to go to bed early tonight","I'm going to go to bed early today","I will sleep early tonight","I will go to bed early tonight"], rule:"Dormir cedo = sleep early / go to bed early. 'Hoje' à noite = tonight."},
   {t:"tr", k:"fu", pt:"O que você vai fazer no fim de semana?", answer:"what are you going to do on the weekend?", alt:["what are you going to do this weekend?","what will you do on the weekend?","what will you do this weekend?","what are you doing this weekend?"], rule:"What + are + you + going to do...? Fazer = do."},
   {t:"tr", k:"fu", pt:"Eu vou pegar o ônibus amanhã.", answer:"I'm going to take the bus tomorrow", alt:["I will take the bus tomorrow","I'm taking the bus tomorrow"], rule:"Going to + take the bus."}
+],
+mystory: [
+  {t:"tr", k:"af", pt:"Seu chefe foi grosseiro com a secretária.", answer:"your boss was rude to the secretary", rule:"Your boss = he/she → was. Rude TO."},
+  {t:"tr", k:"ng", pt:"Seu chefe não foi grosseiro com a secretária.", answer:"your boss wasn't rude to the secretary", alt:["your boss was not rude to the secretary"], rule:"Negativa: wasn't."},
+  {t:"tr", k:"in", pt:"Seu chefe foi grosseiro com a secretária?", answer:"was your boss rude to the secretary?", rule:"Pergunta: Was your boss...?"},
+  {t:"tr", k:"af", pt:"A Maria estava com muita fome.", answer:"Maria was very hungry", rule:"Com fome = hungry (adjetivo, sem 'with'). Was."},
+  {t:"tr", k:"ng", pt:"O tempo não estava quente e ensolarado na primavera passada.", answer:"the weather wasn't hot and sunny last spring", alt:["the weather was not hot and sunny last spring"], rule:"The weather = it → wasn't. Primavera passada = last spring."},
+  {t:"tr", k:"in", pt:"Você ficou frustrado com o jogo ontem?", answer:"were you frustrated with the game yesterday?", rule:"Were you + frustrated WITH...?"},
+  {t:"tr", k:"ng", pt:"Sua tia não estava com muito medo do filme.", answer:"your aunt wasn't really scared of the movie", alt:["your aunt was not really scared of the movie","your aunt wasn't very scared of the movie"], rule:"Scared OF the movie. Wasn't."},
+  {t:"tr", k:"in", pt:"Estava nublado e ventando?", answer:"was it cloudy and windy?", rule:"Clima = it → Was it...?"},
+  {t:"tr", k:"af", pt:"Anna e eu estávamos no interior duas semanas atrás.", answer:"Anna and I were in the countryside two weeks ago", rule:"Anna and I = we → were. Ago vai no final."},
+  {t:"tr", k:"ng", pt:"A festa de aniversário dela não foi incrível.", answer:"her birthday party wasn't incredible", alt:["her birthday party was not incredible"], rule:"Dela = her. Party = it → wasn't."},
+  {t:"tr", k:"in", pt:"Aquele advogado era confiável?", answer:"was that lawyer reliable?", rule:"Aquele = that. Was that lawyer...?"},
+  {t:"tr", k:"af", pt:"As últimas reuniões foram constrangedoras.", answer:"the last meetings were awkward", rule:"Plural → were. Constrangedor = awkward."},
+  {t:"tr", k:"af", pt:"Meu colega de quarto era bagunceiro.", answer:"my roommate was messy", rule:"Roommate = colega de quarto. Was."},
+  {t:"tr", k:"in", pt:"Seu último emprego era incrível?", answer:"was your last job incredible?", rule:"Last job → Was your last job...?"},
+  {t:"tr", k:"in", pt:"Todos os seus amigos estavam na sua última festa de aniversário?", answer:"were all your friends at your last birthday party?", rule:"All your friends → were. Na festa = AT the party."},
+  {t:"tr", k:"in", pt:"Você ficou feliz com os resultados das suas últimas provas?", answer:"were you happy with your last test results?", alt:["were you happy with your last tests results?"], rule:"Happy WITH. Resultados das provas = test results."},
+  {t:"tr", k:"in", pt:"Você estava em casa ontem à noite?", answer:"were you at home last night?", rule:"Em casa = at home. Ontem à noite = last night."},
+  {t:"tr", k:"in", pt:"Sua última viagem à praia foi boa?", answer:"was your last trip to the beach good?", rule:"Trip TO the beach. Was...good?"},
+  {t:"tr", k:"in", pt:"Como está o tempo hoje?", answer:"what's the weather like today?", alt:["what is the weather like today?"], rule:"Hoje = presente → What's (is). O 'like' fecha a pergunta."},
+  {t:"tr", k:"in", pt:"Como estava o tempo no fim de semana passado?", answer:"what was the weather like last weekend?", rule:"Passado → what WAS the weather like."},
+  {t:"tr", k:"in", pt:"Você tinha medo de filmes de terror quando tinha cinco anos?", answer:"were you scared of horror movies when you were five years old?", alt:["were you scared of horror movies when you were five?"], rule:"Tinha medo = were scared OF. Tinha 5 anos = were five years old (to be, não have)."},
+  {t:"tr", k:"in", pt:"Você estava cansado antes da aula?", answer:"were you tired before class?", rule:"Antes da aula = before class."},
+  {t:"tr", k:"in", pt:"Seus professores são educados?", answer:"are your teachers polite?", rule:"São = presente → Are. Educado = polite."},
+  {t:"tr", k:"af", pt:"Sim, ele era. (Seu chefe)", answer:"yes, he was", rule:"Resposta curta afirmativa: Yes, he was."},
+  {t:"tr", k:"ng", pt:"Não, não estavam. (Meus amigos)", answer:"no, they weren't", alt:["no, they were not"], rule:"Resposta curta negativa: No, they weren't."},
+  {t:"tr", k:"ot", pt:"Posso levá-la para casa?", answer:"can I walk you home?", rule:"Walk you home = acompanhar até em casa. Sem 'to'."},
+  {t:"tr", k:"ot", pt:"Foi incrível.", answer:"it was awesome", alt:["it was incredible","it was amazing"], rule:"Foi = it was. Awesome/incredible = incrível."},
+  {t:"tr", k:"ot", pt:"Agora eu tenho que voltar para casa.", answer:"now I have to go back home", alt:["now, I have to go back home","I have to go back home now"], rule:"Ter que = have to. Voltar pra casa = go back home."},
+  {t:"tr", k:"ot", pt:"Tem alguma coisa que você quer dizer?", answer:"is there anything you want to say?", rule:"Tem...? = Is there...? Alguma coisa (pergunta) = anything."},
+  {t:"tr", k:"ot", pt:"Você é uma mulher fascinante.", answer:"you are a fascinating woman", alt:["you're a fascinating woman"], rule:"Adjetivo ANTES do substantivo: fascinating woman."},
+  {t:"tr", k:"ot", pt:"Eu acho que eu estou apaixonado por você.", answer:"I think I am in love with you", alt:["I think I'm in love with you"], rule:"In love WITH you."}
 ]
 };
 
@@ -1659,7 +1926,7 @@ function sectionItems(sec){
   return sec._items;
 }
 
-var PATH_ORDER = ["present","conj","pronomes","tobe","cont","feelings","past","verbos","diaadia","modais","wh","togo","semanas","horas","vocab"];
+var PATH_ORDER = ["present","conj","pronomes","tobe","cont","feelings","tobe3","mystory","past","verbos","diaadia","modais","wh","togo","semanas","horas","vocab"];
 function nodeStatus(st){
   if (!st || !st.a) return "todo";
   if (st.a >= 8 && (st.c / st.a) >= 0.75) return "done";
