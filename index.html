@@ -7,6 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
 <title>Treino de Inglês A1</title>
@@ -31,7 +34,7 @@
   --glow: rgba(52,87,213,0.20);
   --bg-accent-soft: rgba(52,87,213,0.10);
   --shadow: 0 8px 28px rgba(23,27,43,0.08);
-  --mono: "SF Mono", "JetBrains Mono", "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
+  --mono: "JetBrains Mono", "SF Mono", "JetBrains Mono", "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
   --radius: 14px;
 }
 @media (prefers-color-scheme: dark) {
@@ -362,7 +365,7 @@ body::after {
 @media (min-width: 900px) {
   .home { grid-template-columns: 340px 1fr; gap: 28px; align-items: start; }
   .home-side { position: sticky; top: 18px; }
-  h1.hero-title { font-size: 34px; }
+  h1.hero-title { font-size: 30px; }
   .wrap { padding-top: 28px; }
 }
 .home-side .sub { font-size: 14.5px; }
@@ -461,51 +464,170 @@ body::after {
 .dict-hint { font-size: 12.5px; color: var(--muted); }
 .card { border-radius: 18px; }
 .topbar .back:hover { border-color: var(--accent); }
+
+/* ===== v26: visual premium ===== */
+:root { --font: "Sora", "Inter", system-ui, sans-serif; --radius: 18px; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #070A12; --card: #0F1422; --card-glass: rgba(16,21,36,0.72); --line: #1E2740; --line-soft: rgba(120,140,255,0.14);
+    --accent: #7C9BFF; --accent-2: #C084FC; --accent-3: #34D6C6; --glow: rgba(124,155,255,0.30); }
+}
+:root { --accent-3: #14B8A6; }
+body { font-family: var(--font); }
+h1, h2, h3, .path-title, .ttitle, .qa b, .btn, .hero-title { font-family: var(--font); letter-spacing: -0.01em; }
+body::after { background-size: 56px 56px; opacity: 0.35; }
+body::before {
+  background:
+    radial-gradient(1100px 600px at 15% -20%, rgba(124,155,255,0.28), transparent 60%),
+    radial-gradient(900px 600px at 95% 0%, rgba(192,132,252,0.22), transparent 60%),
+    radial-gradient(700px 500px at 60% 120%, rgba(52,214,198,0.14), transparent 60%);
+}
+
+/* cabeçalho de site */
+.site-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 0 22px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; letter-spacing: -0.02em; }
+.brand-mark { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 17px; color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 6px 18px var(--glow); }
+.brand small { display: block; font-weight: 500; font-size: 11px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-family: var(--mono); }
+.site-nav { display: flex; gap: 4px; }
+.site-nav button { font: inherit; font-size: 13.5px; font-weight: 600; color: var(--muted); background: transparent; border: 0; padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+.site-nav button:hover { color: var(--ink); background: var(--bg-accent-soft); }
+.site-nav button.on { color: var(--ink); background: var(--card); border: 1px solid var(--line-soft); }
+.site-chips { display: flex; gap: 8px; }
+.chip-stat { font-family: var(--mono); font-size: 12.5px; font-weight: 700; padding: 7px 11px; border-radius: 999px; background: var(--card-glass); border: 1px solid var(--line-soft); color: var(--ink); white-space: nowrap; }
+.chip-stat.fire { color: #FFB454; }
+@media (max-width: 760px) { .site-nav { display: none; } .site-top { padding-bottom: 14px; } }
+
+/* hero */
+.hero { position: relative; overflow: hidden; border-radius: 24px; padding: 26px 26px 22px; margin-bottom: 18px;
+  background: linear-gradient(135deg, rgba(124,155,255,0.18), rgba(192,132,252,0.10) 50%, rgba(52,214,198,0.10));
+  border: 1px solid var(--line-soft); }
+.hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(500px 220px at 80% 0%, rgba(255,255,255,0.10), transparent 70%); pointer-events: none; }
+.hero .eyebrow { background: transparent; color: var(--accent); border: 1px solid var(--line-soft); padding: 4px 10px; }
+.hero-title { font-size: 30px; font-weight: 800; line-height: 1.05; margin: 10px 0 8px; letter-spacing: -0.03em; }
+.hero .sub { font-size: 14.5px; margin-bottom: 18px; max-width: 520px; }
+.hero-stats { display: flex; gap: 14px; align-items: flex-start; }
+.hero-stats .ring-wrap { width: 64px; height: 64px; } .hero-stats .ring { width: 64px; height: 64px; } .hero-stats .ring-pct { font-size: 13px; }
+.hero-num { flex: 1; min-width: 0; }
+.hero-line span { white-space: nowrap; } .hero-line b { text-align: right; }
+.hero-num { display: grid; gap: 10px; }
+.hero-line { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--muted); }
+.hero-line b { color: var(--ink); font-family: var(--mono); font-size: 14px; }
+.hero .goalbar { margin: 0; height: 10px; }
+.hero .day-streak { margin: 0; }
+
+/* painel lateral mais limpo */
+.quick { gap: 6px; }
+.qa { border-radius: 14px; padding: 12px 14px 12px 50px; position: relative; background: transparent; border-color: transparent; }
+.qa::before { content: attr(data-ic); position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 9px;
+  display: grid; place-items: center; font-size: 15px; background: var(--card); border: 1px solid var(--line-soft); }
+.qa b { font-size: 14.5px; }
+.qa:hover { background: var(--card-glass); border-color: var(--line-soft); box-shadow: none; transform: none; }
+.qa.hot { background: linear-gradient(135deg, rgba(124,155,255,0.16), rgba(192,132,252,0.12)); border: 1px solid var(--line-soft); }
+.qa.hot::after { display: none; }
+.qa.hot::before { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border: 0; box-shadow: 0 4px 12px var(--glow); }
+.home-side > .eyebrow, .home-side > .hero-title, .home-side > .sub { display: none; }
+.side-title { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin: 6px 0 8px 4px; }
+
+/* abas */
+.home-tabs { background: transparent; border: 0; padding: 0; gap: 18px; margin-bottom: 16px; border-bottom: 1px solid var(--line); width: 100%; border-radius: 0; }
+.htab { padding: 8px 2px 12px; border-radius: 0; font-size: 15px; position: relative; }
+.htab.on { background: transparent; color: var(--ink); box-shadow: none; }
+.htab.on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 2px; }
+
+/* cartões de tema */
+.path { gap: 14px; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); }
+.path-node {
+  padding: 18px 16px 16px; border-radius: 20px; flex-direction: column; align-items: flex-start; gap: 14px; min-height: 150px;
+  background: linear-gradient(var(--card), var(--card)) padding-box, linear-gradient(160deg, var(--line-soft), transparent 70%) border-box;
+  border: 1px solid transparent; box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 10px 30px rgba(0,0,0,0.25);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.path-node::before { background: radial-gradient(240px 120px at 100% 0%, hsla(var(--h), 90%, 65%, 0.20), transparent 70%); opacity: 1; }
+.path-node:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,0.35), 0 0 0 1px hsla(var(--h), 90%, 65%, 0.5); border-color: transparent; }
+.path-dot {
+  width: 44px; height: 44px; border-radius: 13px; font-size: 20px; border: 0;
+  background: linear-gradient(135deg, hsl(var(--h) 85% 62%), hsl(calc(var(--h) + 45) 85% 58%));
+  box-shadow: 0 8px 20px hsla(var(--h), 85%, 60%, 0.35);
+}
+.path-node.wip .path-dot { box-shadow: 0 8px 20px hsla(var(--h), 85%, 60%, 0.35); border: 0; background: linear-gradient(135deg, hsl(var(--h) 85% 62%), hsl(calc(var(--h) + 45) 85% 58%)); }
+.path-node.done .path-dot { background: linear-gradient(135deg, #2FD08A, #17A673); box-shadow: 0 8px 20px rgba(47,208,138,0.35); }
+.path-node.done { opacity: 1; }
+.path-body { gap: 5px; }
+.path-title { font-size: 15px; font-weight: 700; }
+.path-sub { font-family: var(--font); font-size: 12.5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.35; }
+.path-bar { height: 5px; margin-top: 4px; }
+.path-bar i { background: linear-gradient(90deg, hsl(var(--h) 85% 62%), hsl(calc(var(--h) + 45) 85% 58%)); }
+.path-badge { display: none; }
+.path-node.done .path-title::after { content: " ✓"; color: var(--ok); }
+.path-node.todo .path-sub { color: var(--muted); }
+@media (max-width: 520px) { .path-node { min-height: 0; padding: 14px; gap: 10px; } .path-dot { width: 38px; height: 38px; font-size: 17px; } }
+
+/* trilha */
+.tstep { border-radius: 18px; padding: 14px 16px; background: var(--card); border: 1px solid var(--line-soft); }
+.tstep.rev { background: transparent; border-style: dashed; }
+.tnum { border-radius: 11px; }
+
+/* telas internas */
+.card { border-radius: 20px; background: var(--card); border: 1px solid var(--line-soft); box-shadow: 0 10px 30px rgba(0,0,0,0.25); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.back { border-radius: 10px; }
+.btn.primary { border-radius: 14px; box-shadow: 0 8px 24px var(--glow); }
+input.answer, .opt, .chip { border-radius: 12px; }
+.chip { border-radius: 999px; }
+.feedback { border-radius: 14px; }
+.kind.on { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-color: transparent; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <section id="s-home">
+   <header class="site-top">
+     <div class="brand"><span class="brand-mark">EN</span><span>Treino de Inglês<small>Apostila A1 · aulas 01–23</small></span></div>
+     <nav class="site-nav">
+       <button type="button" id="nav-temas" class="on">Temas</button>
+       <button type="button" id="nav-trilha">Trilha</button>
+       <button type="button" id="nav-blitz">Desafio</button>
+       <button type="button" id="nav-dict">Ditado</button>
+       <button type="button" id="nav-trans">Tradutor</button>
+     </nav>
+     <div class="site-chips"><span class="chip-stat fire hidden" id="chip-streak"></span><span class="chip-stat" id="chip-goal">🎯 0/20</span></div>
+   </header>
    <div class="home">
     <aside class="home-side">
-      <span class="eyebrow">Apostila A1 · aulas 01–23</span>
-      <h1 class="hero-title">Treino de Inglês</h1>
-      <p class="sub">Explicação, exercícios de estrutura e correção palavra por palavra. Afirmativa, negativa e pergunta — em todos os tempos.</p>
-
-      <div class="levelcard" id="levelcard">
-        <div class="ring-wrap">
-          <svg class="ring" viewBox="0 0 100 100" width="76" height="76" aria-hidden="true">
-            <defs>
-              <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" class="ring-stop-a"></stop>
-                <stop offset="100%" class="ring-stop-b"></stop>
-              </linearGradient>
-            </defs>
-            <circle class="ring-track" cx="50" cy="50" r="42"></circle>
-            <circle class="ring-fill" id="ring-fill" cx="50" cy="50" r="42"></circle>
-          </svg>
-          <div class="ring-pct" id="ring-pct">0%</div>
-        </div>
-        <div class="levelcard-body">
-          <div class="levelcard-label">Domínio geral</div>
-          <div class="levelcard-stats" id="levelcard-stats">Nenhum exercício respondido ainda</div>
-          <div class="day-streak hidden" id="day-streak"></div>
+      <div class="hero">
+        <span class="eyebrow">Seu progresso</span>
+        <h1 class="hero-title">Bora treinar, Robson.</h1>
+        <p class="sub">Explicação, exercícios de estrutura e correção palavra por palavra — afirmativa, negativa e pergunta em todos os tempos.</p>
+        <div class="hero-stats">
+          <div class="ring-wrap">
+            <svg class="ring" viewBox="0 0 100 100" width="76" height="76" aria-hidden="true">
+              <defs>
+                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" class="ring-stop-a"></stop>
+                  <stop offset="100%" class="ring-stop-b"></stop>
+                </linearGradient>
+              </defs>
+              <circle class="ring-track" cx="50" cy="50" r="42"></circle>
+              <circle class="ring-fill" id="ring-fill" cx="50" cy="50" r="42"></circle>
+            </svg>
+            <div class="ring-pct" id="ring-pct">0%</div>
+          </div>
+          <div class="hero-num" id="goalcard">
+            <div class="hero-line"><span>Domínio geral</span><b id="levelcard-stats">—</b></div>
+            <div class="hero-line"><span>🎯 Meta de hoje</span><b class="goal-num" id="goal-txt">0 / 20</b></div>
+            <div class="goalbar"><i id="goal-fill"></i></div>
+            <div class="goal-hint" id="goal-hint"></div>
+            <div class="day-streak hidden" id="day-streak"></div>
+          </div>
         </div>
       </div>
-
-      <div class="goalcard" id="goalcard">
-        <div class="goal-head"><span>🎯 Meta de hoje</span><span class="goal-num" id="goal-txt">0 / 20</span></div>
-        <div class="goalbar"><i id="goal-fill"></i></div>
-        <div class="goal-hint" id="goal-hint">20 frases por dia. Pequeno todo dia vence grande de vez em quando.</div>
-      </div>
-
+      <div class="side-title">Modos de treino</div>
       <div class="quick">
-        <button type="button" class="qa hot" id="btn-trail"><b>🧭 Trilha completa</b><small>Aula por aula, acumulando o que já viu</small></button>
-        <button type="button" class="qa" id="btn-blitz"><b>⚡ Desafio 2 minutos</b><small id="blitz-sub">Quantas frases você acerta contra o relógio?</small></button>
-        <button type="button" class="qa" id="btn-dictation"><b>🎧 Ditado</b><small>Ele fala em inglês, você escreve o que ouviu</small></button>
-        <button type="button" class="qa" id="btn-weak"><b>🎯 Treinar meus erros</b><small id="weak-txt">nenhum erro guardado ainda</small></button>
-        <button type="button" class="qa" id="btn-translate"><b>🌐 Tradutor</b><small>Qualquer frase, na hora</small></button>
+        <button type="button" class="qa hot" id="btn-trail" data-ic="🧭"><b>Trilha completa</b><small>Aula por aula, acumulando o que já viu</small></button>
+        <button type="button" class="qa" id="btn-blitz" data-ic="⚡"><b>Desafio 2 minutos</b><small id="blitz-sub">Quantas frases você acerta contra o relógio?</small></button>
+        <button type="button" class="qa" id="btn-dictation" data-ic="🎧"><b>Ditado</b><small>Ele fala em inglês, você escreve o que ouviu</small></button>
+        <button type="button" class="qa" id="btn-weak" data-ic="🎯"><b>Treinar meus erros</b><small id="weak-txt">nenhum erro guardado ainda</small></button>
+        <button type="button" class="qa" id="btn-translate" data-ic="🌐"><b>Tradutor</b><small>Qualquer frase, na hora</small></button>
       </div>
 
       <details class="more">
@@ -2136,8 +2258,9 @@ function renderHome(){
     var node = document.createElement("button");
     node.type = "button";
     node.className = "path-node " + status;
+    node.style.setProperty("--h", String((i * 47 + 210) % 360));
     var badgeText = status === "done" ? "✓ Dominado" : status === "wip" ? "Em progresso" : "Não iniciado";
-    var subText = st ? (st.c + "/" + st.a + " acertos") : "Toque para começar";
+    var subText = st ? (st.c + "/" + st.a + " acertos") : (sec.desc || "");
     node.innerHTML =
       '<span class="path-dot" aria-hidden="true">' + (status === "done" ? "✓" : sec.icon) + '</span>' +
       '<span class="path-body">' +
@@ -2158,8 +2281,10 @@ function renderHome(){
   $("day-streak").classList.toggle("hidden", !ds);
   $("ring-pct").textContent = pct + "%";
   $("levelcard-stats").textContent = totalA
-    ? (totalC + " de " + totalA + " certas · " + doneCount + "/" + PATH_ORDER.length + " temas dominados")
-    : "Nenhum exercício respondido ainda";
+    ? (pct + "% · " + doneCount + "/" + PATH_ORDER.length + " temas")
+    : "comece agora";
+  $("chip-streak").textContent = ds ? ds.split(" —")[0] : "";
+  $("chip-streak").classList.toggle("hidden", !ds);
 
   var wc = weakCount();
   var wb = $("btn-weak");
@@ -2511,6 +2636,7 @@ function renderGoal(){
   var g = stats.__today && stats.__today.d === t ? stats.__today : { d: t, n: 0 };
   var n = Math.min(g.n, GOAL);
   $("goal-txt").textContent = n + " / " + GOAL;
+  $("chip-goal").textContent = "🎯 " + n + "/" + GOAL;
   $("goal-fill").style.width = (100 * n / GOAL) + "%";
   $("goalcard").classList.toggle("done", n >= GOAL);
   $("goal-hint").textContent = n >= GOAL ? "Meta batida hoje. Tudo além disso é lucro. 🔥" :
@@ -2575,6 +2701,8 @@ function startTrailStep(s){
 }
 function showHomeTab(tab){
   $("tab-temas").classList.toggle("on", tab === "temas");
+  $("nav-temas").classList.toggle("on", tab === "temas");
+  $("nav-trilha").classList.toggle("on", tab === "trilha");
   $("tab-trilha").classList.toggle("on", tab === "trilha");
   $("blocks").classList.toggle("hidden", tab !== "temas");
   $("trail").classList.toggle("hidden", tab !== "trilha");
@@ -3223,6 +3351,11 @@ $("btn-trail").addEventListener("click", function(){ showHomeTab("trilha"); if (
 $("btn-blitz").addEventListener("click", startBlitz);
 $("btn-dictation").addEventListener("click", startDictation);
 $("tab-temas").addEventListener("click", function(){ showHomeTab("temas"); });
+$("nav-temas").addEventListener("click", function(){ showHomeTab("temas"); });
+$("nav-trilha").addEventListener("click", function(){ showHomeTab("trilha"); });
+$("nav-blitz").addEventListener("click", startBlitz);
+$("nav-dict").addEventListener("click", startDictation);
+$("nav-trans").addEventListener("click", openTranslator);
 $("tab-trilha").addEventListener("click", function(){ showHomeTab("trilha"); });
 
 /* ---------- PWA ---------- */
