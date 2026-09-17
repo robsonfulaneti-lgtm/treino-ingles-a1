@@ -364,10 +364,16 @@ body::after {
   mask-image: radial-gradient(ellipse at 50% 0%, #000 20%, transparent 75%);
 }
 .wrap { max-width: 1120px; padding: 18px 18px 120px; }
+@media (min-width: 1300px) { .wrap { max-width: 1560px; padding-left: 40px; padding-right: 40px; } }
+@media (min-width: 1800px) { .wrap { max-width: 1900px; padding-left: 56px; padding-right: 56px; } }
 #s-section, #s-quiz, #s-done, #s-trans { max-width: 720px; margin: 0 auto; }
 .home { display: grid; grid-template-columns: 1fr; gap: 18px; }
 @media (min-width: 900px) {
   .home { grid-template-columns: 340px 1fr; gap: 28px; align-items: start; }
+}
+@media (min-width: 1300px) {
+  .home { grid-template-columns: 380px 1fr; gap: 36px; }
+  .path { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
   .home-side { position: sticky; top: 18px; }
   h1.hero-title { font-size: 30px; }
   .wrap { padding-top: 28px; }
