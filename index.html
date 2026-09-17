@@ -247,6 +247,7 @@ input.answer:focus { outline: none; border-color: var(--accent); }
 .feedback .dw-ok { color: var(--ok); }
 .feedback .dw-bad { color: var(--err); font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
 .feedback .where { display: block; margin-top: 4px; }
+.feedback .dw-extra { color: var(--muted); opacity: 0.7; }
 .feedback .ptfb, .review-item .ptfb { display: block; font-size: 14.5px; color: var(--muted); font-style: italic; margin: 2px 0 4px; }
 .feedback .rule { display: block; margin-top: 8px; font-size: 14.5px; color: var(--ink); opacity: 0.85; }
 
@@ -282,6 +283,9 @@ input.answer:focus { outline: none; border-color: var(--accent); }
 @keyframes cf { 0% { opacity: 1; transform: translate(0,0) rotate(0); } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--r)); } }
 .day-streak { margin-top: 6px; font-size: 13.5px; font-weight: 700; color: var(--accent); }
 @media (prefers-reduced-motion: reduce) { .feedback, .card.shake, .xp-float, .confetti i, .hint.open { animation: none; } }
+.why { display: block; margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); color: var(--ink); }
+.why-label { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.why-line { display: block; font-size: 14.5px; margin: 3px 0; }
 .actionbar {
   position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg);
   border-top: 1px solid var(--line);
@@ -772,7 +776,7 @@ var CONTR = [
   ["she'll","she will"],["we'll","we will"],["they'll","they will"],["it'll","it will"]
 ];
 function norm(s){
-  s = (s || "").normalize("NFC").toLowerCase().trim().replace(/’/g,"'").replace(/\s+/g," ").replace(/\s+\?/g,"?").replace(/[.!?]+$/g,"");
+  s = (s || "").normalize("NFC").toLowerCase().replace(/’/g,"'").replace(/\([^)]*\)/g, " ").replace(/[.,!;:"“”…]/g, " ").replace(/\s+/g," ").trim().replace(/\s+\?/g,"?").replace(/\?+$/g,"");
   CONTR.forEach(function(c){ s = s.split(c[0]).join(c[1]); });
   return s;
 }
@@ -2117,8 +2121,8 @@ mystory: [
   {t:"tr", k:"in", pt:"Você tinha medo de filmes de terror quando tinha cinco anos?", answer:"were you scared of horror movies when you were five years old?", alt:["were you scared of horror movies when you were five?"], rule:"Tinha medo = were scared OF. Tinha 5 anos = were five years old (to be, não have)."},
   {t:"tr", k:"in", pt:"Você estava cansado antes da aula?", answer:"were you tired before class?", rule:"Antes da aula = before class."},
   {t:"tr", k:"in", pt:"Seus professores são educados?", answer:"are your teachers polite?", rule:"São = presente → Are. Educado = polite."},
-  {t:"tr", k:"af", pt:"Sim, ele era. (Seu chefe)", answer:"yes, he was", rule:"Resposta curta afirmativa: Yes, he was."},
-  {t:"tr", k:"ng", pt:"Não, não estavam. (Meus amigos)", answer:"no, they weren't", alt:["no, they were not"], rule:"Resposta curta negativa: No, they weren't."},
+  {t:"tr", k:"af", pt:"Sim, ele era.", answer:"yes, he was", alt:["yes, it was"], rule:"Resposta curta afirmativa (sobre o chefe): Yes, he was."},
+  {t:"tr", k:"ng", pt:"Não, eles não estavam.", answer:"no, they weren't", alt:["no, they were not"], rule:"Resposta curta negativa: No, they weren't."},
   {t:"tr", k:"ot", pt:"Posso levá-la para casa?", answer:"can I walk you home?", rule:"Walk you home = acompanhar até em casa. Sem 'to'."},
   {t:"tr", k:"ot", pt:"Foi incrível.", answer:"it was awesome", alt:["it was incredible","it was amazing"], rule:"Foi = it was. Awesome/incredible = incrível."},
   {t:"tr", k:"ot", pt:"Agora eu tenho que voltar para casa.", answer:"now I have to go back home", alt:["now, I have to go back home","I have to go back home now"], rule:"Ter que = have to. Voltar pra casa = go back home."},
@@ -2915,12 +2919,13 @@ function checkChips(q){
         break;
       }
     }
+    var whyC = whyHtml({answer: q.parts.join(" ").replace(" ?", "?")}, builtWords.join(" ").replace(" ?", "?"));
     state.built.forEach(function(e, i){
       var chips = $("chip-built").children;
       if (chips[i]) chips[i].className = "chip " + (e.word === q.parts[i] ? "good" : "bad");
     });
     fb.className = "feedback err";
-    fb.innerHTML = '✗ Ainda não.<span class="where">' + where + '</span><span class="full">' + answerDisplay(q) + '</span>' + ptFb(q) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+    fb.innerHTML = '✗ Ainda não.<span class="where">' + where + '</span><span class="full">' + answerDisplay(q) + '</span>' + ptFb(q) + whyC + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   }
   attachTtsButton(fb, q.parts.join(" ").replace(" ?","?"));
   $("btn-main").textContent = state.idx + 1 < state.queue.length ? "Próxima →" : "Ver resultado";
@@ -2941,26 +2946,170 @@ function checkSpokenSentence(q, transcript){
     state.misses.push(q);
     var d = wordDiffHtml({ answer: target }, transcript);
     fb.className = "feedback err";
-    fb.innerHTML = '✗ Ainda não.<span class="where">O reconhecimento entendeu: “' + transcript + '”' + (d.where ? '<br>' + d.where : '') + '</span><span class="full">' + d.html + '</span>' + ptFb(q) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+    fb.innerHTML = '✗ Ainda não.<span class="where">O reconhecimento entendeu: “' + transcript + '”' + (d.where ? '<br>' + d.where : '') + '</span><span class="full">' + d.html + '</span>' + ptFb(q) + whyHtml({answer: target}, transcript) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   }
   attachTtsButton(fb, target);
   $("btn-main").textContent = state.idx + 1 < state.queue.length ? "Próxima →" : "Ver resultado";
 }
 
+/* ---------- diagnóstico do erro: POR QUE a forma certa é essa ---------- */
+function alignWords(e, u){
+  /* LCS → lista de operações: eq / miss (faltou) / extra (sobrou) */
+  var n = e.length, m = u.length, i, j;
+  var L = [];
+  for (i = 0; i <= n; i++) { L.push([]); for (j = 0; j <= m; j++) L[i].push(0); }
+  for (i = n - 1; i >= 0; i--) for (j = m - 1; j >= 0; j--)
+    L[i][j] = e[i] === u[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+  var ops = []; i = 0; j = 0;
+  while (i < n || j < m) {
+    if (i < n && j < m && e[i] === u[j]) { ops.push({t:"eq", e:e[i], u:u[j], i:i}); i++; j++; }
+    else if (j < m && (i >= n || L[i][j + 1] >= L[i + 1][j])) { ops.push({t:"extra", u:u[j]}); j++; }
+    else { ops.push({t:"miss", e:e[i], i:i}); i++; }
+  }
+  /* miss + extra adjacentes = substituição */
+  var out = [];
+  for (var k = 0; k < ops.length; k++) {
+    var a = ops[k], b = ops[k + 1];
+    if (a.t === "miss" && b && b.t === "extra") { out.push({t:"sub", e:a.e, u:b.u, i:a.i}); k++; }
+    else if (a.t === "extra" && b && b.t === "miss") { out.push({t:"sub", e:b.e, u:a.u, i:b.i}); k++; }
+    else out.push(a);
+  }
+  return out;
+}
+var SING = {i:1, he:1, she:1, it:1}, PLUR = {you:1, we:1, they:1};
+var PREP_PT = {in:"em / dentro de", on:"em (dia, superfície)", at:"em (lugar exato, hora)", "for":"para / por (refeições: for lunch)", "with":"com", "of":"de (scared of, in love with…)", "to":"para / a (direção)", "from":"de (origem: from home)"};
+function subjBefore(e, idx){
+  for (var k = idx - 1; k >= 0; k--) {
+    var w = e[k];
+    if (SING[w] || PLUR[w]) return w;
+    if (/^(the|my|your|his|her|our|their|that|this|all|last)$/.test(w)) continue;
+    if (k === idx - 1) return w;
+  }
+  return "";
+}
+function isPluralSubj(e, idx){
+  var s = subjBefore(e, idx);
+  if (PLUR[s]) return true;
+  if (SING[s]) return false;
+  if (/ and /.test(e.slice(0, idx).join(" "))) return true;
+  if (/s$/.test(s) && !/(ss|us|is)$/.test(s)) return true;
+  return false;
+}
+function pastOf(base){ for (var k = 0; k < VERBS.length; k++) if (VERBS[k].b === base) return VERBS[k].p; return null; }
+function baseOfPast(p){ for (var k = 0; k < VERBS.length; k++) if (VERBS[k].p === p) return VERBS[k].b; return null; }
+function diagnose(q, userText){
+  var e = norm(q.answer).split(" "), u = norm(userText).split(" ");
+  var ops = alignWords(e, u), why = [], seen = {};
+  function add(s){ if (!seen[s]) { seen[s] = 1; why.push(s); } }
+  var eStr = " " + e.join(" ") + " ", uStr = " " + u.join(" ") + " ";
+  /* casos que valem pela frase inteira */
+  if (e.slice().sort().join(" ") === u.slice().sort().join(" ")) {
+    return [/\?$/.test(q.answer) ? "As palavras estão certas, mas a <b>ordem</b> não: em pergunta o auxiliar/to be vem ANTES do sujeito (Were you…? Do you…? Are you…?)." :
+      "As palavras estão certas, mas a <b>ordem</b> não: sujeito + verbo + complemento + tempo (I ate rice for lunch yesterday)."];
+  }
+  if (/ did /.test(uStr) && / (was|were) /.test(eStr) && !/ did /.test(eStr)) {
+    return ["O verbo <b>to be</b> não usa did: no passado ele mesmo vira a pergunta/negativa → <b>" + (/ were /.test(eStr) ? "Were" : "Was") + " " + (e[e.indexOf(/ were /.test(eStr) ? "were" : "was") + 1] || "") + "…?</b> / wasn't / weren't. Did é só pra verbos comuns (Did you eat…?)."];
+  }
+  if (/ (do|does) /.test(uStr) && / (am|is|are) /.test(eStr) && !/ (do|does) /.test(eStr)) {
+    return ["O verbo <b>to be</b> não usa do/does: ele mesmo inverte → <b>" + cap(e[0]) + " " + (e[1] || "") + "…?</b> Do/does é só pra verbos comuns."];
+  }
+  if (/ going to /.test(eStr) && !/ going /.test(uStr)) {
+    return ["Isso é um <b>plano / futuro</b> → <b>" + e.slice(0, e.indexOf("going") + 2).join(" ") + "</b> + verbo. \"" + u.slice(0, 2).join(" ") + "\" no presente simples seria rotina (todo dia), não o que vai acontecer."];
+  }
+  if (/ (do|does) not /.test(eStr) && / did not /.test(uStr)) return ["A frase é no <b>presente</b> (rotina) → don't/doesn't, não didn't."];
+  if (/ did not /.test(eStr) && / (do|does) not /.test(uStr)) return ["A frase é no <b>passado</b> → <b>didn't</b> + verbo base. Don't/doesn't é presente."];
+  ops.forEach(function(op){
+    var x = op.e, y = op.u;
+    if (op.t === "sub") {
+      /* was / were */
+      if ((x === "was" || x === "were") && (y === "was" || y === "were")) {
+        var pl = isPluralSubj(e, op.i), s = subjBefore(e, op.i);
+        add(x === "were"
+          ? "<b>were</b>, não was: o sujeito \"" + s + "\" é " + (PLUR[s] ? "you/we/they" : "plural (mais de um)") + " → were. Was é só pra I, he, she, it e sujeitos no singular."
+          : "<b>was</b>, não were: o sujeito \"" + s + "\" é " + (SING[s] ? "I/he/she/it" : "singular (um só)") + " → was. Were é pra you, we, they e plural.");
+        return;
+      }
+      /* am / is / are */
+      if (/^(am|is|are)$/.test(x) && /^(am|is|are)$/.test(y)) {
+        var s2 = subjBefore(e, op.i);
+        add("<b>" + x + "</b>, não " + y + ": " + (x === "am" ? "I é sempre am" : x === "is" ? "\"" + s2 + "\" é he/she/it (singular) → is" : "\"" + s2 + "\" é you/we/they ou plural → are") + ".");
+        return;
+      }
+      /* don't / doesn't */
+      if (/^(don't|doesn't)$/.test(x) && /^(don't|doesn't)$/.test(y)) {
+        add(x === "doesn't" ? "<b>doesn't</b>: he/she/it usa does (o -s vai pro auxiliar, o verbo fica na base)." : "<b>don't</b>: I/you/we/they usam do.");
+        return;
+      }
+      if (/^(do|does)$/.test(x) && /^(do|does)$/.test(y)) {
+        var neg = e[op.i + 1] === "not";
+        add(x === "does" ? "<b>" + (neg ? "doesn't" : "Does") + "</b>: he/she/it usa does (o -s vai pro auxiliar e o verbo fica na base)." : "<b>" + (neg ? "don't" : "Do") + "</b>: I/you/we/they usam do."); return;
+      }
+      /* didn't + base */
+      if (x === "didn't" && /^(don't|doesn't)$/.test(y)) { add("<b>didn't</b>: a frase é no passado (ontem, semana passada…), então o auxiliar é did."); return; }
+      if (/^(don't|doesn't)$/.test(x) && y === "didn't") { add("<b>" + x + "</b>: a frase é no presente (rotina), não no passado."); return; }
+      if (x === "did" && /^(do|does)$/.test(y)) { add("<b>Did</b>: pergunta no passado usa did pra todo mundo."); return; }
+      if (x === "wasn't" && y === "didn't" || x === "weren't" && y === "didn't") { add("<b>" + x + "</b>: o verbo to be não usa didn't — nega direto com not (wasn't/weren't)."); return; }
+      if (x === "isn't" && y === "don't" || x === "aren't" && y === "don't" || x === "isn't" && y === "doesn't") { add("<b>" + x + "</b>: to be nega com not, nunca com don't/doesn't."); return; }
+      /* verbo: -s do he/she/it */
+      if (third(y) === x) { add("<b>" + x + "</b>: he/she/it no presente ganha -s (" + y + " → " + x + ")."); return; }
+      if (third(x) === y) {
+        var prev = e[op.i - 1] || "";
+        add(/^(don't|doesn't|do|does|didn't|did|to|can|can't|will|won't|should|would|must|could)$/.test(prev)
+          ? "<b>" + x + "</b> sem -s: depois de " + prev + " o verbo fica na forma base."
+          : "<b>" + x + "</b> sem -s: o sujeito não é he/she/it.");
+        return;
+      }
+      /* passado x base */
+      if (pastOf(y) === x) { add("<b>" + x + "</b>: a frase já aconteceu → passado (" + y + " → " + x + ")."); return; }
+      if (baseOfPast(y) === x) {
+        add(/ did /.test(eStr.slice(0, eStr.indexOf(" " + x + " ") + 1)) ? "<b>" + x + "</b>, não " + y + ": depois de did/didn't o verbo volta pra base — o did já marca o passado (Did he study…? / He didn't study)." : "<b>" + x + "</b>: aqui é presente/base, não passado (" + y + ")."); return;
+      }
+      /* -ing indevido */
+      if (/ing$/.test(y) && !/ing$/.test(x)) { add("<b>" + x + "</b>, não " + y + ": o -ing só existe junto com am/is/are/was/were (I am eating). Sem to be, use " + x + "."); return; }
+      if (/ing$/.test(x) && !/ing$/.test(y)) { add("<b>" + x + "</b>: depois de am/is/are/was/were o verbo vai pra -ing."); return; }
+      /* preposições */
+      if (PREP_PT[x] && PREP_PT[y]) { add("<b>" + x + "</b>, não " + y + ": " + x + " = " + PREP_PT[x] + ". Aqui a expressão é \"" + (e[op.i - 1] ? e[op.i - 1] + " " : "") + x + " " + (e[op.i + 1] || "") + "\"."); return; }
+      /* going to */
+      if (x === "going" && /^(go|will)$/.test(y)) { add("<b>going to</b>: plano/futuro → am/is/are + going to + verbo."); return; }
+      if (x === "will" && y === "going") { add("<b>will</b>: aqui é o futuro com will + verbo base."); return; }
+      /* artigos */
+      if (/^(a|an)$/.test(x) && /^(a|an)$/.test(y)) { add("<b>" + x + "</b>: an antes de som de vogal (an e-mail, an apple), a antes de consoante (a new coat)."); return; }
+      add("<b>" + x + "</b> no lugar de \"" + y + "\"" + (GLOSS_REV && buildGlossRev()[x] ? " — " + x + " = " + buildGlossRev()[x] : "") + ".");
+    } else if (op.t === "miss") {
+      if (x === "the") add("Faltou <b>the</b>: em inglês \"as/os/a/o\" antes de coisa específica vira the (the last meetings, the bus).");
+      else if (/^(a|an)$/.test(x)) add("Faltou <b>" + x + "</b>: coisa contável no singular precisa de a/an (a teacher, a new coat).");
+      else if (/^(am|is|are|was|were)$/.test(x)) add("Faltou <b>" + x + "</b>: o verbo to be não pode sumir — em inglês \"está/é/estava\" sempre aparece (e o -ing depende dele).");
+      else if (/^(do|does|did)$/.test(x)) add("Faltou <b>" + x + "</b>: pergunta com verbo comum começa com o auxiliar (Do you…? Did she…?).");
+      else if (x === "to") add("Faltou <b>to</b>: " + (/ (going|have|want|need|like) to /.test(eStr) ? "going to / have to / want to sempre levam to." : "aqui o verbo pede to (go to work, talk to him)."));
+      else if (PREP_PT[x]) add("Faltou <b>" + x + "</b> (" + PREP_PT[x] + ").");
+      else add("Faltou <b>" + x + "</b>" + (buildGlossRev()[x] ? " (" + buildGlossRev()[x] + ")" : "") + ".");
+    } else if (op.t === "extra") {
+      if (y === "to" && / to home /.test(uStr)) add("Sobrou <b>to</b>: home não usa to (go home, walk you home, get home).");
+      else if (y === "to" && / (can|can't|will|won't|should|would|must|could) to /.test(uStr)) add("Sobrou <b>to</b>: depois de can/will/should o verbo vem direto (can walk, will be).");
+      else if (/^(am|is|are)$/.test(y) && !/ing/.test(u.join(" "))) add("Sobrou <b>" + y + "</b>: verbo comum no presente não leva to be (I work, não I am work).");
+      else if (/^(do|does|did)$/.test(y)) add("Sobrou <b>" + y + "</b>: to be faz pergunta/negativa sozinho, sem do/does/did.");
+      else add("Sobrou <b>" + y + "</b>: essa palavra não entra nessa frase.");
+    }
+  });
+  return why.slice(0, 3);
+}
+function whyHtml(q, userText){
+  var w = diagnose(q, userText);
+  if (!w.length) return "";
+  return '<span class="why"><span class="why-label">💡 Por que</span>' + w.map(function(x){ return '<span class="why-line">' + x + '</span>'; }).join("") + '</span>';
+}
+
 function wordDiffHtml(q, user){
   var e = norm(q.answer).split(" ");
   var u = norm(user).split(" ");
+  var ops = alignWords(e, u);
   var html = "", firstErr = "";
-  for (var i = 0; i < e.length; i++) {
-    var hit = u[i] === e[i];
-    if (!hit && !firstErr) {
-      firstErr = 'Onde errou: <b>palavra ' + (i + 1) + '</b> — você escreveu "' + (u[i] || "nada") + '", o certo era "' + e[i] + '".';
-    }
-    html += '<span class="' + (hit ? "dw-ok" : "dw-bad") + '">' + e[i] + '</span> ';
-  }
-  if (u.length > e.length) {
-    firstErr = firstErr || ('Sobrou palavra: "' + u.slice(e.length).join(" ") + '" não entra nessa frase.');
-  }
+  ops.forEach(function(op){
+    if (op.t === "eq") html += '<span class="dw-ok">' + op.e + '</span> ';
+    else if (op.t === "sub") { html += '<span class="dw-bad">' + op.e + '</span> '; if (!firstErr) firstErr = 'Onde errou: <b>palavra ' + (op.i + 1) + '</b> — você escreveu "' + op.u + '", o certo era "' + op.e + '".'; }
+    else if (op.t === "miss") { html += '<span class="dw-bad">' + op.e + '</span> '; if (!firstErr) firstErr = 'Faltou a palavra <b>"' + op.e + '"</b> (posição ' + (op.i + 1) + ').'; }
+    else if (op.t === "extra") { html += '<s class="dw-extra">' + op.u + '</s> '; if (!firstErr) firstErr = 'Sobrou a palavra <b>"' + op.u + '"</b> — ela não entra nessa frase.'; }
+  });
   return { html: html.trim(), where: firstErr };
 }
 
@@ -2981,7 +3130,7 @@ function checkWrite(q){
     var d = wordDiffHtml(q, user);
     fb.className = "feedback err";
     fb.innerHTML = '✗ Ainda não.' + (d.where ? '<span class="where">' + d.where + '</span>' : "") +
-      '<span class="full">' + d.html + '</span>' + ptFb(q) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+      '<span class="full">' + d.html + '</span>' + ptFb(q) + whyHtml(q, user) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   }
   attachTtsButton(fb, q.answer);
   $("answer-input").blur();
