@@ -338,50 +338,198 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
   .path { opacity: 1 !important; }
   .hero-title { background-position: 0% 50% !important; -webkit-background-clip: initial; background-clip: initial; color: var(--ink) !important; background: none !important; }
 }
+
+/* ===== v25: site no PC, app no celular ===== */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(900px 500px at 8% -10%, var(--glow), transparent 60%),
+    radial-gradient(700px 500px at 100% 10%, rgba(177,140,255,0.22), transparent 60%),
+    radial-gradient(600px 400px at 50% 110%, rgba(62,213,152,0.12), transparent 60%);
+}
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.55;
+  background-image:
+    linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 20%, transparent 75%);
+  mask-image: radial-gradient(ellipse at 50% 0%, #000 20%, transparent 75%);
+}
+.wrap { max-width: 1120px; padding: 18px 18px 120px; }
+#s-section, #s-quiz, #s-done, #s-trans { max-width: 720px; margin: 0 auto; }
+.home { display: grid; grid-template-columns: 1fr; gap: 18px; }
+@media (min-width: 900px) {
+  .home { grid-template-columns: 340px 1fr; gap: 28px; align-items: start; }
+  .home-side { position: sticky; top: 18px; }
+  h1.hero-title { font-size: 34px; }
+  .wrap { padding-top: 28px; }
+}
+.home-side .sub { font-size: 14.5px; }
+.eyebrow { font-family: var(--mono); letter-spacing: 0.12em; }
+.hero-title { font-size: 30px; letter-spacing: -0.02em; }
+
+/* meta diária */
+.goalcard {
+  background: var(--card-glass); border: 1px solid var(--line-soft); border-radius: 16px; padding: 12px 14px; margin-bottom: 14px;
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+.goal-head { display: flex; justify-content: space-between; font-size: 13.5px; font-weight: 700; }
+.goal-num { font-family: var(--mono); color: var(--accent); }
+.goalbar { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; margin: 8px 0 6px; }
+.goalbar i { display: block; height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .8s cubic-bezier(.22,1,.36,1); box-shadow: 0 0 12px var(--glow); }
+.goal-hint { font-size: 12.5px; color: var(--muted); }
+.goalcard.done { border-color: var(--ok); }
+.goalcard.done .goal-num { color: var(--ok); }
+
+/* ações rápidas */
+.quick { display: grid; gap: 8px; margin-bottom: 14px; }
+.qa {
+  font: inherit; text-align: left; cursor: pointer; color: var(--ink);
+  background: var(--card-glass); border: 1px solid var(--line-soft); border-radius: 14px; padding: 11px 14px;
+  display: flex; flex-direction: column; gap: 2px; position: relative; overflow: hidden;
+  transition: transform .15s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.qa b { font-size: 15px; font-weight: 700; }
+.qa small { font-size: 12.5px; color: var(--muted); }
+.qa:hover { border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 8px 24px var(--glow); }
+.qa:active { transform: scale(0.985); }
+.qa:disabled { opacity: 0.55; cursor: default; transform: none; box-shadow: none; }
+.qa.hot { border-color: transparent;
+  background: linear-gradient(var(--card), var(--card)) padding-box, linear-gradient(135deg, var(--accent), var(--accent-2)) border-box; border: 1.5px solid transparent; }
+.qa.hot::after { content: ""; position: absolute; inset: -40% -60%; background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.10) 50%, transparent 60%); animation: sheen 5s linear infinite; pointer-events: none; }
+@keyframes sheen { 0% { transform: translateX(-60%); } 100% { transform: translateX(60%); } }
+.more { margin-top: 6px; font-size: 13.5px; color: var(--muted); }
+.more summary { cursor: pointer; font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+.install-tip { margin-top: 10px; }
+
+/* abas do painel principal */
+.home-tabs { display: flex; gap: 6px; margin-bottom: 14px; background: var(--card-glass); border: 1px solid var(--line-soft); border-radius: 12px; padding: 4px; width: max-content; }
+.htab { font: inherit; font-size: 14px; font-weight: 600; border: 0; background: transparent; color: var(--muted); padding: 8px 14px; border-radius: 9px; cursor: pointer; }
+.htab.on { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--accent-ink); box-shadow: 0 4px 14px var(--glow); }
+
+/* tiles de temas: cartões horizontais, grade fluida */
+.path { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+@media (max-width: 520px) { .path { grid-template-columns: 1fr 1fr; gap: 10px; } }
+.path-node {
+  aspect-ratio: auto; flex-direction: row; align-items: center; gap: 12px; padding: 14px; border-radius: 16px;
+  transition: transform .15s ease, border-color .2s ease, box-shadow .2s ease; overflow: hidden;
+}
+.path-node::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, var(--bg-accent-soft), transparent 60%); opacity: 0; transition: opacity .2s ease; }
+.path-node:hover { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 10px 28px var(--glow); }
+.path-node:hover::before { opacity: 1; }
+.path-dot { width: 42px; height: 42px; font-size: 19px; z-index: 1; }
+.path-body { margin-top: 0; gap: 3px; z-index: 1; min-width: 0; }
+.path-title { font-size: 14px; }
+.path-bar { height: 4px; border-radius: 999px; background: var(--line); overflow: hidden; margin-top: 3px; }
+.path-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+.path-node.done .path-bar i { background: var(--ok); }
+@media (max-width: 520px) {
+  .path-node { flex-direction: column; align-items: flex-start; padding: 12px; }
+  .path-body { width: 100%; }
+}
+
+/* trilha completa */
+.trail { display: grid; gap: 10px; position: relative; }
+.tstep {
+  display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center;
+  background: var(--card-glass); border: 1px solid var(--line-soft); border-radius: 16px; padding: 12px 14px;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); position: relative;
+}
+.tstep.rev { margin-left: 22px; }
+.tstep.rev::before { content: ""; position: absolute; left: -14px; top: -12px; bottom: 50%; width: 2px; border-left: 2px dashed var(--line); }
+.tstep.next { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset, 0 8px 24px var(--glow); }
+.tnum { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 700; font-size: 13px;
+  background: var(--bg); border: 1px solid var(--line); }
+.tstep.done .tnum { background: linear-gradient(135deg, var(--ok), #1FA97A); color: #fff; border-color: transparent; }
+.tstep.next .tnum { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--accent-ink); border-color: transparent; }
+.ttitle { font-weight: 700; font-size: 14.5px; }
+.tsub { font-size: 12.5px; color: var(--muted); font-family: var(--mono); }
+.tacts { display: flex; gap: 6px; }
+.tbtn { font: inherit; font-size: 13px; font-weight: 600; border-radius: 9px; padding: 8px 11px; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+.tbtn.go { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--accent-ink); border-color: transparent; }
+@media (max-width: 560px) { .tstep { grid-template-columns: 40px 1fr; } .tacts { grid-column: 1 / -1; } .tbtn { flex: 1; } }
+
+/* quiz: relógio e ditado */
+.count.timer { color: var(--accent); font-weight: 700; }
+.count.timer.low { color: var(--err); animation: micpulse .8s ease-in-out infinite; }
+.dict { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px 0 16px; }
+.dict-play { font: inherit; font-size: 16px; font-weight: 700; border-radius: 999px; padding: 12px 22px; cursor: pointer; border: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--accent-ink); box-shadow: 0 6px 20px var(--glow); }
+.dict-play:active { transform: scale(0.97); }
+.dict-row { display: flex; gap: 8px; }
+.dict-hint { font-size: 12.5px; color: var(--muted); }
+.card { border-radius: 18px; }
+.topbar .back:hover { border-color: var(--accent); }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <section id="s-home">
-    <span class="eyebrow">Apostila A1 · aulas 01–23</span>
-    <h1 class="hero-title">Treino de Inglês</h1>
-    <p class="sub">Sua trilha de estudos, na ordem certa pra aprender. Cada etapa tem explicação e exercícios de estrutura: afirmativa, negativa e pergunta.</p>
+   <div class="home">
+    <aside class="home-side">
+      <span class="eyebrow">Apostila A1 · aulas 01–23</span>
+      <h1 class="hero-title">Treino de Inglês</h1>
+      <p class="sub">Explicação, exercícios de estrutura e correção palavra por palavra. Afirmativa, negativa e pergunta — em todos os tempos.</p>
 
-    <div class="levelcard" id="levelcard">
-      <div class="ring-wrap">
-        <svg class="ring" viewBox="0 0 100 100" width="76" height="76" aria-hidden="true">
-          <defs>
-            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" class="ring-stop-a"></stop>
-              <stop offset="100%" class="ring-stop-b"></stop>
-            </linearGradient>
-          </defs>
-          <circle class="ring-track" cx="50" cy="50" r="42"></circle>
-          <circle class="ring-fill" id="ring-fill" cx="50" cy="50" r="42"></circle>
-        </svg>
-        <div class="ring-pct" id="ring-pct">0%</div>
+      <div class="levelcard" id="levelcard">
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 100 100" width="76" height="76" aria-hidden="true">
+            <defs>
+              <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" class="ring-stop-a"></stop>
+                <stop offset="100%" class="ring-stop-b"></stop>
+              </linearGradient>
+            </defs>
+            <circle class="ring-track" cx="50" cy="50" r="42"></circle>
+            <circle class="ring-fill" id="ring-fill" cx="50" cy="50" r="42"></circle>
+          </svg>
+          <div class="ring-pct" id="ring-pct">0%</div>
+        </div>
+        <div class="levelcard-body">
+          <div class="levelcard-label">Domínio geral</div>
+          <div class="levelcard-stats" id="levelcard-stats">Nenhum exercício respondido ainda</div>
+          <div class="day-streak hidden" id="day-streak"></div>
+        </div>
       </div>
-      <div class="levelcard-body">
-        <div class="levelcard-label">Domínio geral</div>
-        <div class="levelcard-stats" id="levelcard-stats">Nenhum exercício respondido ainda</div>
-        <div class="day-streak hidden" id="day-streak"></div>
+
+      <div class="goalcard" id="goalcard">
+        <div class="goal-head"><span>🎯 Meta de hoje</span><span class="goal-num" id="goal-txt">0 / 20</span></div>
+        <div class="goalbar"><i id="goal-fill"></i></div>
+        <div class="goal-hint" id="goal-hint">20 frases por dia. Pequeno todo dia vence grande de vez em quando.</div>
       </div>
-    </div>
 
-    <button type="button" class="btn" id="btn-weak" style="margin: 0 0 10px; text-align: left;">🎯 Treinar meus erros — repete o que você mais errou</button>
-    <button type="button" class="btn" id="btn-translate" style="margin: 0 0 16px; text-align: left;">🌐 Tradutor — traduza qualquer frase na hora</button>
+      <div class="quick">
+        <button type="button" class="qa hot" id="btn-trail"><b>🧭 Trilha completa</b><small>Aula por aula, acumulando o que já viu</small></button>
+        <button type="button" class="qa" id="btn-blitz"><b>⚡ Desafio 2 minutos</b><small id="blitz-sub">Quantas frases você acerta contra o relógio?</small></button>
+        <button type="button" class="qa" id="btn-dictation"><b>🎧 Ditado</b><small>Ele fala em inglês, você escreve o que ouviu</small></button>
+        <button type="button" class="qa" id="btn-weak"><b>🎯 Treinar meus erros</b><small id="weak-txt">nenhum erro guardado ainda</small></button>
+        <button type="button" class="qa" id="btn-translate"><b>🌐 Tradutor</b><small>Qualquer frase, na hora</small></button>
+      </div>
 
-    <div class="path" id="blocks"></div>
+      <details class="more">
+        <summary>Instalar · backup</summary>
+        <button type="button" class="btn primary hidden" id="btn-install" style="margin-top:12px;">Instalar no celular</button>
+        <div class="install-tip" id="ios-tip">No iPhone: Safari → botão compartilhar → "Adicionar à Tela de Início". No Android: Chrome → menu ⋮ → "Adicionar à tela inicial". No PC: ícone de instalar na barra de endereço.</div>
+        <div class="backupw">
+          <button type="button" class="btn" id="btn-export">💾 Salvar progresso</button>
+          <button type="button" class="btn" id="btn-import">📂 Restaurar</button>
+          <input type="file" id="import-file" accept="application/json" class="hidden">
+        </div>
+        <p class="backup-hint">Seu progresso fica salvo neste aparelho. Use o backup pra levar pro outro (PC ↔ celular).</p>
+      </details>
+    </aside>
 
-    <button type="button" class="btn primary hidden" id="btn-install" style="margin-top:16px;">Instalar no celular</button>
-    <div class="install-tip" id="ios-tip">No iPhone: Safari → botão compartilhar → "Adicionar à Tela de Início". No Android: Chrome → menu ⋮ → "Adicionar à tela inicial".</div>
-    <div class="backupw">
-      <button type="button" class="btn" id="btn-export">💾 Salvar progresso (backup)</button>
-      <button type="button" class="btn" id="btn-import">📂 Restaurar progresso</button>
-      <input type="file" id="import-file" accept="application/json" class="hidden">
-    </div>
-    <p class="backup-hint">Seu progresso fica salvo só neste link. Se o link mudar algum dia, salve o backup aqui antes e restaure depois — nada se perde.</p>
+    <main class="home-main">
+      <div class="home-tabs">
+        <button type="button" class="htab on" id="tab-temas">Temas</button>
+        <button type="button" class="htab" id="tab-trilha">Trilha completa</button>
+      </div>
+      <div class="path" id="blocks"></div>
+      <div class="trail hidden" id="trail"></div>
+    </main>
+   </div>
   </section>
 
   <section id="s-section" class="hidden">
@@ -1877,6 +2025,7 @@ function recordResult(q, ok){
   var secId = q.__origSec || state.sec.id;
   bumpCombo(ok);
   touchDayStreak();
+  bumpGoal();
   if (!state.isWeak) addStat(state.sec.id, ok);
   if (ok) resolveWeak(secId, q); else addWeak(secId, q);
   var kk = q.k || "ot";
@@ -1994,6 +2143,7 @@ function renderHome(){
       '<span class="path-body">' +
         '<span class="path-title">' + sec.title + '</span>' +
         '<span class="path-sub">' + subText + '</span>' +
+        '<span class="path-bar"><i style="width:' + (st && st.a ? Math.round(100 * st.c / st.a) : 0) + '%"></i></span>' +
         '<span class="path-badge">' + badgeText + '</span>' +
       '</span>';
     node.addEventListener("click", function(){ openSection(sec); });
@@ -2013,9 +2163,13 @@ function renderHome(){
 
   var wc = weakCount();
   var wb = $("btn-weak");
-  wb.textContent = wc ? ("🎯 Treinar meus erros — " + wc + " frase" + (wc > 1 ? "s" : "") + " para reforçar") : "🎯 Treinar meus erros — nenhum erro guardado ainda";
+  $("weak-txt").textContent = wc ? (wc + " frase" + (wc > 1 ? "s" : "") + " para reforçar") : "nenhum erro guardado ainda";
   wb.disabled = !wc;
-  wb.style.opacity = wc ? "1" : "0.6";
+  $("blitz-sub").textContent = stats.__best ? ("Seu recorde: " + stats.__best + " acertos") : "Quantas frases você acerta contra o relógio?";
+  renderGoal();
+  stopBlitz();
+  var tab = "temas"; try { tab = localStorage.getItem("treinoA1tab") || "temas"; } catch(e){}
+  showHomeTab(tab);
   screens("s-home");
 }
 
@@ -2061,14 +2215,14 @@ function renderKindBar(){
 }
 
 function startQuiz(){
-  state.isWeak = false;
   var items = sectionItems(state.sec);
   if (state.mode === "tr") items = items.filter(function(it){ return it.t === "tr"; });
   else if (state.mode === "build") items = items.filter(function(it){ return it.t !== "tr"; });
   if (state.filter !== "all") items = items.filter(function(it){ return it.k === state.filter; });
   if (!items.length) items = sectionItems(state.sec);
-  state.queue = shuffle(items).slice(0, 10);
-  state.idx = 0; state.hits = 0; state.combo = 0; state.hintsUsed = 0; state.misses = []; state.phase = "answer"; state.roundStats = {};
+  var queue = shuffle(items).slice(0, 10);
+  resetRound();
+  state.queue = queue;
   screens("s-quiz");
   renderQuestion();
 }
@@ -2076,10 +2230,10 @@ function startQuiz(){
 function startWeakSession(){
   var q = getWeakQueue(10);
   if (!q.length) return;
+  resetRound();
   state.isWeak = true;
   state.sec = { id: "weak", icon: "🎯", title: "Treinar meus erros", kinds: false };
   state.queue = q;
-  state.idx = 0; state.hits = 0; state.combo = 0; state.hintsUsed = 0; state.misses = []; state.phase = "answer"; state.roundStats = {};
   screens("s-quiz");
   renderQuestion();
 }
@@ -2166,7 +2320,7 @@ function buildGloss(){
 }
 /* palavras da frase em PT que têm tradução no glossário e aparecem na resposta */
 function wordHints(q){
-  if (!q.pt || (q.t !== "tr" && q.t !== "w")) return [];
+  if (!q.pt || (q.t !== "tr" && q.t !== "w") || q.k === "typ" || state.blitz) return [];
   var g = buildGloss();
   var pool = [q.answer].concat(q.alt || []).map(function(a){ return " " + norm(a) + " "; }).join("|");
   var orig = q.pt.replace(/[.,!?;:()"]/g, " ").split(/\s+/).filter(Boolean);
@@ -2331,10 +2485,170 @@ function dayStreakLabel(){
   return "🔥 " + m.n + " dia" + (m.n > 1 ? "s" : "") + " seguido" + (m.n > 1 ? "s" : "") + (m.last === t ? "" : " — treine hoje pra manter");
 }
 
+/* ---------- v25: trilha completa, desafio 2 min, ditado, meta diária ---------- */
+var GOAL = 20;
+function resetRound(){
+  state.idx = 0; state.hits = 0; state.combo = 0; state.hintsUsed = 0; state.misses = []; state.phase = "answer"; state.roundStats = {};
+  state.special = false; state.dictation = false; state.isWeak = false;
+  stopBlitz();
+}
+function secById(id){ for (var i = 0; i < SECTIONS.length; i++) if (SECTIONS[i].id === id) return SECTIONS[i]; return null; }
+function practiceItems(sec){
+  return sectionItems(sec).filter(function(it){ return it.t !== "f"; });
+}
+
+/* meta diária */
+function bumpGoal(){
+  var t = todayKey();
+  var g = stats.__today && stats.__today.d === t ? stats.__today : { d: t, n: 0, done: false };
+  g.n++;
+  if (!g.done && g.n >= GOAL) { g.done = true; setTimeout(function(){ confetti(80); floatText("🎯 Meta do dia batida!"); }, 300); }
+  stats.__today = g;
+  store.set(stats);
+}
+function renderGoal(){
+  var t = todayKey();
+  var g = stats.__today && stats.__today.d === t ? stats.__today : { d: t, n: 0 };
+  var n = Math.min(g.n, GOAL);
+  $("goal-txt").textContent = n + " / " + GOAL;
+  $("goal-fill").style.width = (100 * n / GOAL) + "%";
+  $("goalcard").classList.toggle("done", n >= GOAL);
+  $("goal-hint").textContent = n >= GOAL ? "Meta batida hoje. Tudo além disso é lucro. 🔥" :
+    n === 0 ? "20 frases por dia. Pequeno todo dia vence grande de vez em quando." :
+    "Faltam " + (GOAL - n) + " frases pra fechar o dia.";
+}
+
+/* trilha completa (cumulativa) */
+function trailSteps(){
+  var steps = [];
+  PATH_ORDER.forEach(function(id, i){
+    var sec = secById(id); if (!sec) return;
+    steps.push({ key: "trail:" + id, n: (i + 1) + "", sec: sec, ids: [id], rev: false,
+      title: sec.title, sub: "só este tema" });
+    if (i > 0) {
+      steps.push({ key: "trail:" + id + ":b", n: (i + 1) + "B", sec: sec, ids: PATH_ORDER.slice(0, i + 1), rev: true,
+        title: "Revisão · " + sec.title + " + anteriores", sub: "metade deste tema, metade dos " + i + " anteriores" });
+    }
+  });
+  return steps;
+}
+function stepStatus(st){
+  if (!st || !st.a) return "todo";
+  if (st.a >= 10 && (st.c / st.a) >= 0.7) return "done";
+  return "wip";
+}
+function renderTrail(){
+  var host = $("trail"); host.innerHTML = "";
+  var steps = trailSteps(), nextMarked = false;
+  steps.forEach(function(s){
+    var st = stats[s.key]; var status = stepStatus(st);
+    var isNext = !nextMarked && status !== "done";
+    if (isNext) nextMarked = true;
+    var d = document.createElement("div");
+    d.className = "tstep " + status + (s.rev ? " rev" : "") + (isNext ? " next" : "");
+    d.innerHTML = '<div class="tnum">' + (status === "done" ? "✓" : s.n) + '</div>' +
+      '<div><div class="ttitle">' + (s.rev ? "" : s.sec.icon + " ") + s.title + '</div>' +
+      '<div class="tsub">' + (st && st.a ? (st.c + "/" + st.a + " certas · ") : "") + s.sub + (isNext ? " · ← próxima" : "") + '</div></div>' +
+      '<div class="tacts">' + (s.rev ? "" : '<button type="button" class="tbtn" data-act="explain">📖 Explicação</button>') +
+      '<button type="button" class="tbtn go" data-act="go">▶ Praticar</button></div>';
+    d.querySelector('[data-act="go"]').addEventListener("click", function(){ startTrailStep(s); });
+    var ex = d.querySelector('[data-act="explain"]');
+    if (ex) ex.addEventListener("click", function(){ openSection(s.sec); });
+    host.appendChild(d);
+  });
+}
+function startTrailStep(s){
+  var cur = shuffle(practiceItems(s.sec));
+  var queue;
+  if (!s.rev) queue = cur.slice(0, 12);
+  else {
+    var prev = [];
+    s.ids.slice(0, -1).forEach(function(id){ var sec = secById(id); if (sec) prev = prev.concat(practiceItems(sec)); });
+    queue = shuffle(cur.slice(0, 6).concat(shuffle(prev).slice(0, 6)));
+  }
+  resetRound();
+  state.special = true;
+  state.sec = { id: s.key, icon: s.rev ? "🔁" : s.sec.icon, title: "Trilha " + s.n + " · " + s.title, kinds: false };
+  state.queue = queue;
+  screens("s-quiz");
+  renderQuestion();
+}
+function showHomeTab(tab){
+  $("tab-temas").classList.toggle("on", tab === "temas");
+  $("tab-trilha").classList.toggle("on", tab === "trilha");
+  $("blocks").classList.toggle("hidden", tab !== "temas");
+  $("trail").classList.toggle("hidden", tab !== "trilha");
+  if (tab === "trilha") renderTrail();
+  try { localStorage.setItem("treinoA1tab", tab); } catch(e){}
+}
+
+/* desafio 2 minutos */
+var blitzTimer = null;
+function stopBlitz(){ if (blitzTimer) { clearInterval(blitzTimer); blitzTimer = null; } state.blitz = false; $("count").className = "count"; }
+function startBlitz(){
+  var pool = [];
+  SECTIONS.forEach(function(sec){ pool = pool.concat(practiceItems(sec)); });
+  resetRound();
+  state.special = true; state.blitz = true;
+  state.sec = { id: "blitz", icon: "⚡", title: "Desafio 2 minutos", kinds: false };
+  state.queue = shuffle(pool).slice(0, 60);
+  state.blitzEnd = Date.now() + 120000;
+  screens("s-quiz");
+  renderQuestion();
+  $("count").className = "count timer";
+  blitzTimer = setInterval(tickBlitz, 250);
+  tickBlitz();
+}
+function tickBlitz(){
+  var left = Math.max(0, state.blitzEnd - Date.now());
+  var s = Math.ceil(left / 1000);
+  $("count").textContent = "⏱ " + Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2) + " · " + state.hits + " ✓";
+  $("count").classList.toggle("low", s <= 15);
+  if (left <= 0) {
+    clearInterval(blitzTimer); blitzTimer = null;
+    state.queue = state.queue.slice(0, state.idx + (state.phase === "feedback" ? 1 : 0));
+    if (!state.queue.length) state.queue = [state.queue[0] || {t:"p", text:"", opts:[], answer:"", rule:""}];
+    var best = stats.__best || 0;
+    if (state.hits > best) { stats.__best = state.hits; store.set(stats); }
+    finishQuiz();
+    $("final-msg").textContent = "⚡ " + state.hits + " acertos em 2 minutos" + (state.hits > best ? " — NOVO RECORDE!" : " · recorde: " + Math.max(best, state.hits));
+    if (state.hits > best) setTimeout(function(){ confetti(90); }, 300);
+  }
+}
+
+/* ditado: ouve e escreve */
+function startDictation(){
+  if (!ttsSupported) { alert("Seu navegador não tem voz em inglês disponível. No celular, use o Chrome."); return; }
+  var pool = [];
+  SECTIONS.forEach(function(sec){
+    pool = pool.concat(sectionItems(sec).filter(function(it){ return it.t === "tr" && it.answer.split(" ").length <= 8; }));
+  });
+  resetRound();
+  state.special = true; state.dictation = true;
+  state.sec = { id: "dictation", icon: "🎧", title: "Ditado", kinds: false };
+  state.queue = shuffle(pool).slice(0, 10);
+  screens("s-quiz");
+  renderQuestion();
+}
+function renderDictation(q){
+  $("qlabel").textContent = "Ditado · ouça e escreva em inglês";
+  $("qtext").innerHTML = '<div class="dict"><div class="dict-row">' +
+    '<button type="button" class="dict-play" id="dict-play">🔊 Ouvir</button>' +
+    '<button type="button" class="tts-btn" id="dict-slow">🐢 Devagar</button></div>' +
+    '<span class="dict-hint">Pode ouvir quantas vezes quiser. Escreva exatamente o que ouviu.</span></div>';
+  $("dict-play").addEventListener("click", function(){ speak(q.answer, 1); });
+  $("dict-slow").addEventListener("click", function(){ speak(q.answer, 0.55); });
+  $("area-input").classList.remove("hidden");
+  $("answer-input").value = "";
+  $("answer-input").placeholder = "O que ele falou?";
+  $("mic-row-input").classList.add("hidden");
+  setTimeout(function(){ speak(q.answer, 0.85); }, 350);
+}
+
 function renderQuestion(){
   var q = state.queue[state.idx];
   state.phase = "answer"; state.built = [];
-  $("count").textContent = (state.idx + 1) + "/" + state.queue.length;
+  if (!state.blitz) $("count").textContent = (state.idx + 1) + "/" + state.queue.length;
   $("progress-fill").style.width = (100 * state.idx / state.queue.length) + "%";
   $("feedback").className = "feedback hidden"; $("feedback").innerHTML = "";
   $("area-chips").classList.add("hidden");
@@ -2366,8 +2680,11 @@ function renderQuestion(){
     $("area-input").classList.remove("hidden");
     $("answer-input").value = "";
     $("mic-row-input").classList.toggle("hidden", !speechSupported);
+  } else if (q.t === "tr" && state.dictation) {
+    renderDictation(q);
   } else if (q.t === "tr") {
     $("qlabel").textContent = "Traduza para o inglês" + (kindName ? " · " + kindName : "");
+    $("answer-input").placeholder = "Escreva a frase em inglês";
     $("qtext").textContent = q.pt;
     $("area-input").classList.remove("hidden");
     $("answer-input").value = "";
@@ -2441,7 +2758,7 @@ function renderPick(q){
 
 /* ---------- verificação e "onde errei" ---------- */
 function ptFb(q){
-  if (!q.pt || q.t === "tr" || q.t === "f") return "";
+  if (!q.pt || (q.t === "tr" && !state.dictation) || q.t === "f") return "";
   return '<span class="ptfb">' + q.pt + '</span>';
 }
 function answerDisplay(q){
@@ -2572,6 +2889,7 @@ function nextQuestion(){
 }
 
 function finishQuiz(){
+  if (blitzTimer) { clearInterval(blitzTimer); blitzTimer = null; }
   $("progress-fill").style.width = "100%";
   screens("s-done");
   var total = state.queue.length;
@@ -2898,9 +3216,14 @@ $("answer-input").addEventListener("keydown", function(e){
 $("btn-back-home").addEventListener("click", renderHome);
 $("btn-done-home").addEventListener("click", renderHome);
 $("btn-back-sec").addEventListener("click", function(){
-  if (state.isWeak) renderHome(); else openSection(state.sec);
+  if (state.isWeak || state.special) renderHome(); else openSection(state.sec);
 });
 $("btn-weak").addEventListener("click", startWeakSession);
+$("btn-trail").addEventListener("click", function(){ showHomeTab("trilha"); if (window.innerWidth < 900) $("trail").scrollIntoView({behavior:"smooth"}); });
+$("btn-blitz").addEventListener("click", startBlitz);
+$("btn-dictation").addEventListener("click", startDictation);
+$("tab-temas").addEventListener("click", function(){ showHomeTab("temas"); });
+$("tab-trilha").addEventListener("click", function(){ showHomeTab("trilha"); });
 
 /* ---------- PWA ---------- */
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
