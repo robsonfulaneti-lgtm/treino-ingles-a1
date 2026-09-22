@@ -2235,6 +2235,7 @@ function sectionItems(sec){
     var base = sec.gen ? sec.gen() : sec.items;
     sec._items = base.concat(TRANS[sec.id] || []);
     sec._items.forEach(function(it){
+      if (it.t === "c" && !it.answer) it.answer = it.parts.join(" ").replace(" ?", "?");
       if (it.t === "c" && !it.pt) {
         var hint = PT_HINTS[it.parts.join(" ").replace(" ?", "?")];
         if (hint) it.pt = hint;
@@ -2489,7 +2490,7 @@ function renderHints(q){
 }
 function onHintClick(e){
   var b = e.target.closest(".hint");
-  if (!b || b.classList.contains("open")) return;
+  if (!b || b.id === "btn-build" || b.classList.contains("open")) return;
   b.classList.add("open");
   b.querySelector(".hint-en").classList.remove("hidden");
   state.hintsUsed = (state.hintsUsed || 0) + 1;
@@ -2804,13 +2805,29 @@ function renderQuestion(){
   var kindName = KLABEL[q.k] || "";
 
   if (q.t === "c") {
-    $("qlabel").textContent = "Monte a frase" + (kindName ? " · " + kindName : "");
-    $("qtext").innerHTML = q.hint ? '<b>' + q.hint + '</b>' : "";
-    $("area-chips").classList.remove("hidden");
+    state.buildMode = false;
+    if (!q.answer) q.answer = q.parts.join(" ").replace(" ?", "?");
+    $("qlabel").textContent = "Escreva a frase" + (kindName ? " · " + kindName : "");
+    $("qtext").innerHTML = (q.hint ? '<b>' + q.hint + '</b><br>' : "") + (q.pt || "");
     $("pt-line").textContent = q.pt || "";
-    $("pt-line").classList.toggle("hidden", !q.pt);
+    $("pt-line").classList.add("hidden");
     $("mic-row-chips").classList.toggle("hidden", !speechSupported);
     renderChips(q);
+    $("area-chips").classList.add("hidden");
+    $("area-input").classList.remove("hidden");
+    $("answer-input").value = "";
+    $("answer-input").placeholder = "Escreva a frase em inglês";
+    $("mic-row-input").classList.toggle("hidden", !speechSupported);
+    $("hint-row").innerHTML = '<button type="button" class="hint" id="btn-build">👁 Não lembro as palavras — montar com blocos</button>';
+    $("hint-row").classList.remove("hidden");
+    $("btn-build").addEventListener("click", function(){
+      if (state.phase !== "answer") return;
+      state.buildMode = true; state.hintsUsed = (state.hintsUsed || 0) + 1;
+      $("qlabel").textContent = "Monte a frase" + (kindName ? " · " + kindName : "") + " · cuidado: tem blocos errados";
+      $("area-input").classList.add("hidden");
+      $("hint-row").classList.add("hidden");
+      $("area-chips").classList.remove("hidden");
+    });
   } else if (q.t === "w") {
     $("qlabel").textContent = "Estrutura" + (kindName ? " · " + kindName : "");
     $("qtask-holder").innerHTML = '<span class="qtask">' + q.task + '</span>';
@@ -2843,11 +2860,65 @@ function renderQuestion(){
   }
 }
 
+/* ---------- distratores: blocos errados pra forçar a decisão ---------- */
+var DIS_MAP = {
+  "i":["he","she"], "you":["he","they"], "he":["she","they"], "she":["he","it"], "it":["he","they"], "we":["they","he"], "they":["we","she"],
+  "i'm":["he's","you're"], "he's":["she's","they're"], "she's":["he's","we're"], "it's":["he's","they're"], "we're":["they're","he's"], "they're":["we're","she's"], "you're":["he's","they're"],
+  "am":["is","are"], "is":["are","was"], "are":["is","were"], "was":["were","is"], "were":["was","are"],
+  "isn't":["aren't","wasn't"], "aren't":["isn't","weren't"], "wasn't":["weren't","isn't"], "weren't":["wasn't","aren't"], "am not":["isn't","aren't"],
+  "do":["does","did"], "does":["do","did"], "did":["do","does"],
+  "don't":["doesn't","didn't"], "doesn't":["don't","didn't"], "didn't":["don't","doesn't"],
+  "a":["an","the"], "an":["a","the"], "the":["a","an"],
+  "going to":["will","go to"], "will":["going to","won't"], "won't":["will","don't"],
+  "can":["can't","could"], "can't":["can","don't"], "should":["shouldn't","must"], "shouldn't":["should","can't"], "would":["will","could"],
+  "in":["on","at"], "on":["in","at"], "at":["in","on"], "for":["to","at"], "to":["for","at"], "with":["of","for"], "of":["with","for"], "from":["at","of"],
+  "there is":["there are","is there"], "there are":["there is","are there"], "is there":["are there","there is"], "are there":["is there","there are"],
+  "my":["your","his"], "your":["my","her"], "his":["her","him"], "her":["his","she"], "our":["their","we"], "their":["our","they"],
+  "me":["i","my"], "him":["he","his"], "them":["they","their"], "us":["we","our"],
+  "what":["where","when"], "where":["what","when"], "when":["where","what"], "why":["how","what"], "how":["why","what"], "who":["what","whose"],
+  "very":["much","many"], "always":["never","sometimes"], "never":["always","sometimes"], "usually":["never","always"]
+};
+function distractors(parts){
+  var out = [], have = {};
+  parts.forEach(function(p){ have[p.toLowerCase()] = 1; });
+  function push(w){ if (w && !have[w.toLowerCase()] && out.indexOf(w) < 0) { have[w.toLowerCase()] = 1; out.push(w); return true; } return false; }
+  parts.forEach(function(p){
+    var w = p.toLowerCase();
+    if (w === "?") return;
+    var m = DIS_MAP[w];
+    if (m) { push(m[Math.floor(Math.random() * m.length)]); return; }
+    /* verbos: base / -s / passado / -ing */
+    for (var k = 0; k < VERBS.length; k++) {
+      var v = VERBS[k];
+      var forms = [v.b, third(v.b), v.p, ing(v.b)].filter(Boolean);
+      if (forms.indexOf(w) > -1) {
+        var others = shuffle(forms.filter(function(f){ return f !== w; }));
+        push(others[0]); if (Math.random() < 0.5) push(others[1]);
+        return;
+      }
+    }
+    /* expressões de tempo: presente ↔ passado ↔ futuro */
+    var sets = [T_PRES, T_PAST, T_FUT];
+    for (var s = 0; s < sets.length; s++) {
+      if (sets[s].indexOf(w) > -1) {
+        var other = sets[(s + 1 + Math.floor(Math.random() * 2)) % 3];
+        push(other[Math.floor(Math.random() * other.length)]);
+        return;
+      }
+    }
+    /* palavras com -ing / -s / -ed genéricas */
+    if (/ing$/.test(w) && w.length > 5) { push(w.replace(/ing$/, "")); return; }
+    if (/ed$/.test(w) && w.length > 5) { push(w.replace(/ed$/, "")); return; }
+  });
+  return shuffle(out).slice(0, Math.max(3, Math.min(5, parts.length)));
+}
+
 function renderChips(q){
   var pool = $("chip-pool"), built = $("chip-built");
   pool.innerHTML = "";
   built.innerHTML = '<span class="built-hint">Toque nas palavras · toque de novo para tirar</span>';
-  shuffle(q.parts).forEach(function(word){
+  var pool_words = shuffle(q.parts.concat(state.blitz ? [] : distractors(q.parts)));
+  pool_words.forEach(function(word){
     var b = document.createElement("button");
     b.type = "button"; b.className = "chip"; b.textContent = word;
     b.addEventListener("click", function(){
@@ -3485,14 +3556,14 @@ $("btn-main").addEventListener("click", function(){
   var q = state.queue[state.idx];
   if (q.t === "f") { revealFlash(); return; }
   if (state.phase === "feedback") { nextQuestion(); return; }
-  if (q.t === "c") checkChips(q);
-  else if (q.t === "w" || q.t === "tr") checkWrite(q);
+  if (q.t === "c" && state.buildMode) checkChips(q);
+  else if (q.t === "c" || q.t === "w" || q.t === "tr") checkWrite(q);
 });
 $("answer-input").addEventListener("keydown", function(e){
   if (e.key === "Enter") {
     e.preventDefault();
     var q = state.queue[state.idx];
-    if (state.phase === "answer") checkWrite(q);
+    if (state.phase === "answer") { if (q.t === "c" && state.buildMode) checkChips(q); else checkWrite(q); }
     else nextQuestion();
   }
 });
