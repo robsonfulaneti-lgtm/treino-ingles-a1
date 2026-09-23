@@ -2358,7 +2358,7 @@ function startQuiz(){
   else if (state.mode === "build") items = items.filter(function(it){ return it.t !== "tr"; });
   if (state.filter !== "all") items = items.filter(function(it){ return it.k === state.filter; });
   if (!items.length) items = sectionItems(state.sec);
-  var queue = shuffle(items).slice(0, 10);
+  var queue = shuffle(items).slice(0, ROUND);
   resetRound();
   state.queue = queue;
   screens("s-quiz");
@@ -2366,7 +2366,7 @@ function startQuiz(){
 }
 
 function startWeakSession(){
-  var q = getWeakQueue(10);
+  var q = getWeakQueue(ROUND);
   if (!q.length) return;
   resetRound();
   state.isWeak = true;
@@ -2626,6 +2626,7 @@ function dayStreakLabel(){
 
 /* ---------- v25: trilha completa, desafio 2 min, ditado, meta diária ---------- */
 var GOAL = 20;
+var ROUND = 20;
 function resetRound(){
   state.idx = 0; state.hits = 0; state.combo = 0; state.hintsUsed = 0; state.misses = []; state.phase = "answer"; state.roundStats = {};
   state.special = false; state.dictation = false; state.isWeak = false;
@@ -2700,11 +2701,11 @@ function renderTrail(){
 function startTrailStep(s){
   var cur = shuffle(practiceItems(s.sec));
   var queue;
-  if (!s.rev) queue = cur.slice(0, 12);
+  if (!s.rev) queue = cur.slice(0, ROUND);
   else {
     var prev = [];
     s.ids.slice(0, -1).forEach(function(id){ var sec = secById(id); if (sec) prev = prev.concat(practiceItems(sec)); });
-    queue = shuffle(cur.slice(0, 6).concat(shuffle(prev).slice(0, 6)));
+    queue = shuffle(cur.slice(0, ROUND / 2).concat(shuffle(prev).slice(0, ROUND / 2)));
   }
   resetRound();
   state.special = true;
@@ -2768,7 +2769,7 @@ function startDictation(){
   resetRound();
   state.special = true; state.dictation = true;
   state.sec = { id: "dictation", icon: "🎧", title: "Ditado", kinds: false };
-  state.queue = shuffle(pool).slice(0, 10);
+  state.queue = shuffle(pool).slice(0, ROUND);
   screens("s-quiz");
   renderQuestion();
 }
