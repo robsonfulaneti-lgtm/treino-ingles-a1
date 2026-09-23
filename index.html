@@ -247,6 +247,7 @@ input.answer:focus { outline: none; border-color: var(--accent); }
 .feedback .dw-ok { color: var(--ok); }
 .feedback .dw-bad { color: var(--err); font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
 .feedback .where { display: block; margin-top: 4px; }
+.feedback .alsook { display: block; font-size: 13.5px; color: var(--muted); margin: 2px 0 4px; }
 .feedback .dw-extra { color: var(--muted); opacity: 0.7; }
 .feedback .ptfb, .review-item .ptfb { display: block; font-size: 14.5px; color: var(--muted); font-style: italic; margin: 2px 0 4px; }
 .feedback .rule { display: block; margin-top: 8px; font-size: 14.5px; color: var(--ink); opacity: 0.85; }
@@ -2458,7 +2459,7 @@ function buildGloss(){
 function wordHints(q){
   if (!q.pt || (q.t !== "tr" && q.t !== "w") || q.k === "typ" || state.blitz) return [];
   var g = buildGloss();
-  var pool = [q.answer].concat(q.alt || []).map(function(a){ return " " + norm(a) + " "; }).join("|");
+  var pool = " " + norm(q.answer) + " ";
   var orig = q.pt.replace(/[.,!?;:()"]/g, " ").split(/\s+/).filter(Boolean);
   var toks = orig.map(stripAcc);
   var out = [], seen = {};
@@ -3075,13 +3076,13 @@ function isPluralSubj(e, idx){
 function pastOf(base){ for (var k = 0; k < VERBS.length; k++) if (VERBS[k].b === base) return VERBS[k].p; return null; }
 function baseOfPast(p){ for (var k = 0; k < VERBS.length; k++) if (VERBS[k].p === p) return VERBS[k].b; return null; }
 function diagnose(q, userText){
-  var e = norm(q.answer).split(" "), u = norm(userText).split(" ");
+  var e = norm(q.__target || q.answer).split(" "), u = norm(userText).split(" ");
   var ops = alignWords(e, u), why = [], seen = {};
   function add(s){ if (!seen[s]) { seen[s] = 1; why.push(s); } }
   var eStr = " " + e.join(" ") + " ", uStr = " " + u.join(" ") + " ";
   /* casos que valem pela frase inteira */
   if (e.slice().sort().join(" ") === u.slice().sort().join(" ")) {
-    return [/\?$/.test(q.answer) ? "As palavras estão certas, mas a <b>ordem</b> não: em pergunta o auxiliar/to be vem ANTES do sujeito (Were you…? Do you…? Are you…?)." :
+    return [/\?$/.test(q.__target || q.answer) ? "As palavras estão certas, mas a <b>ordem</b> não: em pergunta o auxiliar/to be vem ANTES do sujeito (Were you…? Do you…? Are you…?)." :
       "As palavras estão certas, mas a <b>ordem</b> não: sujeito + verbo + complemento + tempo (I ate rice for lunch yesterday)."];
   }
   if (/ did /.test(uStr) && / (was|were) /.test(eStr) && !/ did /.test(eStr)) {
@@ -3144,6 +3145,13 @@ function diagnose(q, userText){
       /* -ing indevido */
       if (/ing$/.test(y) && !/ing$/.test(x)) { add("<b>" + x + "</b>, não " + y + ": o -ing só existe junto com am/is/are/was/were (I am eating). Sem to be, use " + x + "."); return; }
       if (/ing$/.test(x) && !/ing$/.test(y)) { add("<b>" + x + "</b>: depois de am/is/are/was/were o verbo vai pra -ing."); return; }
+      /* pronomes */
+      var PRON = {him:"ele (objeto)", her:"ela / dela", them:"eles", me:"mim", us:"nós", it:"isso", he:"ele (sujeito)", she:"ela (sujeito)", they:"eles (sujeito)", his:"dele", their:"deles", your:"seu/sua", my:"meu/minha", our:"nosso"};
+      if (PRON[x] && PRON[y]) {
+        add("<b>" + x + "</b>, não " + y + ": " + x + " = " + PRON[x] + ", " + y + " = " + PRON[y] + "." +
+          (/^(him|her|them|me|us)$/.test(x) && /^(he|she|they|i|we)$/.test(y) ? " Depois de verbo ou preposição usa-se o pronome objeto (talk to him, with her)." : ""));
+        return;
+      }
       /* preposições */
       if (PREP_PT[x] && PREP_PT[y]) { add("<b>" + x + "</b>, não " + y + ": " + x + " = " + PREP_PT[x] + ". Aqui a expressão é \"" + (e[op.i - 1] ? e[op.i - 1] + " " : "") + x + " " + (e[op.i + 1] || "") + "\"."); return; }
       /* going to */
@@ -3176,8 +3184,22 @@ function whyHtml(q, userText){
   return '<span class="why"><span class="why-label">💡 Por que</span>' + w.map(function(x){ return '<span class="why-line">' + x + '</span>'; }).join("") + '</span>';
 }
 
+function bestTarget(q, user){
+  var cands = [q.answer].concat(q.alt || []).filter(Boolean);
+  if (cands.length < 2) return q.answer;
+  var u = norm(user).split(" "), best = cands[0], bestScore = -1;
+  cands.forEach(function(c){
+    var e = norm(c).split(" ");
+    var ops = alignWords(e, u), eq = 0, bad = 0;
+    ops.forEach(function(o){ if (o.t === "eq") eq++; else bad++; });
+    var sc = eq - bad * 0.5;
+    if (sc > bestScore) { bestScore = sc; best = c; }
+  });
+  return best;
+}
+
 function wordDiffHtml(q, user){
-  var e = norm(q.answer).split(" ");
+  var e = norm(q.__target || q.answer).split(" ");
   var u = norm(user).split(" ");
   var ops = alignWords(e, u);
   var html = "", firstErr = "";
@@ -3201,13 +3223,16 @@ function checkWrite(q){
   if (ok) {
     state.hits++;
     fb.className = "feedback ok";
-    fb.innerHTML = '✓ Correto!<span class="full">' + answerDisplay(q) + '</span>' + ptFb(q) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+    fb.innerHTML = '✓ Correto!<span class="full">' + cap(bestTarget(q, user)) + '</span>' + ptFb(q) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   } else {
     state.misses.push(q);
+    q.__target = bestTarget(q, user);
     var d = wordDiffHtml(q, user);
+    var alsoOk = q.__target !== q.answer ? '<span class="alsook">Esta também vale: <b>' + cap(q.answer) + '</b></span>' : "";
     fb.className = "feedback err";
     fb.innerHTML = '✗ Ainda não.' + (d.where ? '<span class="where">' + d.where + '</span>' : "") +
-      '<span class="full">' + d.html + '</span>' + ptFb(q) + whyHtml(q, user) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+      '<span class="full">' + d.html + '</span>' + alsoOk + ptFb(q) + whyHtml(q, user) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+    q.__target = null;
   }
   attachTtsButton(fb, q.answer);
   $("answer-input").blur();
