@@ -261,6 +261,7 @@ input.answer:focus { outline: none; border-color: var(--accent); }
 .hint:active { transform: scale(0.95); }
 .hint.open { border-style: solid; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: var(--accent-ink); animation: hintpop .28s ease; }
 .hint .hint-en { font-weight: 700; }
+.hint.solid { border-style: solid; font-weight: 700; color: var(--accent); }
 @keyframes hintpop { 0% { transform: scale(0.9); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
 /* anatomia da frase */
 .anat { display: block; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line); }
@@ -2420,6 +2421,7 @@ var GLOSS_MANUAL = [
   ["viajar","travel"],["aprender","learn"],["nevar","snow"],["chover","rain"],["contar","tell"],["vender","sell"],
   ["comprar","buy"],["escrever","write"],["falar","speak"],["ter","have"],["entender","understand"],["saber","know"],
   ["sair","leave"],["pegar","take"],["vir","come"],["ficar","stay"],["ver","see"],
+  ["fome","hungry"],["com muita fome","very hungry"],["cachorro","dog"],["livro","book"],["cliente","customer"],["testemunha","witness"],["acorda","wake up"],["acordam","wake up"],["caminhar","walk"],["gosta","like"],["gosto","like"],["gostam","like"],["pais","parents"],["mãe","mother"],["pai","father"],["irmão","brother"],["irmã","sister"],["escola","school"],["à escola","to school"],["comigo","with me"],["com ele","with him"],["com ela","with her"],["horas","time"],["dinheiro","money"],["casa","house"],["cidade","city"],["loja","store"],["restaurante","restaurant"],["hospital","hospital"],["médico","doctor"],["carta","letter"],["música","music"],
   ["chega","gets"],["chegar","get"],["às seis","at six"],["às oito","at eight"],["meio-dia","noon"],["cedo","early"],["fora","out"]
 ];
 var GLOSS = null;
@@ -2457,7 +2459,7 @@ function buildGloss(){
 }
 /* palavras da frase em PT que têm tradução no glossário e aparecem na resposta */
 function wordHints(q){
-  if (!q.pt || (q.t !== "tr" && q.t !== "w") || q.k === "typ" || state.blitz) return [];
+  if (!q.pt || (q.t !== "tr" && q.t !== "w" && q.t !== "c") || q.k === "typ" || state.blitz) return [];
   var g = buildGloss();
   var pool = " " + norm(q.answer) + " ";
   var orig = q.pt.replace(/[.,!?;:()"]/g, " ").split(/\s+/).filter(Boolean);
@@ -2478,15 +2480,15 @@ function wordHints(q){
   }
   return out;
 }
-function renderHints(q){
+function renderHints(q, extraHtml){
   var row = $("hint-row");
   var hs = wordHints(q);
-  if (!hs.length) { row.classList.add("hidden"); row.innerHTML = ""; return; }
+  if (!hs.length && !extraHtml) { row.classList.add("hidden"); row.innerHTML = ""; return; }
   row.innerHTML = '<span class="hint-label">👁 Não sabe uma palavra? Toque pra ver</span>' +
     hs.map(function(h, i){
       return '<button type="button" class="hint" data-en="' + h.en.replace(/"/g, "&quot;") + '" data-i="' + i + '">' +
         '<span class="hint-pt">' + h.pt + '</span><span class="hint-en hidden">→ ' + h.en + '</span></button>';
-    }).join("");
+    }).join("") + (extraHtml || "");
   row.classList.remove("hidden");
 }
 function onHintClick(e){
@@ -2819,14 +2821,13 @@ function renderQuestion(){
     $("answer-input").value = "";
     $("answer-input").placeholder = "Escreva a frase em inglês";
     $("mic-row-input").classList.toggle("hidden", !speechSupported);
-    $("hint-row").innerHTML = '<button type="button" class="hint" id="btn-build">👁 Não lembro as palavras — montar com blocos</button>';
-    $("hint-row").classList.remove("hidden");
+    renderHints(q, '<button type="button" class="hint solid" id="btn-build">🧩 Montar com blocos</button>');
     $("btn-build").addEventListener("click", function(){
       if (state.phase !== "answer") return;
       state.buildMode = true; state.hintsUsed = (state.hintsUsed || 0) + 1;
       $("qlabel").textContent = "Monte a frase" + (kindName ? " · " + kindName : "") + " · cuidado: tem blocos errados";
       $("area-input").classList.add("hidden");
-      $("hint-row").classList.add("hidden");
+      $("btn-build").classList.add("hidden");
       $("area-chips").classList.remove("hidden");
     });
   } else if (q.t === "w") {
