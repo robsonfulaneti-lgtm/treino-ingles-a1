@@ -1214,6 +1214,9 @@ function genTenseId(){
 
 /* ---------- banco de vocabulário (nomes e adjetivos da apostila) ---------- */
 var VOCAB = [
+  {en:"widower", pt:"viúvo"}, {en:"widow", pt:"viúva"}, {en:"single", pt:"solteiro"}, {en:"married", pt:"casado"}, {en:"divorced", pt:"divorciado"},
+  {en:"couple", pt:"casal"}, {en:"adult", pt:"adulto"}, {en:"teenager", pt:"adolescente"}, {en:"relationship", pt:"relacionamento"}, {en:"invitation", pt:"convite"},
+  {en:"kiss", pt:"beijo"}, {en:"hug", pt:"abraço"}, {en:"good-looking", pt:"atraente"}, {en:"gorgeous", pt:"deslumbrante"}, {en:"jealous", pt:"com ciúmes"},
   {en:"bread", pt:"pão"}, {en:"cheese", pt:"queijo"}, {en:"coffee", pt:"café"},
   {en:"ham", pt:"presunto"}, {en:"tea", pt:"chá"}, {en:"apple", pt:"maçã"},
   {en:"milk", pt:"leite"}, {en:"fish", pt:"peixe"}, {en:"juice", pt:"suco"},
@@ -1922,6 +1925,124 @@ var SECTIONS = [
     {t:"p", k:"ot", text:"'Tem alguma coisa que você quer dizer?'", opts:["Is there anything you want to say?","Has anything you want to say?","There is anything you want say?"], answer:"Is there anything you want to say?", rule:"Tem...? = Is there...? (não 'has'). Want TO say."},
     {t:"p", k:"ot", text:"'Eu acho que eu estou apaixonado por você.'", opts:["I think I am in love with you.","I think I am in love for you.","I think I am in love by you."], answer:"I think I am in love with you.", rule:"Apaixonado POR alguém = in love WITH."}
   ]
+},
+{
+  id: "lesson71", icon: "💞", title: "Lesson 71: Relacionamentos", kinds: true,
+  kindOptions: [["all","Tudo"],["voc","Palavras"],["typ","🔤 Adivinhe a palavra"],["ex","Expressões"],["in","Perguntas WH (was/were)"],["ot","Real life"],["af","Afirmativa"],["ng","Negativa"]],
+  desc: "Estado civil, relacionamentos, expressões (get along, break up, turn down) e perguntas com Where/How/Why + was/were.",
+  explain: "<h3>1. Verbo da aula: to be (ser / estar)</h3>" +
+    "<p>No passado: <code>I/he/she/it <b>was</b></code> · <code>you/we/they <b>were</b></code>. Estado civil e sentimentos usam to be: " +
+    "<code>He was a widower.</code> (Ele era viúvo) · <code>They were married.</code> (Eles eram casados) · <code>She was jealous.</code> (Ela estava com ciúmes).</p>" +
+    "<h3>2. New words</h3>" +
+    "<div class='tblwrap'><table><tr><th>Inglês</th><th>Português</th><th>Inglês</th><th>Português</th></tr>" +
+    "<tr><td>widower</td><td>viúvo</td><td>widow</td><td>viúva</td></tr>" +
+    "<tr><td>single</td><td>solteiro(a)</td><td>married</td><td>casado(a)</td></tr>" +
+    "<tr><td>divorced</td><td>divorciado(a)</td><td>couple</td><td>casal</td></tr>" +
+    "<tr><td>adult</td><td>adulto(a)</td><td>teenager</td><td>adolescente</td></tr>" +
+    "<tr><td>relationship</td><td>relacionamento</td><td>invitation</td><td>convite</td></tr>" +
+    "<tr><td>kiss</td><td>beijo</td><td>hug</td><td>abraço</td></tr>" +
+    "<tr><td>good-looking</td><td>atraente</td><td>gorgeous</td><td>deslumbrante</td></tr>" +
+    "<tr><td>jealous</td><td>ciumento / com ciúmes</td><td></td><td></td></tr></table></div>" +
+    "<p>Pegadinha: <b>widower</b> é o homem (viúvo) e <b>widow</b> a mulher (viúva) — em inglês o masculino é que é mais longo. Profissão/estado com substantivo leva <code>a</code>: <code>He was <b>a</b> widower</code>, <code>They were teenagers</code>.</p>" +
+    "<h3>3. Expressões (useful phrases)</h3>" +
+    "<span class='frm'><code>get along (with)</code> — se dar bem (com) · <code>We get along very well.</code><br>" +
+    "<code>go on a (blind) date</code> — ir a um encontro (às cegas) · <code>I don't like to go on blind dates.</code><br>" +
+    "<code>break up (with)</code> — terminar (com) · <code>I want to break up.</code> · passado: <code>broke up</code><br>" +
+    "<code>turn down</code> — recusar · <code>She turns it down.</code> · passado: <code>turned down</code><br>" +
+    "<code>have a crush on</code> — ter uma queda por · <code>He has a crush on her.</code><br>" +
+    "<code>can't make it (to)</code> — não conseguir ir · <code>I can't make it to your party.</code><br>" +
+    "<code>give someone a kiss / a hug</code> — dar um beijo / abraço em alguém</span>" +
+    "<p><b>Atenção no turn down:</b> com pronome (it, them, him, her) o pronome fica <b>no meio</b>: <code>she turns <b>it</b> down</code>, <code>turn <b>them</b> down</code>. Nunca <s>turns down it</s>. Com substantivo pode dos dois jeitos: <code>turns down his invitations</code> ou <code>turns his invitations down</code>.</p>" +
+    "<p><b>Usar roupa</b> = <code>wear</code>, não <s>use</s>: <code>She always wears gorgeous dresses.</code></p>" +
+    "<h3>4. Grammar: perguntas com WH + was/were</h3>" +
+    "<span class='frm'><b>Palavra WH + was/were + sujeito + resto?</b><br>" +
+    "<code>Where was he last week?</code> — Onde ele estava na semana passada?<br>" +
+    "<code>How were they?</code> — Como eles estavam?<br>" +
+    "<code>What time was she there?</code> — Que horas ela estava lá?<br>" +
+    "<code>When were John and Jane in France?</code> — Quando John e Jane estiveram na França?<br>" +
+    "<code>Why was she so nervous?</code> — Por que ela estava tão nervosa?<br>" +
+    "<code>How old were the children?</code> — Quantos anos tinham as crianças?<br>" +
+    "<code>What was their favorite vacation?</code> — Quais foram as férias favoritas deles?</span>" +
+    "<ul><li><b>John and Jane</b>, <b>the children</b>, <b>they</b> → were. <b>he, she</b> → was.</li>" +
+    "<li>Idade é com to be: <code>How old <b>were</b> the children?</code> (nunca <s>How old had</s>).</li>" +
+    "<li><code>vacation</code> é singular em inglês → <code>What <b>was</b> their favorite vacation?</code> mesmo \"férias\" sendo plural em português.</li>" +
+    "<li>Sem did! <s>Where did he was</s> → <code>Where was he?</code></li></ul>" +
+    "<h3>5. Real life</h3>" +
+    "<p>Frases do dia a dia misturando tudo: <code>My parents are divorced, but get along very well.</code> · <code>Nobody knows he has a crush on her.</code> · <code>There were many good-looking couples at that party.</code></p>",
+  gen: function(){
+    var W = [
+      ["widower","viúvo"],["widow","viúva"],["single","solteiro(a)"],["married","casado(a)"],["divorced","divorciado(a)"],
+      ["couple","casal"],["adult","adulto(a)"],["teenager","adolescente"],["relationship","relacionamento"],["invitation","convite"],
+      ["kiss","beijo"],["hug","abraço"],["good-looking","atraente"],["gorgeous","deslumbrante"],["jealous","ciumento(a) / com ciúmes"]
+    ];
+    var items = [];
+    W.forEach(function(w){ items.push({t:"f", k:"voc", en:w[0], pt:w[1]}); });
+    W.forEach(function(w){
+      items.push({t:"tr", k:"typ", pt:w[1], answer:w[0], alt: w[0] === "good-looking" ? ["good looking"] : [],
+        rule:"A palavra é: " + w[0] + "." + (w[0] === "widower" ? " (widower = homem; widow = mulher)" : w[0] === "widow" ? " (widow = mulher; widower = homem)" : "")});
+    });
+    return items.concat([
+      /* expressões — montar */
+      {t:"c", k:"ex", parts:["we","get along","very well"], pt:"A gente se dá muito bem.", rule:"Se dar bem = get along."},
+      {t:"c", k:"ex", parts:["I","don't like","to go","on blind dates"], pt:"Eu não gosto de ir a encontros às cegas.", rule:"Ir a um encontro = go ON a date. Encontro às cegas = blind date."},
+      {t:"c", k:"ex", parts:["I","don't love","him"], pt:"Eu não o amo.", rule:"Presente negativo: don't + love. O = him (objeto)."},
+      {t:"c", k:"ex", parts:["I","want","to break up"], pt:"Eu quero terminar.", rule:"Terminar (namoro) = break up. Want + to + verbo."},
+      {t:"c", k:"ex", parts:["every time","I ask her","to come","to my house","for dinner","she","turns it down"], pt:"Toda vez que eu a chamo para jantar na minha casa, ela recusa.", rule:"Recusar = turn down. Com pronome o 'it' fica no meio: turns it down. She → turns (com -s)."},
+      /* grammar — montar */
+      {t:"c", k:"in", parts:["what","was","their","favorite vacation","?"], pt:"Quais foram as férias favoritas deles?", rule:"Vacation é singular em inglês → was."},
+      {t:"c", k:"in", parts:["where","was","he","last week","?"], pt:"Onde ele estava na semana passada?", rule:"WH + was + he...?"},
+      {t:"c", k:"in", parts:["how","were","they","?"], pt:"Como eles estavam?", rule:"They → were. How + were + they?"},
+      {t:"c", k:"in", parts:["what time","was","she","there","?"], pt:"Que horas ela estava lá?", rule:"Que horas = what time. She → was."},
+      {t:"c", k:"in", parts:["when","were","John and Jane","in France","?"], pt:"Quando John e Jane estiveram na França?", rule:"John and Jane = they → were."},
+      {t:"c", k:"in", parts:["why","was","she","so nervous","?"], pt:"Por que ela estava tão nervosa?", rule:"Tão = so. She → was."},
+      {t:"c", k:"in", parts:["how old","were","the children","?"], pt:"Quantos anos tinham as crianças?", rule:"Idade usa to be: how old + were. Children = plural."},
+      /* real life — montar */
+      {t:"c", k:"ot", parts:["she","doesn't want","to have","a relationship","now"], pt:"Ela não quer ter um relacionamento agora.", rule:"She → doesn't want (want sem -s depois do doesn't)."},
+      {t:"c", k:"ot", parts:["she","always","wears","gorgeous dresses","when she goes","on a date"], pt:"Ela sempre usa vestidos deslumbrantes quando vai a um encontro.", rule:"Usar roupa = wear (não use). Always vem antes do verbo."},
+      {t:"c", k:"ot", parts:["my parents","are","divorced","but","get along","very well"], pt:"Meus pais são divorciados, mas se dão muito bem.", rule:"My parents = they → are. Get along = se dar bem."},
+      {t:"c", k:"ot", parts:["do","you","want","to go","on a blind date","?"], pt:"Você quer ir a um encontro às cegas?", rule:"Pergunta no presente: Do + you + want...?"},
+      {t:"c", k:"ot", parts:["every day","I give","my father","a kiss","and a hug"], pt:"Todo dia eu dou um beijo e um abraço em meu pai.", rule:"Dar um beijo EM alguém = give someone a kiss (sem 'in')."},
+      {t:"c", k:"ot", parts:["he","wants","to break up","with her"], pt:"Ele quer terminar com ela.", rule:"Terminar COM alguém = break up WITH someone."},
+      {t:"c", k:"ot", parts:["nobody","knows","he","has a crush","on her"], pt:"Ninguém sabe que ele tem uma queda por ela.", rule:"Nobody + knows (singular). Ter uma queda POR = have a crush ON."},
+      {t:"c", k:"ot", parts:["she","always","turns down","his invitations"], pt:"Ela sempre recusa os convites dele.", rule:"Recusar = turn down. Dele = his."},
+      {t:"c", k:"ot", parts:["that widow","wasn't","rude","to the secretary"], pt:"Aquela viúva não foi rude com a secretária.", rule:"Widow = ela → wasn't. Rude COM = rude TO."},
+      {t:"c", k:"ot", parts:["sorry, but","I","can't make it","to your party"], pt:"Desculpe, mas não posso ir à sua festa.", rule:"Não conseguir ir = can't make it (to)."},
+      {t:"c", k:"ot", parts:["there were","many","good-looking couples","at that party"], pt:"Tinham muitos casais atraentes naquela festa.", rule:"Tinha (existir) no passado + plural = there were."},
+      /* escolha — o conceito */
+      {t:"p", k:"ex", text:"Every time I ask her, she turns ___.", opts:["it down","down it","it"], answer:"it down", rule:"Com pronome (it/them/him/her) ele fica NO MEIO: turns it down."},
+      {t:"p", k:"ex", text:"We get ___ very well.", opts:["along","on","up"], answer:"along", rule:"Se dar bem = get along."},
+      {t:"p", k:"ex", text:"He wants to break up ___ her.", opts:["with","to","for"], answer:"with", rule:"Terminar com alguém = break up WITH."},
+      {t:"p", k:"ex", text:"Nobody knows he has a crush ___ her.", opts:["on","in","for"], answer:"on", rule:"Queda por alguém = crush ON."},
+      {t:"p", k:"ex", text:"Sorry, I can't ___ it to your party.", opts:["make","do","go"], answer:"make", rule:"Can't make it = não conseguir ir."},
+      {t:"p", k:"ex", text:"Do you want to go ___ a blind date?", opts:["on","in","to"], answer:"on", rule:"Go ON a date."},
+      {t:"p", k:"ot", text:"She always ___ gorgeous dresses.", opts:["wears","uses","dresses"], answer:"wears", rule:"Usar roupa = wear. Use é usar ferramenta/objeto."},
+      {t:"p", k:"ot", text:"Every day I ___ my father a kiss.", opts:["give","do","make"], answer:"give", rule:"Dar beijo/abraço = give a kiss / a hug."},
+      {t:"p", k:"in", text:"Where ___ he last week?", opts:["was","were","did"], answer:"was", rule:"He → was. To be não usa did."},
+      {t:"p", k:"in", text:"How ___ they?", opts:["were","was","did"], answer:"were", rule:"They → were."},
+      {t:"p", k:"in", text:"When ___ John and Jane in France?", opts:["were","was","did"], answer:"were", rule:"John and Jane = they → were."},
+      {t:"p", k:"in", text:"How old ___ the children?", opts:["were","was","had"], answer:"were", rule:"Idade usa to be. Children (plural) → were."},
+      {t:"p", k:"in", text:"Why ___ she so nervous?", opts:["was","were","did"], answer:"was", rule:"She → was."},
+      {t:"p", k:"in", text:"What ___ their favorite vacation?", opts:["was","were","did"], answer:"was", rule:"Vacation é singular em inglês → was."},
+      {t:"p", k:"voc", text:"'Viúvo' (homem) em inglês é…", opts:["widower","widow","single"], answer:"widower", rule:"Widower = viúvo. Widow = viúva."},
+      {t:"p", k:"voc", text:"'Ciumento / com ciúmes' em inglês é…", opts:["jealous","gorgeous","good-looking"], answer:"jealous", rule:"Jealous = com ciúmes. Gorgeous = deslumbrante."},
+      {t:"p", k:"voc", text:"'Adolescente' em inglês é…", opts:["teenager","adult","couple"], answer:"teenager", rule:"Teenager = adolescente (de 13 a 19: thirTEEN… nineTEEN)."},
+      /* estrutura — transformar */
+      {t:"w", k:"in", given:"He was in Paris last week.", task:"Pergunte ONDE ele estava (where)", answer:"where was he last week?", pt:"Onde ele estava na semana passada?", rule:"Where + was + he + last week?"},
+      {t:"w", k:"in", given:"They were fine.", task:"Pergunte COMO eles estavam (how)", answer:"how were they?", pt:"Como eles estavam?", rule:"How + were + they?"},
+      {t:"w", k:"in", given:"She was there at eight o'clock.", task:"Pergunte QUE HORAS (what time)", answer:"what time was she there?", pt:"Que horas ela estava lá?", rule:"What time + was + she + there?"},
+      {t:"w", k:"in", given:"John and Jane were in France in 2020.", task:"Pergunte QUANDO (when)", answer:"when were John and Jane in France?", pt:"Quando John e Jane estiveram na França?", rule:"When + were + John and Jane...?"},
+      {t:"w", k:"in", given:"She was so nervous because of the test.", task:"Pergunte POR QUE (why)", answer:"why was she so nervous?", alt:["why was she nervous?"], pt:"Por que ela estava tão nervosa?", rule:"Why + was + she + so nervous?"},
+      {t:"w", k:"in", given:"The children were five years old.", task:"Pergunte a IDADE (how old)", answer:"how old were the children?", pt:"Quantos anos tinham as crianças?", rule:"How old + were + the children?"},
+      {t:"w", k:"in", given:"Their favorite vacation was in Bahia.", task:"Pergunte QUAL foi (what)", answer:"what was their favorite vacation?", pt:"Quais foram as férias favoritas deles?", rule:"What + was + their favorite vacation?"},
+      {t:"w", k:"ng", given:"That widow was rude to the secretary.", task:"Passe para negativa", answer:"that widow wasn't rude to the secretary", alt:["that widow was not rude to the secretary"], pt:"Aquela viúva não foi rude com a secretária.", rule:"To be nega com not: wasn't."},
+      {t:"w", k:"ex", given:"She turns down his invitations.", task:"Troque 'his invitations' por them", answer:"she turns them down", pt:"Ela os recusa.", rule:"Com pronome, ele vai no meio: turns them down."},
+      {t:"w", k:"ng", given:"They get along very well.", task:"Passe para negativa", answer:"they don't get along very well", alt:["they do not get along very well"], pt:"Eles não se dão muito bem.", rule:"Get é verbo comum → don't get along."},
+      {t:"w", k:"in", given:"He wants to break up with her.", task:"Passe para pergunta", answer:"does he want to break up with her?", pt:"Ele quer terminar com ela?", rule:"He → Does + he + want (sem -s)."},
+      {t:"w", k:"af", given:"Were you single last year?", task:"Responda SIM (resposta curta)", answer:"yes, I was", pt:"Você estava solteiro no ano passado? — Sim, estava.", rule:"You → I was."},
+      {t:"w", k:"ng", given:"Was your grandmother a widow?", task:"Responda NÃO (resposta curta)", answer:"no, she wasn't", alt:["no, she was not"], pt:"Sua avó era viúva? — Não, não era.", rule:"Grandmother → she wasn't."},
+      {t:"w", k:"af", given:"Were your parents married in 1990?", task:"Responda SIM (resposta curta)", answer:"yes, they were", pt:"Seus pais eram casados em 1990? — Sim, eram.", rule:"Parents → they were."}
+    ]);
+  }
 }
 ];
 
@@ -2137,6 +2258,49 @@ mystory: [
   {t:"tr", k:"ot", pt:"Tem alguma coisa que você quer dizer?", answer:"is there anything you want to say?", rule:"Tem...? = Is there...? Alguma coisa (pergunta) = anything."},
   {t:"tr", k:"ot", pt:"Você é uma mulher fascinante.", answer:"you are a fascinating woman", alt:["you're a fascinating woman"], rule:"Adjetivo ANTES do substantivo: fascinating woman."},
   {t:"tr", k:"ot", pt:"Eu acho que eu estou apaixonado por você.", answer:"I think I am in love with you", alt:["I think I'm in love with you"], rule:"In love WITH you."}
+],
+lesson71: [
+  {t:"tr", k:"ex", pt:"A gente se dá muito bem.", answer:"we get along very well", alt:["we get along really well"], rule:"Se dar bem = get along."},
+  {t:"tr", k:"ex", pt:"Eu não gosto de ir a encontros às cegas.", answer:"I don't like to go on blind dates", alt:["I don't like going on blind dates"], rule:"Go ON a blind date. Don't like + to go."},
+  {t:"tr", k:"ex", pt:"Eu não o amo. Eu quero terminar.", answer:"I don't love him I want to break up", alt:["I do not love him I want to break up"], rule:"O (ele, objeto) = him. Terminar = break up."},
+  {t:"tr", k:"ex", pt:"Toda vez que eu a chamo para jantar na minha casa, ela recusa.", answer:"every time I ask her to come to my house for dinner she turns it down", alt:["every time I invite her to my house for dinner she turns it down","every time I ask her to come to my house for dinner she says no","every time I invite her to come to my house for dinner she turns it down"], rule:"Recusar = turn down → she turns it down (pronome no meio, -s do she)."},
+  {t:"tr", k:"ex", pt:"Ele tem uma queda por ela.", answer:"he has a crush on her", rule:"Have a crush ON. He → has."},
+  {t:"tr", k:"ex", pt:"Você se dá bem com seus pais?", answer:"do you get along with your parents?", alt:["do you get along well with your parents?"], rule:"Get along WITH. Pergunta: Do you...?"},
+  {t:"tr", k:"ex", pt:"Ela recusou o convite.", answer:"she turned down the invitation", alt:["she turned the invitation down","she turned it down"], rule:"Passado de turn = turned (regular)."},
+  {t:"tr", k:"ex", pt:"Eles terminaram semana passada.", answer:"they broke up last week", rule:"Passado de break = broke (irregular). Break up → broke up."},
+  {t:"tr", k:"ex", pt:"Me dá um abraço.", answer:"give me a hug", rule:"Dar um abraço = give a hug. Me = me."},
+  {t:"tr", k:"ex", pt:"Obrigado pelo convite.", answer:"thank you for the invitation", alt:["thanks for the invitation"], rule:"Obrigado POR = thank you FOR."},
+  {t:"tr", k:"in", pt:"Quais foram as férias favoritas deles?", answer:"what was their favorite vacation?", alt:["what were their favorite vacations?"], rule:"Vacation singular → was. Deles = their."},
+  {t:"tr", k:"in", pt:"Onde ele estava na semana passada?", answer:"where was he last week?", rule:"Where + was + he?"},
+  {t:"tr", k:"in", pt:"Como eles estavam?", answer:"how were they?", rule:"How + were + they?"},
+  {t:"tr", k:"in", pt:"Que horas ela estava lá?", answer:"what time was she there?", rule:"What time + was + she + there?"},
+  {t:"tr", k:"in", pt:"Quando John e Jane estiveram na França?", answer:"when were John and Jane in France?", rule:"John and Jane = they → were."},
+  {t:"tr", k:"in", pt:"Por que ela estava tão nervosa?", answer:"why was she so nervous?", rule:"Tão = so."},
+  {t:"tr", k:"in", pt:"Quantos anos tinham as crianças?", answer:"how old were the children?", alt:["how old were the kids?"], rule:"Idade = to be: How old were...?"},
+  {t:"tr", k:"in", pt:"Você estava com ciúmes?", answer:"were you jealous?", rule:"You → were. Com ciúmes = jealous."},
+  {t:"tr", k:"in", pt:"Onde vocês estavam ontem à noite?", answer:"where were you last night?", rule:"Vocês = you → were."},
+  {t:"tr", k:"in", pt:"Como estava a festa?", answer:"how was the party?", rule:"The party = it → was."},
+  {t:"tr", k:"ot", pt:"Ela não quer ter um relacionamento agora.", answer:"she doesn't want to have a relationship now", alt:["she doesn't want a relationship now","she does not want to have a relationship now"], rule:"She → doesn't want."},
+  {t:"tr", k:"ot", pt:"Ela sempre usa vestidos deslumbrantes quando vai a um encontro.", answer:"she always wears gorgeous dresses when she goes on a date", rule:"Usar roupa = wear. She → wears, goes."},
+  {t:"tr", k:"ot", pt:"Meus pais são divorciados, mas se dão muito bem.", answer:"my parents are divorced but get along very well", alt:["my parents are divorced but they get along very well"], rule:"Parents → are. Get along = se dar bem."},
+  {t:"tr", k:"ot", pt:"Você quer ir a um encontro às cegas?", answer:"do you want to go on a blind date?", rule:"Do + you + want + to go + ON a blind date?"},
+  {t:"tr", k:"ot", pt:"Todo dia eu dou um beijo e um abraço em meu pai.", answer:"every day I give my father a kiss and a hug", alt:["I give my father a kiss and a hug every day","every day I give my dad a kiss and a hug"], rule:"Give + pessoa + a kiss (sem 'in')."},
+  {t:"tr", k:"ot", pt:"Ele quer terminar com ela.", answer:"he wants to break up with her", rule:"He → wants. Break up WITH her."},
+  {t:"tr", k:"ot", pt:"Ninguém sabe que ele tem uma queda por ela.", answer:"nobody knows he has a crush on her", alt:["nobody knows that he has a crush on her","no one knows he has a crush on her"], rule:"Nobody → knows (singular). He → has."},
+  {t:"tr", k:"ot", pt:"Ela sempre recusa os convites dele.", answer:"she always turns down his invitations", alt:["she always turns his invitations down"], rule:"Always antes do verbo. She → turns."},
+  {t:"tr", k:"ot", pt:"Aquela viúva não foi rude com a secretária.", answer:"that widow wasn't rude to the secretary", alt:["that widow was not rude to the secretary"], rule:"Widow = ela → wasn't. Rude TO."},
+  {t:"tr", k:"ot", pt:"Desculpe, mas não posso ir à sua festa.", answer:"sorry but I can't make it to your party", alt:["sorry but I can't go to your party","sorry but I cannot make it to your party"], rule:"Não conseguir ir = can't make it."},
+  {t:"tr", k:"ot", pt:"Tinham muitos casais atraentes naquela festa.", answer:"there were many good-looking couples at that party", alt:["there were a lot of good-looking couples at that party","there were many good looking couples at that party"], rule:"Tinha (existia) + plural no passado = there were."},
+  {t:"tr", k:"af", pt:"Meu avô era viúvo.", answer:"my grandfather was a widower", rule:"Widower = viúvo (homem). Leva 'a': was A widower."},
+  {t:"tr", k:"af", pt:"Eles eram casados.", answer:"they were married", rule:"They → were. Casado = married."},
+  {t:"tr", k:"af", pt:"Ela estava solteira no ano passado.", answer:"she was single last year", rule:"She → was. Solteira = single."},
+  {t:"tr", k:"af", pt:"Nós éramos adolescentes em 2010.", answer:"we were teenagers in 2010", rule:"We → were. Plural: teenagers."},
+  {t:"tr", k:"af", pt:"Ele estava com ciúmes da namorada.", answer:"he was jealous of his girlfriend", rule:"Com ciúmes DE = jealous OF. Da namorada (dele) = his girlfriend."},
+  {t:"tr", k:"af", pt:"O casal estava muito feliz.", answer:"the couple was very happy", rule:"Couple = um casal (singular) → was."},
+  {t:"tr", k:"af", pt:"Ela é deslumbrante.", answer:"she is gorgeous", alt:["she's gorgeous"], rule:"Presente: she is."},
+  {t:"tr", k:"ng", pt:"Eles não eram divorciados.", answer:"they weren't divorced", alt:["they were not divorced"], rule:"They → weren't."},
+  {t:"tr", k:"ng", pt:"Ele não é atraente.", answer:"he isn't good-looking", alt:["he's not good-looking","he is not good-looking","he isn't good looking","he is not good looking"], rule:"Presente negativo do to be: isn't."},
+  {t:"tr", k:"ng", pt:"Os adultos não estavam na festa.", answer:"the adults weren't at the party", alt:["the adults were not at the party"], rule:"Adults (plural) → weren't. Na festa = AT the party."}
 ]
 };
 
@@ -2221,7 +2385,7 @@ function getWeakQueue(limit){
 /* ---------- estado e navegação ---------- */
 var KINDS = [["all","Tudo"],["af","Afirmativa"],["ng","Negativa"],["in","Pergunta"]];
 var MODES = [["all","Misturado"],["build","Só montar"],["tr","Só traduzir"]];
-var KLABEL = {af:"Afirmativa", ng:"Negativa", in:"Pergunta", pr:"Presente", pa:"Passado", fu:"Futuro", ot:"Estrutura", voc:"Vocabulário", typ:"Adivinhe a palavra"};
+var KLABEL = {af:"Afirmativa", ng:"Negativa", in:"Pergunta", pr:"Presente", pa:"Passado", fu:"Futuro", ot:"Estrutura", voc:"Vocabulário", typ:"Adivinhe a palavra", ex:"Expressões"};
 var state = { sec: null, filter: "all", mode: "all", queue: [], idx: 0, hits: 0, misses: [], phase: "answer", built: [], roundStats: {}, isWeak: false };
 
 function screens(on){
@@ -2247,7 +2411,7 @@ function sectionItems(sec){
   return sec._items;
 }
 
-var PATH_ORDER = ["present","conj","pronomes","tobe","cont","feelings","tobe3","mystory","past","verbos","diaadia","modais","wh","togo","semanas","horas","vocab"];
+var PATH_ORDER = ["present","conj","pronomes","tobe","cont","feelings","tobe3","mystory","lesson71","past","verbos","diaadia","modais","wh","togo","semanas","horas","vocab"];
 function nodeStatus(st){
   if (!st || !st.a) return "todo";
   if (st.a >= 8 && (st.c / st.a) >= 0.75) return "done";
@@ -2422,6 +2586,7 @@ var GLOSS_MANUAL = [
   ["comprar","buy"],["escrever","write"],["falar","speak"],["ter","have"],["entender","understand"],["saber","know"],
   ["sair","leave"],["pegar","take"],["vir","come"],["ficar","stay"],["ver","see"],
   ["fome","hungry"],["com muita fome","very hungry"],["cachorro","dog"],["livro","book"],["cliente","customer"],["testemunha","witness"],["acorda","wake up"],["acordam","wake up"],["caminhar","walk"],["gosta","like"],["gosto","like"],["gostam","like"],["pais","parents"],["mãe","mother"],["pai","father"],["irmão","brother"],["irmã","sister"],["escola","school"],["à escola","to school"],["comigo","with me"],["com ele","with him"],["com ela","with her"],["horas","time"],["dinheiro","money"],["casa","house"],["cidade","city"],["loja","store"],["restaurante","restaurant"],["hospital","hospital"],["médico","doctor"],["carta","letter"],["música","music"],
+  ["se dá muito bem","get along very well"],["se dão muito bem","get along very well"],["se dá bem","get along"],["encontros às cegas","blind dates"],["encontro às cegas","blind date"],["encontro","date"],["terminar","break up"],["terminaram","broke up"],["recusa","turns down"],["recusou","turned down"],["queda","crush"],["tem uma queda","has a crush"],["convites","invitations"],["convite","invitation"],["viúvo","widower"],["viúva","widow"],["solteira","single"],["solteiro","single"],["casados","married"],["divorciados","divorced"],["casais","couples"],["atraentes","good-looking"],["adolescentes","teenagers"],["adultos","adults"],["ciúmes","jealous"],["com ciúmes","jealous"],["vestidos","dresses"],["deslumbrantes","gorgeous"],["relacionamento","relationship"],["beijo","kiss"],["abraço","hug"],["ninguém","nobody"],["crianças","children"],["férias","vacation"],["nervosa","nervous"],["nervoso","nervous"],["tão","so"],["lá","there"],["França","France"],["avô","grandfather"],["avó","grandmother"],["namorada","girlfriend"],["namorado","boyfriend"],["desculpe","sorry"],["mas","but"],["obrigado","thank you"],["que horas","what time"],["quantos anos","how old"],["por que","why"],["onde","where"],["como","how"],
   ["chega","gets"],["chegar","get"],["às seis","at six"],["às oito","at eight"],["meio-dia","noon"],["cedo","early"],["fora","out"]
 ];
 var GLOSS = null;
@@ -2879,6 +3044,8 @@ var DIS_MAP = {
   "my":["your","his"], "your":["my","her"], "his":["her","him"], "her":["his","she"], "our":["their","we"], "their":["our","they"],
   "me":["i","my"], "him":["he","his"], "them":["they","their"], "us":["we","our"],
   "what":["where","when"], "where":["what","when"], "when":["where","what"], "why":["how","what"], "how":["why","what"], "who":["what","whose"],
+  "there were":["there was","there are"], "there was":["there were","there is"],
+  "get along":["get on","get up"], "to break up":["to break down","to broke up"], "turns down":["turn down","turns up"], "turns it down":["turns down it","turn it down"],
   "very":["much","many"], "always":["never","sometimes"], "never":["always","sometimes"], "usually":["never","always"]
 };
 function distractors(parts){
@@ -3067,6 +3234,27 @@ function subjBefore(e, idx){
   }
   return "";
 }
+var WHW = {what:1, where:1, when:1, why:1, how:1, who:1, which:1, old:1, time:1, much:1, many:1};
+var DETW = /^(the|my|your|his|her|our|their|that|this|these|those|all|last|a|an|many|some)$/;
+/* sujeito do verbo na posição idx: antes (frase) ou depois (pergunta invertida) */
+function subjInfo(e, idx){
+  var inverted = idx === 0 || WHW[e[idx - 1]];
+  if (inverted) {
+    var k = idx + 1, words = [];
+    while (k < e.length && DETW.test(e[k])) { words.push(e[k]); k++; }
+    while (k < e.length - 1 && /^(favorite|best|first|new|good|little|big|young|beautiful|good-looking)$/.test(e[k])) { words.push(e[k]); k++; }
+    if (k < e.length) words.push(e[k]);
+    var head = e[k] || "";
+    var plural = !!PLUR[head] || e[k + 1] === "and" || /^(these|those|all|many)$/.test(words[0] || "") ||
+      (!SING[head] && /s$/.test(head) && !/(ss|us|is)$/.test(head)) || head === "children" || head === "people";
+    if (e[k + 1] === "and") words.push("and " + (e[k + 2] || ""));
+    return { w: words.join(" "), head: head, plural: plural };
+  }
+  var before = e.slice(0, idx);
+  if (before.indexOf("and") > -1 && before.length <= 5) return { w: before.join(" "), head: "", plural: true };
+  var s = subjBefore(e, idx);
+  return { w: s, head: s, plural: isPluralSubj(e, idx) || s === "children" || s === "people" };
+}
 function isPluralSubj(e, idx){
   var s = subjBefore(e, idx);
   if (PLUR[s]) return true;
@@ -3103,15 +3291,15 @@ function diagnose(q, userText){
     if (op.t === "sub") {
       /* was / were */
       if ((x === "was" || x === "were") && (y === "was" || y === "were")) {
-        var pl = isPluralSubj(e, op.i), s = subjBefore(e, op.i);
+        var si = subjInfo(e, op.i), s = si.w;
         add(x === "were"
-          ? "<b>were</b>, não was: o sujeito \"" + s + "\" é " + (PLUR[s] ? "you/we/they" : "plural (mais de um)") + " → were. Was é só pra I, he, she, it e sujeitos no singular."
-          : "<b>was</b>, não were: o sujeito \"" + s + "\" é " + (SING[s] ? "I/he/she/it" : "singular (um só)") + " → was. Were é pra you, we, they e plural.");
+          ? "<b>were</b>, não was: o sujeito \"" + s + "\" é " + (PLUR[si.head] ? "you/we/they" : / and i$/.test(s) ? "\"X and I\" = we (plural)" : "plural (mais de um)") + " → were. Was é só pra I, he, she, it e sujeitos no singular."
+          : "<b>was</b>, não were: o sujeito \"" + s + "\" é " + (SING[si.head] ? "I/he/she/it" : "singular (um só)") + " → was. Were é pra you, we, they e plural.");
         return;
       }
       /* am / is / are */
       if (/^(am|is|are)$/.test(x) && /^(am|is|are)$/.test(y)) {
-        var s2 = subjBefore(e, op.i);
+        var s2 = subjInfo(e, op.i).w;
         add("<b>" + x + "</b>, não " + y + ": " + (x === "am" ? "I é sempre am" : x === "is" ? "\"" + s2 + "\" é he/she/it (singular) → is" : "\"" + s2 + "\" é you/we/they ou plural → are") + ".");
         return;
       }
