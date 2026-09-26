@@ -786,6 +786,8 @@ var CONTR = [
 function norm(s){
   s = (s || "").normalize("NFC").toLowerCase().replace(/’/g,"'").replace(/\([^)]*\)/g, " ").replace(/[.,!;:"“”…]/g, " ").replace(/\s+/g," ").trim().replace(/\s+\?/g,"?").replace(/\?+$/g,"");
   CONTR.forEach(function(c){ s = s.split(c[0]).join(c[1]); });
+  /* formas equivalentes: learn how to = learn to */
+  s = s.replace(/\b(learn|learns|learned|learnt|learning) how to\b/g, "$1 to");
   return s;
 }
 function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
@@ -2626,7 +2628,7 @@ function buildGloss(){
 function wordHints(q){
   if (!q.pt || (q.t !== "tr" && q.t !== "w" && q.t !== "c") || q.k === "typ" || state.blitz) return [];
   var g = buildGloss();
-  var pool = " " + norm(q.answer) + " ";
+  var pool = " " + norm(q.answer) + " " + q.answer.toLowerCase().replace(/[.,!?;:]/g, " ") + " ";
   var orig = q.pt.replace(/[.,!?;:()"]/g, " ").split(/\s+/).filter(Boolean);
   var toks = orig.map(stripAcc);
   var out = [], seen = {};
