@@ -194,6 +194,7 @@ h2 { font-size: 20px; margin: 0 0 2px; }
 .built .chip { background: var(--card); border-color: var(--accent); }
 .built-hint { color: var(--muted); font-size: 14px; padding-left: 4px; }
 .ptline { color: var(--muted); font-size: 15px; margin: 10px 2px 0; font-style: italic; }
+.ptline.qpt { margin: -6px 0 14px; font-size: 15.5px; }
 .microw { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 14px; }
 .mic-btn {
   font: inherit; font-weight: 500; font-size: 15px; border-radius: 999px;
@@ -686,6 +687,7 @@ input.answer, .opt, .chip { border-radius: 12px; }
       <p class="qlabel" id="qlabel"></p>
       <div id="qtask-holder"></div>
       <p class="qtext" id="qtext"></p>
+      <p class="ptline qpt hidden" id="q-pt"></p>
       <div id="hint-row" class="hintrow hidden"></div>
       <div id="area-chips" class="hidden">
         <div class="chips" id="chip-pool"></div>
@@ -2378,6 +2380,11 @@ function getWeakQueue(limit){
     var w = weakMap[k];
     var item = JSON.parse(JSON.stringify(w.item));
     item.__origSec = w.sec; item.__key = k;
+    if (!item.pt) {
+      var fk = item.t === "w" ? (item.task + "::" + item.given) : item.t === "c" ? null : item.text;
+      if (fk && PT_FIX[fk]) item.pt = PT_FIX[fk];
+      if (item.t === "c" && PT_HINTS[item.parts.join(" ").replace(" ?", "?")]) item.pt = PT_HINTS[item.parts.join(" ").replace(" ?", "?")];
+    }
     return item;
   });
   list.sort(function(a,b){ return weakMap[b.__key].count - weakMap[a.__key].count; });
@@ -2398,12 +2405,105 @@ function screens(on){
   window.scrollTo(0,0);
 }
 
+var PT_FIX = {
+"Passe para pergunta::She can play the guitar.": "Ela sabe tocar violão?",
+"Passe para negativa::I can go now.": "Eu não posso ir agora.",
+"Passe para pergunta::You would like to start today.": "Você gostaria de começar hoje?",
+"Passe para negativa::He should eat meat.": "Ele não deveria comer carne.",
+"Reescreva com TWO APPLES::There is an apple in the fridge.": "Tem duas maçãs na geladeira.",
+"Passe para pergunta::She is busy.": "Ela está ocupada?",
+"Passe para negativa::They are at the beach.": "Eles não estão na praia.",
+"Passe para pergunta::He was late.": "Ele estava atrasado?",
+"14h (2 da tarde) é ___": "Duas da tarde.",
+"Pergunte o LUGAR (where)::She likes to go to the beach.": "Onde ela gosta de ir?",
+"Pergunte o TEMPO (when)::They study English in the morning.": "Quando eles estudam inglês?",
+"Pergunte a COISA (what)::He wants to eat chicken.": "O que ele quer comer?",
+"Pergunte QUANTOS (how many)::I have three brothers.": "Quantos irmãos você tem?",
+"Pergunte a FREQUÊNCIA (how often)::She goes to the gym every day.": "Com que frequência ela vai à academia?",
+"I go ___ movies on weekends.": "Eu vou ao cinema nos fins de semana.",
+"She goes ___ church every week.": "Ela vai à igreja toda semana.",
+"We go ___ downtown every day.": "Nós vamos ao centro todos os dias.",
+"They go ___ school in the morning.": "Eles vão à escola de manhã.",
+"He goes ___ home at night.": "Ele vai para casa à noite.",
+"I want to go ___ USA.": "Eu quero ir para os EUA.",
+"She goes ___ beach on weekends.": "Ela vai à praia nos fins de semana.",
+"I go ___ Brazil every year.": "Eu vou ao Brasil todo ano.",
+"I need to go ___ dentist tomorrow.": "Eu preciso ir ao dentista amanhã.",
+"I study English ___ (na semana).": "Eu estudo inglês durante a semana.",
+"We go to the mall ___ (no final de semana).": "Nós vamos ao shopping no fim de semana.",
+"They travel ___ (nos fins de semana, costume).": "Eles viajam nos fins de semana.",
+"She works ___ (nos finais de semana, específicos).": "Ela trabalha nos fins de semana.",
+"I want to go to the movies ___ (hoje à noite).": "Eu quero ir ao cinema hoje à noite.",
+"He needs to work ___ (hoje de manhã).": "Ele precisa trabalhar hoje de manhã.",
+"See you ___ (despedida, hoje à noite).": "Até hoje à noite.",
+"___ works every day. (ele)": "Ele trabalha todos os dias.",
+"I speak English with ___. (ela)": "Eu falo inglês com ela.",
+"This is ___ book. (meu)": "Este é o meu livro.",
+"Do you understand ___? (eles)": "Você entende eles?",
+"I like ___ car. (dele)": "Eu gosto do carro dele.",
+"___ name is Ana. (dela)": "O nome dela é Ana.",
+"She likes ___. (eu)": "Ela gosta de mim.",
+"I want to talk to ___. (ele)": "Eu quero falar com ele.",
+"We love ___ parents. (nossos)": "Nós amamos nossos pais.",
+"They sell ___ house. (deles)": "Eles vendem a casa deles.",
+"Call ___ tomorrow. (nós)": "Ligue para nós amanhã.",
+"___ are my parents. (eles)": "Eles são meus pais.",
+"Conjugue para HE::to study": "Ele estuda.",
+"Conjugue para SHE::to go": "Ela vai.",
+"Conjugue para IT::to work": "Isso funciona.",
+"Conjugue para HE::to have": "Ele tem.",
+"Conjugue para SHE::to play": "Ela joga.",
+"Conjugue para HE::to buy": "Ele compra.",
+"Conjugue para SHE::to do": "Ela faz.",
+"Conjugue para IT::to rain": "Chove.",
+"Conjugue para HE::to speak": "Ele fala.",
+"Conjugue para SHE::to sell": "Ela vende.",
+"Conjugue para WE::to study": "Nós estudamos.",
+"Conjugue para THEY::to eat": "Eles comem.",
+"Conjugue para I::to drink": "Eu bebo.",
+"Conjugue para YOU::to sleep": "Você dorme.",
+"Conjugue para HE::to watch": "Ele assiste.",
+"Conjugue para SHE::to teach": "Ela ensina.",
+"She ___ very polite. (ela foi)": "Ela foi muito educada.",
+"They ___ scared. (eles ficaram)": "Eles ficaram com medo.",
+"___ you at home? (pergunta)": "Você estava em casa?",
+"It ___ sunny yesterday.": "Estava ensolarado ontem.",
+"We ___ n't at the right place.": "Nós não estávamos no lugar certo.",
+"___ he polite to you?": "Ele foi educado com você?",
+"That lawyer ___ unreliable. (presente)": "Aquele advogado não é confiável.",
+"Our boss ___ rude when we talk about deadlines.": "Nosso chefe fica grosseiro quando falamos de prazos.",
+"'Posso levá-la para casa?' — qual é a frase correta?": "Posso levá-la para casa?",
+"'Agora eu tenho que voltar para casa.'": "Agora eu tenho que voltar para casa.",
+"'Tem alguma coisa que você quer dizer?'": "Tem alguma coisa que você quer dizer?",
+"'Eu acho que eu estou apaixonado por você.'": "Eu acho que eu estou apaixonado por você.",
+"Every time I ask her, she turns ___.": "Toda vez que eu a convido, ela recusa.",
+"We get ___ very well.": "A gente se dá muito bem.",
+"He wants to break up ___ her.": "Ele quer terminar com ela.",
+"Nobody knows he has a crush ___ her.": "Ninguém sabe que ele tem uma queda por ela.",
+"Sorry, I can't ___ it to your party.": "Desculpe, não consigo ir à sua festa.",
+"Do you want to go ___ a blind date?": "Você quer ir a um encontro às cegas?",
+"She always ___ gorgeous dresses.": "Ela sempre usa vestidos deslumbrantes.",
+"Every day I ___ my father a kiss.": "Todo dia eu dou um beijo no meu pai.",
+"Where ___ he last week?": "Onde ele estava na semana passada?",
+"How ___ they?": "Como eles estavam?",
+"When ___ John and Jane in France?": "Quando John e Jane estiveram na França?",
+"How old ___ the children?": "Quantos anos tinham as crianças?",
+"Why ___ she so nervous?": "Por que ela estava tão nervosa?",
+"What ___ their favorite vacation?": "Quais foram as férias favoritas deles?",
+"'Viúvo' (homem) em inglês é…": "viúvo",
+"'Ciumento / com ciúmes' em inglês é…": "com ciúmes",
+"'Adolescente' em inglês é…": "adolescente"
+};
 function sectionItems(sec){
   if (!sec._items) {
     var base = sec.gen ? sec.gen() : sec.items;
     sec._items = base.concat(TRANS[sec.id] || []);
     sec._items.forEach(function(it){
       if (it.t === "c" && !it.answer) it.answer = it.parts.join(" ").replace(" ?", "?");
+      if (!it.pt) {
+        var fk = it.t === "w" ? (it.task + "::" + it.given) : it.text;
+        if (fk && PT_FIX[fk]) it.pt = PT_FIX[fk];
+      }
       if (it.t === "c" && !it.pt) {
         var hint = PT_HINTS[it.parts.join(" ").replace(" ?", "?")];
         if (hint) it.pt = hint;
@@ -2969,6 +3069,7 @@ function renderQuestion(){
   $("flash-grade").classList.add("hidden");
   $("qtask-holder").innerHTML = "";
   $("hint-row").classList.add("hidden"); $("hint-row").innerHTML = "";
+  $("q-pt").classList.add("hidden"); $("q-pt").textContent = "";
   $("btn-main").textContent = "Verificar";
   $("btn-main").classList.remove("hidden");
   $("btn-main").disabled = false;
@@ -3002,6 +3103,7 @@ function renderQuestion(){
     $("qlabel").textContent = "Estrutura" + (kindName ? " · " + kindName : "");
     $("qtask-holder").innerHTML = '<span class="qtask">' + q.task + '</span>';
     $("qtext").innerHTML = '<span class="en">' + q.given + '</span>';
+    if (q.pt) { $("q-pt").textContent = "🇧🇷 " + q.pt; $("q-pt").classList.remove("hidden"); }
     $("area-input").classList.remove("hidden");
     $("answer-input").value = "";
     $("mic-row-input").classList.toggle("hidden", !speechSupported);
@@ -3025,6 +3127,8 @@ function renderQuestion(){
   } else {
     $("qlabel").textContent = q.text.indexOf("tempo verbal") > -1 ? "Identifique o tempo verbal" : "Complete";
     $("qtext").innerHTML = q.text.replace("___", '<span class="gap"></span>');
+    var isTenseId = q.text.indexOf("tempo verbal") > -1, isPtQ = /^'/.test(q.text);
+    if (q.pt && !isTenseId && !isPtQ) { $("q-pt").textContent = "🇧🇷 " + q.pt; $("q-pt").classList.remove("hidden"); }
     $("area-pick").classList.remove("hidden");
     renderPick(q);
   }
