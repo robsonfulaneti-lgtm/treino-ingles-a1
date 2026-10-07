@@ -2715,11 +2715,28 @@ function renderKindBar(){
   }
 }
 
+/* transforma uma frase de traduzir/transformar em exercício de blocos */
+function toBlocks(it){
+  if (it.t === "c") return it;
+  var ans = (it.answer || "").trim();
+  var q = /\?$/.test(ans);
+  var words = ans.replace(/\?$/, "").split(/\s+/).filter(Boolean);
+  if (q) words.push("?");
+  return { t:"c", k: it.k, parts: words, answer: ans, pt: it.pt, rule: it.rule,
+    hint: it.t === "w" ? (it.task + ": " + it.given) : "" };
+}
 function startQuiz(){
   var items = sectionItems(state.sec);
   if (state.mode === "tr") items = items.filter(function(it){ return it.t === "tr"; });
-  else if (state.mode === "build") items = items.filter(function(it){ return it.t !== "tr"; });
   if (state.filter !== "all") items = items.filter(function(it){ return it.k === state.filter; });
+  if (state.mode === "build") {
+    /* Só montar: tudo que tem frase vira blocos (montar, traduzir e transformar) */
+    items = items.filter(function(it){
+      if (it.t === "c") return true;
+      if ((it.t === "tr" || it.t === "w") && it.k !== "typ") return (it.answer || "").split(/\s+/).length >= 3;
+      return false;
+    }).map(toBlocks);
+  }
   if (!items.length) items = sectionItems(state.sec);
   var queue = shuffle(items).slice(0, ROUND);
   resetRound();
@@ -3352,6 +3369,7 @@ function renderQuestion(){
   $("qtask-holder").innerHTML = "";
   $("hint-row").classList.add("hidden"); $("hint-row").innerHTML = "";
   $("q-pt").classList.add("hidden"); $("q-pt").textContent = "";
+  $("qtext").innerHTML = "";
   $("btn-main").textContent = "Verificar";
   $("btn-main").classList.remove("hidden");
   $("btn-main").disabled = false;
@@ -3405,7 +3423,8 @@ function renderQuestion(){
     $("mic-row-input").classList.toggle("hidden", !speechSupported);
     renderHints(q);
   } else if (q.t === "f") {
-    $("qlabel").textContent = "Vocabulário";
+    $("qlabel").textContent = "Vocabulário · o que significa esta palavra?";
+    $("qtext").innerHTML = "";
     $("flash-word").textContent = q.en;
     $("flash-answer").textContent = q.pt;
     $("area-flash").classList.remove("hidden");
