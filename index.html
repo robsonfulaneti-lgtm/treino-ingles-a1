@@ -248,6 +248,7 @@ input.answer:focus { outline: none; border-color: var(--accent); }
 .feedback .dw-ok { color: var(--ok); }
 .feedback .dw-bad { color: var(--err); font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
 .feedback .where { display: block; margin-top: 4px; }
+.feedback .typo { display: block; font-size: 13.5px; color: #E0A53A; margin: 2px 0 4px; }
 .feedback .alsook { display: block; font-size: 13.5px; color: var(--muted); margin: 2px 0 4px; }
 .feedback .dw-extra { color: var(--muted); opacity: 0.7; }
 .feedback .ptfb, .review-item .ptfb { display: block; font-size: 14.5px; color: var(--muted); font-style: italic; margin: 2px 0 4px; }
@@ -856,8 +857,33 @@ var CONTR = [
   ["won't","will not"],["i'll","i will"],["you'll","you will"],["he'll","he will"],
   ["she'll","she will"],["we'll","we will"],["they'll","they will"],["it'll","it will"]
 ];
+var TYPOS = {
+  "dosen't":"doesn't", "doens't":"doesn't", "dosent":"doesn't", "doesnt":"doesn't", "does'nt":"doesn't", "dosn't":"doesn't", "doesen't":"doesn't",
+  "dont":"don't", "do'nt":"don't", "didnt":"didn't", "did'nt":"didn't", "dind't":"didn't", "didin't":"didn't",
+  "isnt":"isn't", "is'nt":"isn't", "arent":"aren't", "are'nt":"aren't", "wasnt":"wasn't", "was'nt":"wasn't", "wasen't":"wasn't",
+  "werent":"weren't", "were'nt":"weren't", "cant":"can't", "ca'nt":"can't", "wont":"won't", "wo'nt":"won't", "shouldnt":"shouldn't",
+  "wouldnt":"wouldn't", "im":"i'm", "youre":"you're", "theyre":"they're", "whats":"what's", "theres":"there's"
+};
+function fixTypos(s){
+  return s.replace(/[a-z']+/g, function(w){ return TYPOS[w] || w; });
+}
+/* lista de palavras escritas errado (pra avisar o aluno) */
+function typoNotes(user){
+  var out = [], seen = {};
+  (user || "").toLowerCase().replace(/’/g, "'").replace(/[a-z']+/g, function(w){
+    if (TYPOS[w] && !seen[w]) { seen[w] = 1; out.push([w, TYPOS[w]]); }
+    return w;
+  });
+  return out;
+}
+function typoHtml(user){
+  var t = typoNotes(user);
+  if (!t.length) return "";
+  return '<span class="typo">✍️ Atenção à escrita: ' + t.map(function(x){ return '<b>' + x[1].replace(/^i'm$/, "I'm") + '</b> (você escreveu ' + x[0] + ')'; }).join(" · ") + '</span>';
+}
 function norm(s){
   s = (s || "").normalize("NFC").toLowerCase().replace(/’/g,"'").replace(/\([^)]*\)/g, " ").replace(/[.,!;:"“”…]/g, " ").replace(/\s+/g," ").trim().replace(/\s+\?/g,"?").replace(/\?+$/g,"");
+  s = fixTypos(s);
   CONTR.forEach(function(c){ s = s.split(c[0]).join(c[1]); });
   /* formas equivalentes: learn how to = learn to */
   s = s.replace(/\b(learn|learns|learned|learnt|learning) how to\b/g, "$1 to");
@@ -2464,7 +2490,7 @@ function getWeakQueue(limit){
 
 /* ---------- estado e navegação ---------- */
 var KINDS = [["all","Tudo"],["af","Afirmativa"],["ng","Negativa"],["in","Pergunta"]];
-var MODES = [["all","Misturado"],["build","Só montar"],["tr","Só traduzir"]];
+var MODES = [["all","Misturado"],["build","🧩 Só montar (blocos)"],["tr","Só traduzir (escrever)"]];
 var KLABEL = {af:"Afirmativa", ng:"Negativa", in:"Pergunta", pr:"Presente", pa:"Passado", fu:"Futuro", ot:"Estrutura", voc:"Vocabulário", typ:"Adivinhe a palavra", ex:"Expressões"};
 var state = { sec: null, filter: "all", mode: "all", queue: [], idx: 0, hits: 0, misses: [], phase: "answer", built: [], roundStats: {}, isWeak: false };
 
@@ -3276,13 +3302,13 @@ function mxCheck(rec){
   rec.el.classList.remove("ok", "err"); void rec.el.offsetWidth;
   rec.el.classList.add(ok ? "ok" : "err");
   if (ok) {
-    fb.innerHTML = '<div class="feedback ok">✓ Correto!<span class="full">' + mxDisplay(bestTarget(q, user)) + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml() + '</div>';
+    fb.innerHTML = '<div class="feedback ok">✓ Correto!<span class="full">' + mxDisplay(bestTarget(q, user)) + '</span>' + typoHtml(user) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml() + '</div>';
   } else {
     q.__target = bestTarget(q, user);
     var d = wordDiffHtml(q, user);
     var alsoOk = q.__target !== q.answer ? '<span class="alsook">Também vale: <b>' + mxDisplay(q.answer) + '</b></span>' : "";
     fb.innerHTML = '<div class="feedback err">✗ Ainda não.' + (d.where ? '<span class="where">' + d.where + '</span>' : "") +
-      '<span class="full">' + d.html + '</span>' + alsoOk + whyHtml(q, user) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml() +
+      '<span class="full">' + d.html + '</span>' + alsoOk + typoHtml(user) + whyHtml(q, user) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml() +
       '<span class="mx-retry">Corrija ali em cima e verifique de novo.</span></div>';
     q.__target = null;
   }
@@ -3331,6 +3357,7 @@ function renderQuestion(){
   $("btn-main").disabled = false;
 
   var kindName = KLABEL[q.k] || "";
+  if (state.sec && state.sec.kindOptions) state.sec.kindOptions.forEach(function(ko){ if (ko[0] === q.k) kindName = ko[1].replace(/^\W+\s*/, "").replace(/\s*\(.*\)$/, ""); });
 
   if (q.t === "c") {
     state.buildMode = false;
@@ -3347,14 +3374,18 @@ function renderQuestion(){
     $("answer-input").placeholder = "Escreva a frase em inglês";
     $("mic-row-input").classList.toggle("hidden", !speechSupported);
     renderHints(q, '<button type="button" class="hint solid" id="btn-build">🧩 Montar com blocos</button>');
-    $("btn-build").addEventListener("click", function(){
+    var enterBuild = function(countHint){
       if (state.phase !== "answer") return;
-      state.buildMode = true; state.hintsUsed = (state.hintsUsed || 0) + 1;
+      state.buildMode = true;
+      if (countHint) state.hintsUsed = (state.hintsUsed || 0) + 1;
       $("qlabel").textContent = "Monte a frase" + (kindName ? " · " + kindName : "") + " · cuidado: tem blocos errados";
       $("area-input").classList.add("hidden");
       $("btn-build").classList.add("hidden");
       $("area-chips").classList.remove("hidden");
-    });
+    };
+    $("btn-build").addEventListener("click", function(){ enterBuild(true); });
+    /* modo "Só montar": já abre nos blocos */
+    if (state.mode === "build" && !state.special && !state.isWeak) enterBuild(false);
   } else if (q.t === "w") {
     $("qlabel").textContent = "Estrutura" + (kindName ? " · " + kindName : "");
     $("qtask-holder").innerHTML = '<span class="qtask">' + q.task + '</span>';
@@ -3575,13 +3606,25 @@ function alignWords(e, u){
     else if (j < m && (i >= n || L[i][j + 1] >= L[i + 1][j])) { ops.push({t:"extra", u:u[j]}); j++; }
     else { ops.push({t:"miss", e:e[i], i:i}); i++; }
   }
-  /* miss + extra adjacentes = substituição */
-  var out = [];
-  for (var k = 0; k < ops.length; k++) {
-    var a = ops[k], b = ops[k + 1];
-    if (a.t === "miss" && b && b.t === "extra") { out.push({t:"sub", e:a.e, u:b.u, i:a.i}); k++; }
-    else if (a.t === "extra" && b && b.t === "miss") { out.push({t:"sub", e:b.e, u:a.u, i:b.i}); k++; }
-    else out.push(a);
+  /* em cada trecho de diferenças: pareia primeiro palavras parecidas (has↔have), depois as que sobrarem em ordem */
+  var out = [], k = 0;
+  while (k < ops.length) {
+    if (ops[k].t === "eq") { out.push(ops[k]); k++; continue; }
+    var miss = [], extra = [];
+    while (k < ops.length && ops[k].t !== "eq") { (ops[k].t === "miss" ? miss : extra).push(ops[k]); k++; }
+    var pairs = {}, usedX = {};
+    miss.forEach(function(m, mi){
+      for (var xi = 0; xi < extra.length; xi++) if (!usedX[xi] && wordsNear(m.e, extra[xi].u)) { pairs[mi] = xi; usedX[xi] = 1; break; }
+    });
+    var freeX = extra.map(function(x, xi){ return xi; }).filter(function(xi){ return !usedX[xi]; });
+    var freeM = miss.map(function(m, mi){ return mi; }).filter(function(mi){ return pairs[mi] === undefined; });
+    /* sobras: só pareia se a quantidade bater (troca simples), senão fica faltou/sobrou */
+    if (freeX.length && freeX.length === freeM.length) freeM.forEach(function(mi, n){ pairs[mi] = freeX[n]; usedX[freeX[n]] = 1; });
+    miss.forEach(function(m, mi){
+      if (pairs[mi] !== undefined) out.push({t:"sub", e:m.e, u:extra[pairs[mi]].u, i:m.i});
+      else out.push(m);
+    });
+    extra.forEach(function(x, xi){ if (!usedX[xi]) out.push(x); });
   }
   return out;
 }
@@ -3645,6 +3688,10 @@ function diagnose(q, userText){
   }
   if (/ going to /.test(eStr) && !/ going /.test(uStr)) {
     return ["Isso é um <b>plano / futuro</b> → <b>" + e.slice(0, e.indexOf("going") + 2).join(" ") + "</b> + verbo. \"" + u.slice(0, 2).join(" ") + "\" no presente simples seria rotina (todo dia), não o que vai acontecer."];
+  }
+  var eqN = ops.filter(function(o){ return o.t === "eq"; }).length;
+  if (eqN < Math.max(2, Math.ceil(e.length * 0.4))) {
+    return ["Sua frase ficou <b>bem diferente</b> da pedida — confira o português de novo e compare com a resposta certa acima, palavra por palavra. A regra logo abaixo mostra a estrutura."];
   }
   if (/ (do|does) not /.test(eStr) && / did not /.test(uStr)) return ["A frase é no <b>presente</b> (rotina) → don't/doesn't, não didn't."];
   if (/ did not /.test(eStr) && / (do|does) not /.test(uStr)) return ["A frase é no <b>passado</b> → <b>didn't</b> + verbo base. Don't/doesn't é presente."];
@@ -3735,7 +3782,7 @@ function diagnose(q, userText){
       else add("Sobrou <b>" + y + "</b>: essa palavra não entra nessa frase.");
     }
   });
-  return why.slice(0, 3);
+  return why.slice(0, 4);
 }
 function whyHtml(q, userText){
   var w = diagnose(q, userText);
@@ -3743,15 +3790,31 @@ function whyHtml(q, userText){
   return '<span class="why"><span class="why-label">💡 Por que</span>' + w.map(function(x){ return '<span class="why-line">' + x + '</span>'; }).join("") + '</span>';
 }
 
+function wordsNear(a, b){
+  if (!a || !b) return false;
+  if (third(a) === b || third(b) === a || pastOf(a) === b || pastOf(b) === a || baseOfPast(a) === b || baseOfPast(b) === a) return true;
+  if (a.slice(0, 2) !== b.slice(0, 2)) return false;
+  /* distância de edição pequena */
+  var m = a.length, n = b.length, d = [], i, j;
+  for (i = 0; i <= m; i++) { d[i] = [i]; }
+  for (j = 0; j <= n; j++) d[0][j] = j;
+  for (i = 1; i <= m; i++) for (j = 1; j <= n; j++)
+    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[m][n] <= 2;
+}
 function bestTarget(q, user){
   var cands = [q.answer].concat(q.alt || []).filter(Boolean);
   if (cands.length < 2) return q.answer;
   var u = norm(user).split(" "), best = cands[0], bestScore = -1;
   cands.forEach(function(c){
     var e = norm(c).split(" ");
-    var ops = alignWords(e, u), eq = 0, bad = 0;
-    ops.forEach(function(o){ if (o.t === "eq") eq++; else bad++; });
-    var sc = eq - bad * 0.5;
+    var ops = alignWords(e, u), eq = 0, bad = 0, near = 0;
+    ops.forEach(function(o){
+      if (o.t === "eq") eq++;
+      else if (o.t === "sub" && wordsNear(o.e, o.u)) near++;
+      else bad++;
+    });
+    var sc = eq + near * 0.6 - bad * 0.4;
     if (sc > bestScore) { bestScore = sc; best = c; }
   });
   return best;
@@ -3782,7 +3845,7 @@ function checkWrite(q){
   if (ok) {
     state.hits++;
     fb.className = "feedback ok";
-    fb.innerHTML = '✓ Correto!<span class="full">' + cap(bestTarget(q, user)) + '</span>' + ptFb(q) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+    fb.innerHTML = '✓ Correto!<span class="full">' + cap(bestTarget(q, user)) + '</span>' + typoHtml(user) + ptFb(q) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
   } else {
     state.misses.push(q);
     q.__target = bestTarget(q, user);
@@ -3790,7 +3853,7 @@ function checkWrite(q){
     var alsoOk = q.__target !== q.answer ? '<span class="alsook">Esta também vale: <b>' + cap(q.answer) + '</b></span>' : "";
     fb.className = "feedback err";
     fb.innerHTML = '✗ Ainda não.' + (d.where ? '<span class="where">' + d.where + '</span>' : "") +
-      '<span class="full">' + d.html + '</span>' + alsoOk + ptFb(q) + whyHtml(q, user) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
+      '<span class="full">' + d.html + '</span>' + alsoOk + typoHtml(user) + ptFb(q) + whyHtml(q, user) + anatomyHtml(q) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml();
     q.__target = null;
   }
   attachTtsButton(fb, q.answer);
