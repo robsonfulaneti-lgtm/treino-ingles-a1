@@ -588,6 +588,48 @@ input.answer, .opt, .chip { border-radius: 12px; }
 .chip { border-radius: 999px; }
 .feedback { border-radius: 14px; }
 .kind.on { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-color: transparent; }
+
+/* matriz de frases */
+#s-matrix { max-width: 1180px; margin: 0 auto; }
+.mx-score { margin-left: auto; font-family: var(--mono); font-size: 13.5px; font-weight: 700; color: var(--accent); }
+.mx-base { position: relative; overflow: hidden; border-radius: 22px; padding: 20px 22px; margin: 6px 0 18px;
+  background: linear-gradient(135deg, rgba(124,155,255,0.18), rgba(192,132,252,0.10) 55%, rgba(52,214,198,0.10)); border: 1px solid var(--line-soft); }
+.mx-base-tag { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.mx-base-en { font-family: Georgia, serif; font-size: 26px; margin: 6px 0 2px; }
+.mx-base-pt { color: var(--muted); font-style: italic; font-size: 15px; }
+.mx-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 14px; }
+.mx-grid { display: grid; grid-template-columns: 110px repeat(3, minmax(0, 1fr)); gap: 12px; align-items: start; }
+.mx-corner { }
+.mx-colh { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: center; padding: 4px 0; }
+.mx-rowh { align-self: center; font-weight: 800; font-size: 15px; writing-mode: horizontal-tb; }
+.mx-cell { background: var(--card); border: 1px solid var(--line-soft); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 8px;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.22); transition: border-color .2s ease, box-shadow .2s ease; min-width: 0; }
+.mx-cell:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
+.mx-cell.base { background: linear-gradient(135deg, rgba(124,155,255,0.14), rgba(192,132,252,0.10)); border-style: dashed; }
+.mx-cell.ok { border-color: var(--ok); animation: mxpop .35s ease; }
+.mx-cell.err { border-color: var(--err); animation: shake .4s ease; }
+@keyframes mxpop { 0% { transform: scale(0.98); } 60% { transform: scale(1.02); } 100% { transform: scale(1); } }
+.mx-tag { font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); }
+.mx-pt { font-size: 14px; color: var(--muted); font-style: italic; line-height: 1.35; }
+.mx-in { font-size: 16px !important; padding: 10px 12px !important; }
+.mx-check { font: inherit; font-size: 13.5px; font-weight: 700; border-radius: 10px; padding: 8px 12px; cursor: pointer; align-self: flex-start;
+  border: 1px solid var(--accent); background: transparent; color: var(--accent); }
+.mx-check:hover { background: var(--bg-accent-soft); }
+.mx-basefill { font-family: Georgia, serif; font-size: 17px; }
+.mx-basefill span { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em; }
+.mx-fb .feedback { margin-top: 2px; font-size: 14px; padding: 11px 12px; }
+.mx-fb .feedback .full { font-size: 16px; }
+.mx-fb .why { padding: 8px 10px; }
+.mx-fb .why-line, .mx-fb .rule { font-size: 13.5px; }
+.mx-retry { display: block; font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+.mx-foot { display: flex; gap: 10px; margin-top: 18px; }
+.mx-foot .btn { flex: 1; }
+@media (max-width: 860px) {
+  .mx-grid { grid-template-columns: 1fr; }
+  .mx-corner, .mx-colh { display: none; }
+  .mx-rowh { font-size: 17px; margin-top: 10px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+  .mx-base-en { font-size: 22px; }
+}
 </style>
 </head>
 <body>
@@ -599,6 +641,7 @@ input.answer, .opt, .chip { border-radius: 12px; }
      <nav class="site-nav">
        <button type="button" id="nav-temas" class="on">Temas</button>
        <button type="button" id="nav-trilha">Trilha</button>
+       <button type="button" id="nav-matrix">Matriz</button>
        <button type="button" id="nav-blitz">Desafio</button>
        <button type="button" id="nav-dict">Ditado</button>
        <button type="button" id="nav-trans">Tradutor</button>
@@ -637,6 +680,7 @@ input.answer, .opt, .chip { border-radius: 12px; }
       <div class="side-title">Modos de treino</div>
       <div class="quick">
         <button type="button" class="qa hot" id="btn-trail" data-ic="🧭"><b>Trilha completa</b><small>Aula por aula, acumulando o que já viu</small></button>
+        <button type="button" class="qa hot" id="btn-matrix" data-ic="🧩"><b>Matriz de frases</b><small>1 frase → presente, passado e futuro (+ − ?)</small></button>
         <button type="button" class="qa" id="btn-blitz" data-ic="⚡"><b>Desafio 2 minutos</b><small id="blitz-sub">Quantas frases você acerta contra o relógio?</small></button>
         <button type="button" class="qa" id="btn-dictation" data-ic="🎧"><b>Ditado</b><small>Ele fala em inglês, você escreve o que ouviu</small></button>
         <button type="button" class="qa" id="btn-weak" data-ic="🎯"><b>Treinar meus erros</b><small id="weak-txt">nenhum erro guardado ainda</small></button>
@@ -733,6 +777,33 @@ input.answer, .opt, .chip { border-radius: 12px; }
     </div>
     <div id="summary"></div>
     <div class="review" id="review"></div>
+  </section>
+
+  <section id="s-matrix" class="hidden">
+    <div class="topbar">
+      <button type="button" class="back" id="btn-mx-home">← Início</button>
+      <span class="mx-score" id="mx-score"></span>
+    </div>
+    <h2>🧩 Matriz de frases</h2>
+    <p class="sub">Uma frase base — você escreve ela nos outros 8 quadrados: presente, passado e futuro, afirmando, negando e perguntando. Cada quadrado corrige na hora e explica o erro.</p>
+    <div class="mx-base">
+      <span class="mx-base-tag" id="mx-base-tag"></span>
+      <div class="mx-base-en" id="mx-base-en"></div>
+      <div class="mx-base-pt" id="mx-base-pt"></div>
+      <div class="mx-tools">
+        <div class="kinds" style="margin:0">
+          <button type="button" class="kind on" data-mxk="mix">Misturado</button>
+          <button type="button" class="kind" data-mxk="verb">Verbos</button>
+          <button type="button" class="kind" data-mxk="be">To be</button>
+        </div>
+        <button type="button" class="tbtn go" id="mx-new">🔀 Nova frase</button>
+      </div>
+    </div>
+    <div class="mx-grid" id="mx-grid"></div>
+    <div class="mx-foot">
+      <button type="button" class="btn primary" id="mx-checkall">Verificar todas</button>
+      <button type="button" class="btn" id="mx-new2">🔀 Nova frase</button>
+    </div>
   </section>
 
   <section id="s-trans" class="hidden">
@@ -2398,7 +2469,7 @@ var KLABEL = {af:"Afirmativa", ng:"Negativa", in:"Pergunta", pr:"Presente", pa:"
 var state = { sec: null, filter: "all", mode: "all", queue: [], idx: 0, hits: 0, misses: [], phase: "answer", built: [], roundStats: {}, isWeak: false };
 
 function screens(on){
-  ["s-home","s-section","s-quiz","s-done","s-trans"].forEach(function(id){
+  ["s-home","s-section","s-quiz","s-done","s-trans","s-matrix"].forEach(function(id){
     $(id).classList.toggle("hidden", id !== on);
   });
   $("actionbar").classList.toggle("hidden", on !== "s-quiz" && on !== "s-section");
@@ -3063,6 +3134,183 @@ function renderDictation(q){
   setTimeout(function(){ speak(q.answer, 0.85); }, 350);
 }
 
+/* ---------- Matriz de frases: uma frase base → 9 formas ---------- */
+var MX = { cells: [], kind: "mix", score: 0, done: 0 };
+var MX_TENSES = [["pres","Presente"],["past","Passado"],["fut","Futuro"]];
+var MX_POLS = [["af","Afirmativa (+)"],["ng","Negativa (−)"],["in","Pergunta (?)"]];
+function mxVerbCells(){
+  var v = VERBS[Math.floor(Math.random() * VERBS.length)];
+  var s = v.it ? "it" : SUBJ[Math.floor(Math.random() * SUBJ.length)];
+  var sp = SUBJ_PT[s], slot = sp.slot, is3 = (s === "he" || s === "she" || s === "it");
+  var S = s === "I" ? "I" : s, Sq = S, sw = v.it ? "" : sp.w;
+  var be = beFor(s), neg = be === "am" ? "am not" : be === "is" ? "is not" : "are not";
+  var T = { pres:["every day","todos os dias"], past:["yesterday","ontem"], fut:["tomorrow","amanhã"] };
+  var go = goingPt(slot), pres = ptForm(v, "pres", slot), past = ptForm(v, "past", slot);
+  var c = v.c, cp = v.cpt;
+  function pt(list, punct){ return ptSentence(list, punct); }
+  return {
+    base: v.b, label: "verbo " + v.b + " (" + v.pt + ")",
+    pres: {
+      af: { a: parts([S, is3 ? third(v.b) : v.b, c, T.pres[0]]).join(" "), pt: pt([sw, pres, cp, T.pres[1]], "."),
+            rule: "Presente afirmativo: " + (is3 ? "he/she/it → verbo com -s (" + third(v.b) + ")." : "verbo na forma base (" + v.b + ").") },
+      ng: { a: parts([S, is3 ? "doesn't" : "don't", v.b, c, T.pres[0]]).join(" "), pt: pt([sw, "não", pres, cp, T.pres[1]], "."),
+            rule: "Presente negativo: " + (is3 ? "doesn't" : "don't") + " + verbo base (" + v.b + ", sem -s)." },
+      in: { a: parts([is3 ? "does" : "do", Sq, v.b, c, T.pres[0]]).join(" ") + "?", pt: pt([sw, pres, cp, T.pres[1]], "?"),
+            rule: "Pergunta no presente: " + (is3 ? "Does" : "Do") + " + sujeito + verbo base." }
+    },
+    past: {
+      af: { a: parts([S, v.p, c, T.past[0]]).join(" "), pt: pt([sw, past, cp, T.past[1]], "."),
+            rule: "Passado afirmativo: " + v.b + " → " + v.p + (v.reg ? " (regular, +ed)." : " (irregular).") + " Igual pra todos os sujeitos." },
+      ng: { a: parts([S, "didn't", v.b, c, T.past[0]]).join(" "), pt: pt([sw, "não", past, cp, T.past[1]], "."),
+            rule: "Passado negativo: didn't + verbo BASE (" + v.b + "), nunca didn't " + v.p + "." },
+      in: { a: parts(["did", Sq, v.b, c, T.past[0]]).join(" ") + "?", pt: pt([sw, past, cp, T.past[1]], "?"),
+            rule: "Pergunta no passado: Did + sujeito + verbo base (" + v.b + "). O did já marca o passado." }
+    },
+    fut: {
+      af: { a: parts([S, "will", v.b, c, T.fut[0]]).join(" "), alt: [parts([S, be, "going to", v.b, c, T.fut[0]]).join(" ")],
+            pt: pt([sw, go, v.pt, cp, T.fut[1]], "."), rule: "Futuro: will + verbo base (ou " + be + " going to + " + v.b + ")." },
+      ng: { a: parts([S, "won't", v.b, c, T.fut[0]]).join(" "), alt: [parts([S, neg, "going to", v.b, c, T.fut[0]]).join(" ")],
+            pt: pt([sw, "não", go, v.pt, cp, T.fut[1]], "."), rule: "Futuro negativo: won't (will not) + verbo base — ou " + neg + " going to." },
+      in: { a: parts(["will", Sq, v.b, c, T.fut[0]]).join(" ") + "?", alt: [parts([be, Sq, "going to", v.b, c, T.fut[0]]).join(" ") + "?"],
+            pt: pt([sw, go, v.pt, cp, T.fut[1]], "?"), rule: "Pergunta no futuro: Will + sujeito + verbo base? (ou " + cap(be) + " + sujeito + going to...?)" }
+    }
+  };
+}
+function mxBeCells(){
+  var c = BE_COMP[Math.floor(Math.random() * BE_COMP.length)];
+  var s = c.it ? "it" : SUBJ[Math.floor(Math.random() * SUBJ.length)];
+  var sp = SUBJ_PT[s], slot = sp.slot, S = s;
+  var enC = (s === "we" || s === "they") && /^a /.test(c.en) ? c.en.slice(2) + "s" : c.en;
+  var ptC = (slot === "plur3" || slot === "nos") && c.ptp ? c.ptp : c.pt;
+  var V = c.v === "ser" ? SER_PT : ESTAR_PT, sw = c.it ? "" : sp.w;
+  var T = c.v === "ser" ? { pres:["",""], past:["last year","no ano passado"], fut:["next year","no ano que vem"] }
+                        : { pres:["today","hoje"], past:["yesterday","ontem"], fut:["tomorrow","amanhã"] };
+  var be = beFor(s), was = wasFor(s), beNeg = be === "am" ? "am not" : be + "n't";
+  function pt(list, punct){ return ptSentence(list, punct); }
+  var tag = " (" + (c.v === "ser" ? "ser" : "estar") + " = to be)";
+  return {
+    base: "to be", label: "to be + " + c.en + " (" + c.pt + ")",
+    pres: {
+      af: { a: parts([S, be, enC, T.pres[0]]).join(" "), pt: pt([sw, V.pres[slot], ptC, T.pres[1]], "."), rule: "To be no presente: " + s + " → " + be + "." + tag },
+      ng: { a: parts([S, beNeg, enC, T.pres[0]]).join(" "), pt: pt([sw, "não", V.pres[slot], ptC, T.pres[1]], "."), rule: "Negativa do to be: " + beNeg + " — sem don't/doesn't." },
+      in: { a: parts([be, S, enC, T.pres[0]]).join(" ") + "?", pt: pt([sw, V.pres[slot], ptC, T.pres[1]], "?"), rule: "Pergunta com to be: inverte → " + cap(be) + " " + s + "...? Sem do/does." }
+    },
+    past: {
+      af: { a: parts([S, was, enC, T.past[0]]).join(" "), pt: pt([sw, V.past[slot], ptC, T.past[1]], "."), rule: "To be no passado: " + s + " → " + was + " (I/he/she/it was · you/we/they were)." },
+      ng: { a: parts([S, was + "n't", enC, T.past[0]]).join(" "), pt: pt([sw, "não", V.past[slot], ptC, T.past[1]], "."), rule: "Passado negativo do to be: " + was + "n't — nunca didn't." },
+      in: { a: parts([was, S, enC, T.past[0]]).join(" ") + "?", pt: pt([sw, V.past[slot], ptC, T.past[1]], "?"), rule: "Pergunta no passado: " + cap(was) + " + " + s + "...? Sem did." }
+    },
+    fut: {
+      af: { a: parts([S, "will be", enC, T.fut[0]]).join(" "), alt: [parts([S, be, "going to be", enC, T.fut[0]]).join(" ")],
+            pt: pt([sw, V.fut[slot], ptC, T.fut[1]], "."), rule: "Futuro do to be: will be (igual pra todos)." },
+      ng: { a: parts([S, "won't be", enC, T.fut[0]]).join(" "), alt: [parts([S, beNeg, "going to be", enC, T.fut[0]]).join(" ")],
+            pt: pt([sw, "não", V.fut[slot], ptC, T.fut[1]], "."), rule: "Futuro negativo: won't be (will not be)." },
+      in: { a: parts(["will", S, "be", enC, T.fut[0]]).join(" ") + "?", alt: [parts([be, S, "going to be", enC, T.fut[0]]).join(" ") + "?"],
+            pt: pt([sw, V.fut[slot], ptC, T.fut[1]], "?"), rule: "Pergunta no futuro: Will + " + s + " + be...?" }
+    }
+  };
+}
+function mxDisplay(a){
+  var t = a.charAt(0).toUpperCase() + a.slice(1);
+  return t.replace(/\bi\b/g, "I");
+}
+function mxNew(){
+  var kind = MX.kind === "mix" ? (Math.random() < 0.55 ? "verb" : "be") : MX.kind;
+  var data = kind === "verb" ? mxVerbCells() : mxBeCells();
+  var baseT = MX_TENSES[Math.floor(Math.random() * 3)][0], baseP = MX_POLS[Math.floor(Math.random() * 3)][0];
+  MX.cells = []; MX.score = 0; MX.done = 0; MX.celebrated = false;
+  var grid = $("mx-grid"); grid.innerHTML = "";
+  var base = data[baseT][baseP];
+  $("mx-base-en").textContent = mxDisplay(base.a);
+  $("mx-base-pt").textContent = "🇧🇷 " + base.pt;
+  $("mx-base-tag").textContent = MX_TENSES.filter(function(t){ return t[0] === baseT; })[0][1] + " · " + MX_POLS.filter(function(p){ return p[0] === baseP; })[0][1] + " · " + data.label;
+  /* cabeçalho das colunas */
+  grid.appendChild(mxEl("div", "mx-corner", ""));
+  MX_POLS.forEach(function(p){ grid.appendChild(mxEl("div", "mx-colh", p[1])); });
+  MX_TENSES.forEach(function(t){
+    grid.appendChild(mxEl("div", "mx-rowh", t[1]));
+    MX_POLS.forEach(function(p){
+      var d = data[t[0]][p[0]];
+      var isBase = t[0] === baseT && p[0] === baseP;
+      var q = { t:"tr", k: t[0] === "pres" ? "pr" : t[0] === "past" ? "pa" : "fu", pt: d.pt, answer: d.a, alt: d.alt || [], rule: d.rule };
+      var cell = mxEl("div", "mx-cell" + (isBase ? " base" : ""), "");
+      cell.innerHTML = '<div class="mx-tag">' + t[1] + ' · ' + p[1] + '</div>' +
+        '<div class="mx-pt">🇧🇷 ' + d.pt + '</div>' +
+        (isBase ? '<div class="mx-basefill">' + mxDisplay(d.a) + '<span>frase base</span></div>' :
+        '<input type="text" class="answer mx-in" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" placeholder="Escreva aqui…">' +
+        '<button type="button" class="mx-check">Verificar</button><div class="mx-fb"></div>');
+      grid.appendChild(cell);
+      if (!isBase) {
+        var rec = { q: q, el: cell, tried: false, ok: false };
+        MX.cells.push(rec);
+        var inp = cell.querySelector(".mx-in");
+        cell.querySelector(".mx-check").addEventListener("click", function(){ mxCheck(rec); });
+        inp.addEventListener("keydown", function(e){
+          if (e.key === "Enter") {
+            e.preventDefault(); mxCheck(rec);
+            var i = MX.cells.indexOf(rec), nx = MX.cells[i + 1];
+            if (nx && rec.ok) nx.el.querySelector(".mx-in").focus();
+          }
+        });
+      }
+    });
+  });
+  mxScore();
+}
+function mxEl(tag, cls, txt){ var e = document.createElement(tag); e.className = cls; if (txt) e.textContent = txt; return e; }
+function mxCheck(rec){
+  var inp = rec.el.querySelector(".mx-in"), user = inp.value;
+  if (!norm(user)) return;
+  var q = rec.q;
+  var ok = norm(user) === norm(q.answer) || (q.alt || []).some(function(a){ return norm(user) === norm(a); });
+  var fb = rec.el.querySelector(".mx-fb");
+  if (!rec.tried) {
+    rec.tried = true; MX.done++;
+    addStat("matriz", ok);
+    if (ok) { MX.score++; resolveWeak("matriz", q); } else addWeak("matriz", q);
+    bumpCombo(ok); touchDayStreak(); bumpGoal();
+  } else if (ok && !rec.ok) {
+    bumpCombo(true);
+  }
+  rec.ok = ok;
+  rec.el.classList.remove("ok", "err"); void rec.el.offsetWidth;
+  rec.el.classList.add(ok ? "ok" : "err");
+  if (ok) {
+    fb.innerHTML = '<div class="feedback ok">✓ Correto!<span class="full">' + mxDisplay(bestTarget(q, user)) + '</span><span class="rule">' + q.rule + '</span>' + ttsBtnHtml() + '</div>';
+  } else {
+    q.__target = bestTarget(q, user);
+    var d = wordDiffHtml(q, user);
+    var alsoOk = q.__target !== q.answer ? '<span class="alsook">Também vale: <b>' + mxDisplay(q.answer) + '</b></span>' : "";
+    fb.innerHTML = '<div class="feedback err">✗ Ainda não.' + (d.where ? '<span class="where">' + d.where + '</span>' : "") +
+      '<span class="full">' + d.html + '</span>' + alsoOk + whyHtml(q, user) + '<span class="rule">' + q.rule + '</span>' + ttsBtnHtml() +
+      '<span class="mx-retry">Corrija ali em cima e verifique de novo.</span></div>';
+    q.__target = null;
+  }
+  attachTtsButton(fb, q.answer);
+  mxScore();
+}
+function mxCheckAll(){
+  var first = null;
+  MX.cells.forEach(function(rec){
+    var v = rec.el.querySelector(".mx-in").value;
+    if (norm(v)) mxCheck(rec); else if (!first) first = rec;
+  });
+  if (first) { first.el.querySelector(".mx-in").focus(); floatText("Faltam quadrados em branco"); }
+}
+function mxScore(){
+  var right = MX.cells.filter(function(r){ return r.ok; }).length;
+  $("mx-score").textContent = right + " / " + MX.cells.length + " certas" + (MX.done ? " · 1ª tentativa: " + MX.score + "/" + MX.done : "");
+  if (right === MX.cells.length && MX.cells.length && !MX.celebrated) {
+    MX.celebrated = true;
+    setTimeout(function(){ confetti(90); floatText("🧩 Matriz completa!"); }, 200);
+  }
+}
+function openMatrix(){
+  screens("s-matrix");
+  MX.celebrated = false;
+  mxNew();
+}
+
 function renderQuestion(){
   var q = state.queue[state.idx];
   state.phase = "answer"; state.built = [];
@@ -3436,9 +3684,16 @@ function diagnose(q, userText){
       if (third(y) === x) { add("<b>" + x + "</b>: he/she/it no presente ganha -s (" + y + " → " + x + ")."); return; }
       if (third(x) === y) {
         var prev = e[op.i - 1] || "";
+        if (prev === "not") prev = e[op.i - 2] || "";
         add(/^(don't|doesn't|do|does|didn't|did|to|can|can't|will|won't|should|would|must|could)$/.test(prev)
           ? "<b>" + x + "</b> sem -s: depois de " + prev + " o verbo fica na forma base."
           : "<b>" + x + "</b> sem -s: o sujeito não é he/she/it.");
+        return;
+      }
+      /* passado irregular "regularizado" (leaved, goed, eated) */
+      var bOf = baseOfPast(x);
+      if (bOf && (y === bOf + "ed" || y === bOf + "d" || y === bOf.replace(/e$/, "") + "ed")) {
+        add("<b>" + x + "</b>: " + bOf + " é verbo <b>irregular</b> — o passado não leva -ed (não existe " + y + "). " + bOf + " → " + x + ".");
         return;
       }
       /* passado x base */
@@ -3911,6 +4166,19 @@ $("nav-trilha").addEventListener("click", function(){ showHomeTab("trilha"); });
 $("nav-blitz").addEventListener("click", startBlitz);
 $("nav-dict").addEventListener("click", startDictation);
 $("nav-trans").addEventListener("click", openTranslator);
+$("nav-matrix").addEventListener("click", openMatrix);
+$("btn-matrix").addEventListener("click", openMatrix);
+$("btn-mx-home").addEventListener("click", renderHome);
+$("mx-new").addEventListener("click", mxNew);
+$("mx-new2").addEventListener("click", function(){ mxNew(); window.scrollTo(0, 0); });
+$("mx-checkall").addEventListener("click", mxCheckAll);
+Array.prototype.forEach.call(document.querySelectorAll("[data-mxk]"), function(b){
+  b.addEventListener("click", function(){
+    MX.kind = b.getAttribute("data-mxk");
+    Array.prototype.forEach.call(document.querySelectorAll("[data-mxk]"), function(x){ x.classList.toggle("on", x === b); });
+    mxNew();
+  });
+});
 $("tab-trilha").addEventListener("click", function(){ showHomeTab("trilha"); });
 
 /* ---------- PWA ---------- */
